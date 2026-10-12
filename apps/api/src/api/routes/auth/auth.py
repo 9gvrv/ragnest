@@ -8,7 +8,7 @@ from src.api.deps import get_current_user
 from src.core.security import create_access_token, hash_password, verify_password
 from src.db import get_db
 from src.models import Organization, User
-from src.schema.auth import LoginRequest, SignupRequest, TokenResponse, UserRead
+from src.schemas.auth import LoginRequest, SignupRequest, TokenResponse, UserRead
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

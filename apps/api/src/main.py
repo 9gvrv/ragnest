@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from src.api.routes.auth import router as auth_router
+from src.api.routes import api_router
 from src.config import settings
 from src.db import dispose_engine, engine
 
@@ -19,7 +19,7 @@ app = FastAPI(
     debug=settings.debug,
     lifespan=lifespan,
 )
-app.include_router(auth_router)
+app.include_router(api_router)
 
 
 @app.get("/")
