@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from core.database import dispose_engine, engine
 from src.config import settings
+from src.db import dispose_engine, engine
 
 
 @asynccontextmanager
