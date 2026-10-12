@@ -21,7 +21,8 @@ class User(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(320), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    org_id: Mapped[uuid.UUID] = mapped_column(
+    role: Mapped[str | None] = mapped_column(String(20))
+    org_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"), index=True
     )
 
