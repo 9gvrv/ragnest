@@ -45,18 +45,18 @@ Failure modes the spec implies but that no task fully pins down in tests, most l
 - Consumes: nothing
 - Produces: a clean working tree on `main`; no `app/` package yet.
 
-- [ ] **Step 1: Confirm what is on disk**
+- [x] **Step 1: Confirm what is on disk**
 
 Run: `find apps/api -not -path '*/.venv/*' -not -path '*/__pycache__/*' | sort`
 Expected: shows `apps/api/main.py`, `apps/api/config.py`, and an `apps/api/app/` tree with no real code.
 
-- [ ] **Step 2: Remove the leftover scaffold**
+- [x] **Step 2: Remove the leftover scaffold**
 
 ```bash
 rm -rf apps/api/app apps/api/main.py apps/api/config.py
 ```
 
-- [ ] **Step 3: Stage and review the full change**
+- [x] **Step 3: Stage and review the full change**
 
 ```bash
 git add -A
@@ -64,13 +64,13 @@ git status
 ```
 Expected: the old `src/`, `migrations/`, `tests/`, `alembic.ini` are recorded as deleted; the scaffold is gone. `.env` is *not* listed (it is gitignored).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "chore(api): reset to a clean baseline for a rebuild"
 ```
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Run: `git status`
 Expected: `nothing to commit, working tree clean`.
@@ -88,12 +88,12 @@ Expected: `nothing to commit, working tree clean`.
 - Consumes: Task 1's clean tree
 - Produces: `uv run pytest`, `uv run ruff`, and `uv run fastapi` all work; `pyproject.toml` has `[tool.pytest.ini_options]` (`asyncio_mode = "auto"`, `testpaths = ["tests"]`) and `[tool.ruff]` (`line-length = 100`, `target-version = "py313"`, `exclude = ["migrations/versions"]`).
 
-- [ ] **Step 1: Add dev dependencies**
+- [x] **Step 1: Add dev dependencies**
 
 Run (from `apps/api`): `uv add --dev pytest pytest-asyncio httpx aiosqlite ruff`
 Expected: `pyproject.toml` gains a `[dependency-groups]` (or `[tool.uv]` dev group) and `uv.lock` updates.
 
-- [ ] **Step 2: Add tool configuration to `apps/api/pyproject.toml`**
+- [x] **Step 2: Add tool configuration to `apps/api/pyproject.toml`**
 
 Add (as my/mentor's call — pure config, nothing to learn):
 
@@ -109,7 +109,7 @@ target-version = "py313"
 exclude = ["migrations/versions"]
 ```
 
-- [ ] **Step 3: Write `apps/api/.env.example`**
+- [x] **Step 3: Write `apps/api/.env.example`**
 
 ```
 APP_NAME="Ragnest API"
@@ -117,14 +117,14 @@ LOG_LEVEL=INFO
 DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 ```
 
-- [ ] **Step 4: Create the package markers**
+- [x] **Step 4: Create the package markers**
 
 ```bash
 mkdir -p apps/api/app apps/api/tests
 touch apps/api/app/__init__.py apps/api/tests/__init__.py
 ```
 
-- [ ] **Step 5: Verify the toolchain runs**
+- [x] **Step 5: Verify the toolchain runs**
 
 ```bash
 uv run ruff check app tests
@@ -132,7 +132,7 @@ uv run pytest
 ```
 Expected: ruff reports no issues; pytest reports `no tests ran` (exit code 5 is fine here).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add apps/api/pyproject.toml apps/api/uv.lock apps/api/.env.example apps/api/app/__init__.py apps/api/tests/__init__.py
