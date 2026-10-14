@@ -1,6 +1,7 @@
+from urllib.parse import parse_qs, urlparse
+
 import pytest
 from pydantic import ValidationError
-from urllib.parse import parse_qs, urlparse
 
 from app.core.config import Settings
 

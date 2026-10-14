@@ -1,3 +1,6 @@
+# sets up the database connection, creates sessions for queries
+# and transactions, and provides a way to clean up the connection pool.
+
 from collections.abc import AsyncIterator
 
 from sqlalchemy.ext.asyncio.engine import create_async_engine
