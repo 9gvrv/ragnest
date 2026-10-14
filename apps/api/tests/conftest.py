@@ -2,8 +2,6 @@
 
 import os
 
-from app.db.session import get_db
-
 os.environ.setdefault(
     "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/ragnest"
 )
@@ -12,6 +10,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from app.db.session import get_db
 from app.main import create_app
 
 

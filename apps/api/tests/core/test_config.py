@@ -5,10 +5,7 @@ from pydantic import ValidationError
 
 from app.core.config import Settings
 
-NEON = (
-    "postgresql://u:p@host/db"
-    "?sslmode=require&channel_binding=require&application_name=ragnest"
-)
+NEON = "postgresql://u:p@host/db?sslmode=require&channel_binding=require&application_name=ragnest"
 
 
 def test_rewrites_scheme_and_strips_libpq_only_params():
