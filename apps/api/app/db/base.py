@@ -1,3 +1,5 @@
+# defines the foundation for database models and a reusable timestamp mixin.
+
 from datetime import datetime
 
 from sqlalchemy.orm import mapped_column
