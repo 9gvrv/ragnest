@@ -1,4 +1,8 @@
+# conftest.py
+
 import os
+
+from app.db.session import get_db
 
 os.environ.setdefault(
     "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/ragnest"
@@ -19,7 +23,13 @@ async def session_factory():
 
 
 @pytest_asyncio.fixture
-async def client():
+async def client(session_factory):
     app = create_app()
+
+    async def override_get_db():
+        async with session_factory() as session:
+            yield session
+
+    app.dependency_overrides[get_db] = override_get_db
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
