@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Ragnest API"
     LOG_LEVEL: str = "INFO"
     DATABASE_URL: str
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",

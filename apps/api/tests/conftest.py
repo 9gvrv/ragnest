@@ -5,6 +5,7 @@ import os
 os.environ.setdefault(
     "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/ragnest"
 )
+os.environ.setdefault("SECRET_KEY", "test-secret-key-that-is-at-least-32-bytes-long")
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient

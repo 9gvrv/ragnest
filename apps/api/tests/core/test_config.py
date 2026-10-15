@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from pydantic import ValidationError
 
-from app.core.config import Settings
+from app.core.config import Settings, settings
 
 NEON = "postgresql://u:p@host/db?sslmode=require&channel_binding=require&application_name=ragnest"
 
@@ -34,3 +34,11 @@ def test_missing_database_url_raises(monkeypatch):
     monkeypatch.delenv("DATABASE_URL", raising=False)
     with pytest.raises(ValidationError):
         Settings(_env_file=None)
+
+
+def test_access_token_expiry_defaults_to_30_minutes():
+    assert settings.ACCESS_TOKEN_EXPIRE_MINUTES == 30
+
+
+def test_secret_key_is_loaded():
+    assert settings.SECRET_KEY
