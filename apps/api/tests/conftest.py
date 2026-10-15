@@ -9,14 +9,25 @@ os.environ.setdefault(
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import StaticPool
 
+import app.db.models  # noqa: F401  (register all models on Base.metadata)
+from app.db.base import Base
 from app.db.session import get_db
 from app.main import create_app
 
 
 @pytest_asyncio.fixture
 async def session_factory():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    # StaticPool keeps ONE connection, so the in-memory DB (and its tables)
+    # persist across sessions within a test.
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield async_sessionmaker(engine, expire_on_commit=False)
     await engine.dispose()
 
