@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.auth.security import hash_password
+from app.modules.auth.security import hash_password, verify_password
 from app.modules.users.models import User
 
 
@@ -28,4 +28,13 @@ async def create_user(session: AsyncSession, email: str, password: str) -> User:
         await session.rollback()
         raise EmailAlreadyExistsError from exc
     await session.refresh(user)
+    return user
+
+
+async def authenticate_user(session: AsyncSession, email: str, password: str) -> User | None:
+    user = await get_user_by_email(session, email)
+    if user is None:
+        return None
+    if not verify_password(password, user.password_hash):
+        return None
     return user
