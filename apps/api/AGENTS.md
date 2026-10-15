@@ -4,15 +4,16 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-14 (Milestone 1 — foundation — complete)
+> **Last updated:** 2026-10-15 (Milestone 2 — users + auth — complete)
 
 ---
 
 ## 1. What this project is
 
-**Ragnest** is a multi-tenant RAG SaaS: an organization signs up, creates a
-workspace, uploads documents (txt/pdf/md), and chats with them. Answers must be
-grounded only in that workspace's documents, with citations to the source file.
+**Ragnest** is a multi-tenant RAG SaaS: a user signs up, creates a workspace,
+uploads documents (txt/pdf/md), and chats with them. Answers must be grounded
+only in that workspace's documents, with citations to the source file. The
+**workspace is the tenant** — there are no organizations (see §13).
 
 `apps/api/` is the **FastAPI backend**. It is one part of a monorepo; treat it as
 its own project (its own `pyproject.toml`, its own `.env`).
@@ -38,7 +39,7 @@ line.
   learn, or debugging it would cost more than it teaches — and must **say so
   first**, then explain the code line by line.
 - **No unrequested refactors.** Structural changes are proposed and agreed
-  *before* anything moves.
+  _before_ anything moves.
 - **Small, frequent commits**, so history tells the story.
 - **Design before code for every new milestone.** New features get a short design
   doc and a task-by-task plan before implementation.
@@ -56,7 +57,7 @@ Rules that keep this from becoming a mess:
 - `app/api/` is the **HTTP layer**: the aggregate router, shared HTTP
   dependencies, and infrastructure routes (health).
 - **Domain features are modules** under `app/modules/<feature>/`, each owning its
-  router, schemas, models, and service. New features copy the shape of an
+  router, schemas, models, service, and (where applicable) deps. New features copy the shape of an
   existing module.
 
 ```
@@ -82,21 +83,44 @@ apps/api/
 │   ├── db/
 │   │   ├── __init__.py
 │   │   ├── base.py          # Base (DeclarativeBase + naming convention) + TimestampMixin
+│   │   ├── models.py        # import-only aggregator registering all models
 │   │   └── session.py       # engine, SessionLocal, get_db, dispose_engine
-│   └── api/
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── router.py        # api_router aggregate — includes every feature router
+│   │   └── health.py        # GET /health
+│   └── modules/             # domain feature modules
 │       ├── __init__.py
-│       ├── router.py        # api_router aggregate — includes every feature router
-│       └── health.py        # GET /health
+│       ├── users/
+│       │   ├── __init__.py
+│       │   ├── models.py
+│       │   ├── router.py
+│       │   └── schemas.py
+│       └── auth/
+│           ├── __init__.py
+│           ├── deps.py
+│           ├── router.py
+│           ├── schemas.py
+│           ├── security.py
+│           └── service.py
 └── tests/                   # mirrors the app tree
     ├── conftest.py          # shared fixtures: client, session_factory
     ├── test_app.py
     ├── api/test_health.py
     ├── core/test_config.py, core/test_logging.py
-    └── db/test_base.py, db/test_session.py
+    ├── db/test_base.py, db/test_session.py
+    └── modules/             # domain feature tests
+        ├── auth/
+        │   ├── __init__.py
+        │   ├── test_login.py
+        │   └── test_signup.py
+        └── users/
+            ├── __init__.py
+            ├── test_me.py
+            └── test_model.py
 ```
 
-**`app/modules/` does not exist yet.** It is created with the first domain
-feature (auth). That is *growth, not a restructure* — no existing file moves.
+**`app/modules/` now exists** with the first real features (`users`, `auth`). This was growth, not a restructure — no existing file moves.
 
 ### Hard structural rules
 
@@ -172,9 +196,11 @@ If you add another DB engine (e.g. in Alembic), pass
 - `.env` is **gitignored** and holds the real credentials. Never commit it, never
   print it, never paste it into logs.
 - `.env.example` is committed and documents the shape:
-  `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`.
+  `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `ACCESS_TOKEN_EXPIRE_MINUTES`.
 - Settings fields: `APP_NAME` (default `"Ragnest API"`), `LOG_LEVEL` (default
-  `"INFO"`), `DATABASE_URL` (**required** — missing raises `ValidationError`).
+  `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`).
+- `SECRET_KEY` is used for HS256 JWTs; tokens expire after `ACCESS_TOKEN_EXPIRE_MINUTES`.
+- The project uses `pwdlib[argon2]` for password hashing and `PyJWT` for token signing; `EmailStr` validation is provided by `email-validator`.
 - A module-level `settings = Settings()` exists; `Settings()` is instantiated at
   import time. Keep that in mind if you touch import order in tests.
 
@@ -189,11 +215,9 @@ If you add another DB engine (e.g. in Alembic), pass
 - `alembic/env.py` is **async**: it reads `settings.database_url`, sets
   `sqlalchemy.url`, uses `async_engine_from_config` with
   `connect_args=settings.database_connect_args`, and targets `Base.metadata`.
-- **Known wart:** there are currently **two empty baseline revisions**
-  (`736e318369b1 -> a058018dc98a`; both `pass`). The design intended one. Neon is
-  stamped at `a058018dc98a`. Squashing is cosmetic and optional.
-- **No domain tables yet.** The first real table (users / organizations) arrives
-  with the auth milestone.
+- The first real domain table is **`users`** (T1 of Milestone 2). The two empty
+  baseline revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart;
+  squashing is optional.
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
 
@@ -205,18 +229,20 @@ If you add another DB engine (e.g. in Alembic), pass
   tests need no decorator). Config lives in `pyproject.toml`
   (`testpaths = ["tests"]`).
 - **Tests never touch Neon.** `tests/conftest.py` sets a dummy `DATABASE_URL`
-  *before* importing any `app.*` module, builds the app, and overrides `get_db`
+  _before_ importing any `app.*` module, builds the app, and overrides `get_db`
   with an **in-memory async SQLite** (`aiosqlite`) session. Keep that import
-  order — the `os.environ.setdefault(...)` must stay above the `app.*` imports.
+  order — the `os.environ.setdefault(...)` must stay above the `app.*` imports. The
+  session factory uses `StaticPool` so the in-memory schema (created via
+  `Base.metadata.create_all`) persists for all database-dependent tests.
 - Fixtures live in the **root `tests/conftest.py`**: `client` (httpx
   `AsyncClient` bound via `ASGITransport`) and `session_factory` (async SQLite
   sessionmaker). A subdir may add its own `conftest.py` for local fixtures.
 - **Test layout mirrors the app:** `tests/api/`, `tests/core/`, `tests/db/`, and
-  later `tests/modules/<feature>/`. **Every test subdirectory needs an
-  `__init__.py`** — otherwise pytest's default import mode breaks when two files
-  share a basename.
+  `tests/modules/<feature>/` for domain code (`tests/modules/auth/`,
+  `tests/modules/users/`). **Every test subdirectory needs an `__init__.py`** —
+  otherwise pytest's default import mode breaks when two files share a basename.
 - Test names/fixtures use plain absolute imports (`from app.core.config import
-  Settings`); moving test files does not change imports.
+Settings`); moving test files does not change imports.
 
 ---
 
@@ -246,27 +272,21 @@ from the given file path.
 
 ---
 
-## 11. Adding a feature module (the pattern, when auth arrives)
+## 11. Adding a feature module (pattern)
 
-Do **not** invent a new shape. Copy this:
-
-```
+Do **not** invent a new shape. Copy the `users` or `auth` module as a template. New
+modules follow:
+```text
 app/modules/<feature>/
 ├── __init__.py
 ├── router.py     # APIRouter(prefix="/<feature>", tags=["<feature>"])
 ├── schemas.py    # Pydantic request/response models
 ├── models.py     # SQLAlchemy models (inherit app.db.base.Base)
-└── service.py    # business logic (routes stay thin)
+├── service.py    # business logic (routes stay thin)
+└── deps.py       # FastAPI dependencies (optional)
 ```
 
-Then register it in `app/api/router.py`:
-
-```python
-from app.modules.auth import router as auth_router
-api_router.include_router(auth_router.router)
-```
-
-Tests go in `tests/modules/<feature>/` (with `__init__.py`).
+Then register it in `app/api/router.py` and add tests under `tests/modules/<feature>/` (with `__init__.py`).
 
 ---
 
@@ -287,14 +307,17 @@ Tests go in `tests/modules/<feature>/` (with `__init__.py`).
 
 1. ✅ **Foundation** (this milestone) — skeleton, config, db, `/health`,
    Alembic baseline, tests, README.
-2. **Auth** — users + organizations, signup/login, JWT. First real models,
-   migration, and the first `app/modules/` feature.
-3. **Workspaces & membership** — create workspace, invite members.
+2. ✅ **Users + Auth** — users model + migration, password hashing (argon2),
+   JWT (HS256), `POST /api/v1/auth/signup`, `POST /api/v1/auth/login`,
+   `GET /api/v1/users/me`, dependency injection, module layout. **Organizations were
+   deliberately removed; the workspace is the tenant.**
+3. **Workspaces, roles & invitations** — create workspace, membership, roles,
+   invitations. (Milestone 3)
 4. **Documents** — upload txt/pdf/md, store, extract text.
 5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
 
-**Next up: Milestone 2 (auth + workspaces/orgs).** Design precedes code.
+**Next up: Milestone 3 (Workspaces, roles & invitations).** Design precedes code.
 
 ---
 
