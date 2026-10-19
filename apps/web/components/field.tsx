@@ -27,11 +27,11 @@ export function Field({ label, hint, error, id, ...props }: FieldProps) {
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className="mt-2 w-full border-0 border-b border-rule bg-transparent py-2 text-[15px] outline-none focus:border-action aria-[invalid=true]:border-[#a3341f]"
+        className="mt-2 w-full border-0 border-b border-control bg-transparent py-2 text-[15px] focus:border-action aria-[invalid=true]:border-danger"
         {...props}
       />
       {error ? (
-        <p id={`${fieldId}-error`} className="mt-2 text-[13px] text-[#a3341f]">
+        <p id={`${fieldId}-error`} className="mt-2 text-[13px] text-danger">
           {error}
         </p>
       ) : hint ? (

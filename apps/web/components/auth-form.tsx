@@ -49,7 +49,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
       if (response.ok) {
         router.replace("/");
-        router.refresh();
         return;
       }
 
@@ -103,7 +102,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       />
 
       {failure ? (
-        <p role="alert" className="text-[13px] text-[#a3341f]">
+        <p role="alert" className="text-[13px] text-danger">
           {failure.detail}
         </p>
       ) : null}

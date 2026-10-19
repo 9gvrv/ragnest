@@ -8,6 +8,9 @@
   --color-action: #2b3a8f;
   --color-saffron: #f5c445;
   --color-rule: #ddd9ce;
+  /* Controls need 3:1 against the page; --color-rule is a hairline for text. */
+  --color-control: #8f8a78;
+  --color-danger: #a3341f;
 
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
@@ -52,8 +55,8 @@
 .retrieved-mark {
   background-image: linear-gradient(var(--color-saffron), var(--color-saffron));
   background-repeat: no-repeat;
-  background-position: 0 82%;
-  background-size: 100% 42%;
+  background-position: 0 92%;
+  background-size: 100% 58%;
   animation: mark-sweep 700ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
 }
 

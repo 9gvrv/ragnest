@@ -33,7 +33,7 @@ export function AuthShell({
 
       <div className="mt-10">{children}</div>
 
-      {footer ? <div className="mt-auto pt-12">{footer}</div> : null}
+      {footer ? <div className="pt-12">{footer}</div> : null}
     </main>
   );
 }

@@ -6,6 +6,9 @@ import { getSessionToken } from "@/lib/session";
 
 export const metadata = { title: "Create an account — Ragnest" };
 
+// Reads the session cookie, so it cannot be prerendered.
+export const instant = false;
+
 export default async function SignupPage() {
   if (await getSessionToken()) redirect("/");
 

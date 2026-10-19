@@ -1,16 +1,21 @@
 import { redirect } from "next/navigation";
 import { SignOut } from "@/components/sign-out";
 import { ApiError, getMe } from "@/lib/api";
+import { parseApiDate } from "@/lib/dates";
 import { getSessionToken } from "@/lib/session";
 import { tokenExpiry } from "@/lib/token";
 
 export const metadata = { title: "Your account — Ragnest" };
+
+// Reads the session cookie and calls the API, so it cannot be prerendered.
+export const instant = false;
 
 const dateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",
   hour: "2-digit",
   minute: "2-digit",
+  timeZoneName: "short",
 });
 
 export default async function AccountPage() {
@@ -54,7 +59,7 @@ export default async function AccountPage() {
         <div className="py-4">
           <dt className="text-[13px] text-muted">Member since</dt>
           <dd className="mt-1 text-[15px]">
-            {dateFormat.format(new Date(user.created_at))}
+            {dateFormat.format(parseApiDate(user.created_at))}
           </dd>
         </div>
         {expires ? (
@@ -65,7 +70,7 @@ export default async function AccountPage() {
         ) : null}
       </dl>
 
-      <div className="mt-10 flex items-center justify-between gap-6">
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <SignOut />
         <p className="text-[13px] text-muted">
           Workspaces arrive in the next milestone.
