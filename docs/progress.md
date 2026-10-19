@@ -338,8 +338,18 @@ apps/web/
   `--tw-outline-style: none`, which the shared `:focus-visible` ring inherits, so
   focused inputs showed no outline. Dropping the utility restores it.
 - **`router.replace()` + `router.refresh()` fight each other.** Both trigger a
-  server round trip and the navigation stalled for seconds. Only `replace()` is
-  needed after the cookie changes.
+  server round trip and the navigation stalled for seconds.
+- **Prefetched payloads outlive the session change.** `next dev` disables
+  prefetching, so signing in looked fine there; under `next start` the client
+  router replayed a `/` payload that had been prefetched while signed out (it
+  still carried `NEXT_REDIRECT;replace;/login`), bouncing the user back to the
+  form. Auth changes now use a full `window.location.assign()`, with the lint
+  rule suppressed and the reason inline. **Verify auth flows against
+  `next start`, not only `next dev`.**
+- **Argon2 makes signup slow.** `POST /auth/signup` takes 3.5–4.8s against the
+  local API even with a warm server, so the UI sits in "Working…" for several
+  seconds. That is backend hashing cost, not a frontend stall; worth tuning the
+  Argon2 parameters (or moving hashing to a threadpool) before release.
 - **Cache Components is on** (`next.config.ts`). Pages that read cookies or call
   the API cannot be prerendered; they set `export const instant = false` to opt
   out of the dev-time validation warning rather than being wrapped in Suspense
@@ -363,6 +373,9 @@ apps/web/
 - Keyboard focus ring visible on email, password, button, and link. No horizontal
   overflow at 390px. The highlight animates in and respects
   `prefers-reduced-motion`.
+- Verified against **`next start`** as well as `next dev`: signed out `/` →
+  `/login`; signup → `/` with the email shown; duplicate signup and bad login
+  show their copy in place; signed-in `/login` → `/`; sign out → `/login`.
 
 ### Commits
 
