@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/button";
 import { Field } from "@/components/field";
@@ -23,7 +22,6 @@ const copy = {
 } as const;
 
 export function AuthForm({ mode }: { mode: Mode }) {
-  const router = useRouter();
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -48,7 +46,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
       });
 
       if (response.ok) {
-        router.replace("/");
+        // The cookie just changed, so any prefetched payload for "/" was built
+        // for a signed-out visitor and would bounce straight back here. A full
+        // navigation discards the client router cache.
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.assign("/");
         return;
       }
 

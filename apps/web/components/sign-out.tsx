@@ -1,16 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function SignOut() {
-  const router = useRouter();
   const [pending, setPending] = useState(false);
 
   async function signOut() {
     setPending(true);
     await fetch("/api/auth/logout", { method: "POST" });
-    router.replace("/login");
+    // Same reason as sign-in: drop prefetched payloads built for the old session.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign("/login");
   }
 
   return (
