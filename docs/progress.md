@@ -258,3 +258,121 @@ apps/api/
   `/api/v1/auth/*` routes.
 - Live boot via `fastapi dev src/app/main.py` (Readme-documented dev command):
   `/health` OK.
+---
+
+## 2026-10-19 — Web: auth screens (signup, login, account)
+
+### Summary
+
+Built the first real frontend for Ragnest in `apps/web/` — Next.js 16 App Router,
+React 19, Tailwind v4. Three screens: sign up, sign in, and a protected account
+page that proves the token works. Designed as permanent product surfaces, not a
+throwaway API harness.
+
+The three backend endpoints exercised: `POST /api/v1/auth/signup`,
+`POST /api/v1/auth/login`, `GET /api/v1/users/me`.
+
+### Structure (`apps/web/`)
+
+```
+apps/web/
+├── app/
+│   ├── layout.tsx              # Archivo + Newsreader via next/font
+│   ├── globals.css             # design tokens + the highlight sweep
+│   ├── page.tsx                # protected account page
+│   ├── login/page.tsx
+│   ├── signup/page.tsx
+│   ├── (protected)/layout.tsx  # session-cookie guard
+│   └── api/auth/
+│       ├── signup/route.ts     # proxy -> API, sets cookie
+│       ├── login/route.ts
+│       ├── logout/route.ts     # clears cookie
+│       └── me/route.ts
+├── components/
+│   ├── auth-shell.tsx          # frame + retrieved-sentence motif
+│   ├── auth-form.tsx           # shared signup/login form (client)
+│   ├── field.tsx               # underlined input + inline error
+│   ├── button.tsx
+│   └── sign-out.tsx
+└── lib/
+    ├── api.ts                  # fetch wrapper + FastAPI error mapping
+    ├── session.ts              # httpOnly cookie read/write
+    ├── dates.ts                # parse zone-less API timestamps as UTC
+    └── token.ts                # read exp from the JWT for display
+```
+
+### Key decisions
+
+- **Proxy instead of CORS.** The API has no `CORSMiddleware`, so the browser
+  cannot call `:8000` from `:3000`. Next route handlers call the API server-side
+  and store the token in an **httpOnly, SameSite=Lax cookie** (`ragnest_session`,
+  `maxAge` 1800 to match the token). No API changes; the token never reaches
+  client JS. The API URL lives in `API_URL` (`.env.example`), server-only.
+- **Design direction — ink and paper.** The product's world is a passage lifted
+  out of a document, so the motif is a highlighter mark behind a retrieved
+  sentence, cited to `file, page`. Palette: paper `#f8f6f1`, ink `#171a2b`,
+  muted `#5b5f73`, action `#2b3a8f`, saffron `#f5c445`, rule `#ddd9ce`,
+  control `#8f8a78`, danger `#a3341f`. Type: **Newsreader** (serif) for headings
+  and quoted content, **Archivo** (sans) for the interface. Light-only for now;
+  the scaffold's `prefers-color-scheme` block was removed because it fought the
+  palette.
+- **Error copy is the API's, translated.** 409 → "That email already has an
+  account. Sign in instead."; 401 login → "Email or password isn't right.";
+  422 → per-field messages from Pydantic's `detail` array; unreachable API →
+  "Can't reach the API. Is it running on port 8000?".
+- **No refresh token.** The session ends after 30 minutes. The account page
+  shows "Signed in until <time>", and a 401 from `/users/me` redirects to
+  `/login`.
+
+### Gotchas
+
+- **Repo `.gitignore` swallowed `apps/web/lib/`.** The Python template's `lib/`
+  rule is unanchored, so it matched any directory named `lib` at any depth. Now
+  anchored to `/lib/`.
+- **API timestamps have no timezone.** `created_at` is stored UTC but serialized
+  as `2026-10-19T10:07:15.377167` with no `Z`. `new Date(...)` reads that as
+  local time and shifted "Member since" by the viewer's offset (5h30m here).
+  `lib/dates.ts` appends `Z` when no zone is present. **The API should emit
+  timezone-aware datetimes** — worth fixing server-side later.
+- **Tailwind `outline-none` kills the focus ring.** It sets
+  `--tw-outline-style: none`, which the shared `:focus-visible` ring inherits, so
+  focused inputs showed no outline. Dropping the utility restores it.
+- **`router.replace()` + `router.refresh()` fight each other.** Both trigger a
+  server round trip and the navigation stalled for seconds. Only `replace()` is
+  needed after the cookie changes.
+- **Cache Components is on** (`next.config.ts`). Pages that read cookies or call
+  the API cannot be prerendered; they set `export const instant = false` to opt
+  out of the dev-time validation warning rather than being wrapped in Suspense
+  they do not need.
+- **`next dev` rewrites `apps/web/AGENTS.md`.** It appends Next's own
+  agent-rules blocks on every run. The file is still the API's copy — it needs
+  rewriting for the web app.
+
+### Verified
+
+- `pnpm build` succeeds; `/` and the four `/api/auth/*` handlers are dynamic,
+  `/_not-found` static. `tsc --noEmit` and `eslint` clean.
+- Server contract against the live API: signup 201 → me 200 → logout 204 → me
+  401; duplicate signup 409; bad login 401; malformed signup 422 with field
+  errors.
+- Driven in headless Chrome: field-level validation renders, signup lands on `/`
+  with the email shown, sign out returns to `/login` (209ms), bad login shows
+  "Email or password isn't right.", duplicate signup shows the sign-in hint.
+- Route guards both ways: signed out, `/` → 307 `/login`; signed in, `/login` and
+  `/signup` → 307 `/`.
+- Keyboard focus ring visible on email, password, button, and link. No horizontal
+  overflow at 390px. The highlight animates in and respects
+  `prefers-reduced-motion`.
+
+### Commits
+
+`chore(web): scaffold` · `feat(web): design tokens` · `feat(web): auth shell` ·
+`feat(web): auth proxy + cookie` · `feat(web): signup and login forms` ·
+`feat(web): account page` · `feat(web): route guards` · `fix(web): timezone,
+focus, contrast`
+
+### Next
+
+Replace `apps/web/AGENTS.md` with a web-specific version. Milestone 4 adds
+workspace selection to `/`, at which point the account page becomes a settings
+screen.
