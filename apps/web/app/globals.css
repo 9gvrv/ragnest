@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ink on paper: the palette comes from the product, not from a template. */
+  --color-paper: #f8f6f1;
+  --color-ink: #171a2b;
+  --color-muted: #5b5f73;
+  --color-action: #2b3a8f;
+  --color-saffron: #f5c445;
+  --color-rule: #ddd9ce;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  ::selection {
+    background: var(--color-saffron);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* The one orchestrated moment: the retrieved sentence is marked on arrival. */
+@keyframes mark-sweep {
+  from {
+    background-size: 0% 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
+}
+
+.retrieved-mark {
+  background-image: linear-gradient(var(--color-saffron), var(--color-saffron));
+  background-repeat: no-repeat;
+  background-position: 0 82%;
+  background-size: 100% 42%;
+  animation: mark-sweep 700ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retrieved-mark {
+    animation: none;
+  }
+}
