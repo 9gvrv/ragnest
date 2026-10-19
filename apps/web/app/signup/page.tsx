@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth-form";
 import { AuthShell } from "@/components/auth-shell";
+import { getSessionToken } from "@/lib/session";
 
 export const metadata = { title: "Create an account — Ragnest" };
 
-export default function SignupPage() {
+export default async function SignupPage() {
+  if (await getSessionToken()) redirect("/");
+
   return (
     <AuthShell
       title="Start asking your documents."

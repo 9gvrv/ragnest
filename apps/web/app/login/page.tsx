@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth-form";
 import { AuthShell } from "@/components/auth-shell";
+import { getSessionToken } from "@/lib/session";
 
 export const metadata = { title: "Sign in — Ragnest" };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  if (await getSessionToken()) redirect("/");
+
   return (
     <AuthShell
       title="Welcome back."
