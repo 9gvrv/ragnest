@@ -16,7 +16,7 @@ export function AuthShell({
   footer?: ReactNode;
 }) {
   return (
-    <main className="mx-auto flex w-full max-w-[34rem] flex-1 flex-col px-6 pt-[14vh] pb-20">
+    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
       <header>
         <p className="text-[13px] font-medium tracking-[0.08em] text-action">
           Ragnest

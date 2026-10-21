@@ -27,7 +27,7 @@ export function Field({ label, hint, error, id, ...props }: FieldProps) {
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className="mt-2 w-full border-0 border-b border-control bg-transparent py-2 text-[15px] focus:border-action aria-[invalid=true]:border-danger"
+        className="mt-2 w-full border-0 border-b border-control bg-transparent py-2 text-[15px] focus:border-action aria-invalid:border-danger"
         {...props}
       />
       {error ? (
