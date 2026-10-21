@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# OpenCode local project config (user-specific agent settings)
+opencode.jsonc
+
+# Superpowers plugin state (task briefs, progress, test logs — auto-created)
+.superpowers/
