@@ -152,7 +152,10 @@ async def list_pending_for_user(session: AsyncSession, user: User) -> list[dict]
         .where(Invitation.email == email_norm, Invitation.status == InvitationStatus.PENDING)
     )
     res = await session.execute(stmt)
-    return [dict(r) for r in res.mappings().all()]
+    now = datetime.now(UTC)
+    # A row past `expires_at` is no longer a pending invitation, even if nothing
+    # has tried to accept it yet.
+    return [dict(r) for r in res.mappings().all() if not _is_expired(r["expires_at"], now)]
 
 
 async def get_invitation_preview(session: AsyncSession, token: str) -> dict | None:
@@ -174,4 +177,21 @@ async def get_invitation_preview(session: AsyncSession, token: str) -> dict | No
     )
     res = await session.execute(stmt)
     row = res.mappings().one_or_none()
-    return dict(row) if row else None
+    if not row:
+        return None
+
+    preview = dict(row)
+    if preview["status"] == InvitationStatus.PENDING and _is_expired(
+        preview["expires_at"], datetime.now(UTC)
+    ):
+        # Read-only: the row is marked EXPIRED when someone acts on it, but the
+        # preview must not offer an Accept button in the meantime.
+        preview["status"] = InvitationStatus.EXPIRED
+    return preview
+
+
+def _is_expired(expires_at: datetime, now: datetime) -> bool:
+    """SQLite hands datetimes back naive; Postgres keeps the zone."""
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    return expires_at < now

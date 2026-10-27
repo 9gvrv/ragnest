@@ -207,7 +207,7 @@ export function createInvitation(
   token: string,
   workspaceId: string,
   email: string,
-  role: "admin" | "member",
+  role: string,
 ) {
   return request<ApiInvitationCreated>(
     `/api/v1/workspaces/${workspaceId}/invitations`,

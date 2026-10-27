@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/button";
 
@@ -17,9 +16,24 @@ export function AcceptInvitationButton({
   email: string;
 }) {
   const [pending, setPending] = useState(false);
+  const [switching, setSwitching] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(null);
 
   const next = encodeURIComponent(`/invite/${token}`);
+
+  async function switchAccount() {
+    setSwitching(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // If the call fails the cookie survives; the person can still sign out
+      // from /account. Nothing else to do here.
+    }
+    // The cookie just changed (or should have); a full navigation drops the
+    // router cache built for the old session.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign(`/login?next=${next}`);
+  }
 
   async function accept() {
     setPending(true);
@@ -85,13 +99,19 @@ export function AcceptInvitationButton({
         <div role="alert" className="mt-4 max-w-[55ch] text-[13px] text-danger">
           {problem.kind === "mismatch" ? (
             <>
-              <p>This invitation was sent to {email}. Sign in with that account.</p>
-              <Link
-                href={`/login?next=${next}`}
-                className="mt-2 inline-block text-action underline-offset-4 hover:underline"
+              <p>
+                This invitation was sent to {email}. Sign in with that account.
+              </p>
+              <button
+                type="button"
+                onClick={switchAccount}
+                disabled={switching}
+                className="mt-2 text-left text-action underline-offset-4 hover:underline disabled:opacity-60"
               >
-                Sign in with {email}
-              </Link>
+                {switching
+                  ? "Signing out…"
+                  : `Sign out and sign in as ${email}`}
+              </button>
             </>
           ) : problem.kind === "dead" ? (
             <p>

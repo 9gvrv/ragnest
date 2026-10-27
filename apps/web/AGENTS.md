@@ -141,10 +141,13 @@ The viewer's own role comes from the members list, matched by
 ## 6. `?next=` and invite links (decisions)
 
 - **`?next=` resumption.** Login/signup accept `next` in the request body. The
-  route handlers accept it only if it starts with `/` and not `//` (open-redirect
-  guard), default `/`, and echo `{ok: true, redirect}`. `AuthForm` reads
+  value must survive `safeNextPath()` (`lib/next-path.ts`): a leading `/`, no
+  backslash or control characters, and a parsed origin equal to this site
+  (`/\evil.com` and `//evil.com` both fall back to `/`). `AuthForm` reads
   `redirect` and does a full navigation. The auth pages pass `next` through to
-  the form and to the link that switches between login and signup.
+  the form and to the link that switches between login and signup, and only
+  bounce a cookie-holding visitor when `getMe()` confirms the session is live
+  (a stale cookie must not loop between `/` and `/login`).
 - **Invite links are web links.** The shareable address is always
   `${origin}/invite/{token}`. The API's `link` field
   (`/invitations/{token}/accept`) is internal plumbing and is never rendered.

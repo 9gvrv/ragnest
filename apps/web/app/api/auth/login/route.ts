@@ -1,13 +1,15 @@
 import { ApiError, login } from "@/lib/api";
+import { safeNextPath } from "@/lib/next-path";
 import { setSessionToken } from "@/lib/session";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email : "";
   const password = typeof body?.password === "string" ? body.password : "";
-  const next = typeof body?.next === "string" ? body.next : "";
-  // Only same-site paths: "/x" is fine, "//evil.com" is not.
-  const redirect = next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  // Only same-site paths survive: safeNextPath parses the value rather than
+  // trusting a "/" prefix, so "/\evil.com" and friends fall back to "/".
+  const redirect =
+    safeNextPath(typeof body?.next === "string" ? body.next : null) ?? "/";
 
   try {
     const result = await login(email, password);

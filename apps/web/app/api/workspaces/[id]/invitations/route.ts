@@ -13,7 +13,9 @@ export async function POST(
   const { id } = await context.params;
   const body = await request.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email : "";
-  const role = body?.role === "admin" ? "admin" : "member";
+  // Forward the role as sent: the API validates admin/member and its 422
+  // comes back untouched.
+  const role = typeof body?.role === "string" ? body.role : "";
 
   try {
     const invitation = await createInvitation(token, id, email, role);

@@ -317,7 +317,8 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    invitations. The web UI (home, workspace detail, invite links, pending list,
    public accept) followed in a separate milestone plan. The API also gained the
    public `GET /api/v1/invitations/{token}` preview and a `token` field on the
-   pending list so the web pages could render real state.
+   pending list so the web pages could render real state; preview and pending
+   list both treat a past-`expires_at` invitation as expired.
 4. **Documents** — upload txt/pdf/md, store, extract text.
 5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.

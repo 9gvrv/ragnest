@@ -16,7 +16,7 @@ PREVIEW_KEYS = {
 }
 
 
-async def seed_invitation(session_factory, invited_email="bob@example.com") -> dict:
+async def seed_invitation(session_factory, invited_email="bob@example.com", expires_days=7) -> dict:
     async with session_factory() as session:
         inviter = User(email="alice@example.com", password_hash="not-used")
         invited = User(email=invited_email, password_hash="not-used")
@@ -36,7 +36,12 @@ async def seed_invitation(session_factory, invited_email="bob@example.com") -> d
         await session.commit()
 
         invitation = await create_invitation(
-            session, workspace.id, inviter.id, invited_email, WorkspaceRole.MEMBER
+            session,
+            workspace.id,
+            inviter.id,
+            invited_email,
+            WorkspaceRole.MEMBER,
+            expires_days=expires_days,
         )
         return {
             "token": invitation.token,
@@ -80,3 +85,22 @@ async def test_pending_list_includes_token(client, session_factory):
     rows = resp.json()
     assert len(rows) == 1
     assert rows[0]["token"] == seed["token"]
+
+
+async def test_preview_reports_past_expiry_as_expired(client, session_factory):
+    seed = await seed_invitation(session_factory, invited_email="late@example.com", expires_days=-1)
+
+    resp = await client.get(f"/api/v1/invitations/{seed['token']}")
+
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "expired"
+
+
+async def test_pending_list_omits_past_expiry(client, session_factory):
+    seed = await seed_invitation(session_factory, invited_email="late@example.com", expires_days=-1)
+    headers = {"Authorization": f"Bearer {create_access_token(seed['invited_id'])}"}
+
+    resp = await client.get("/api/v1/invitations/pending", headers=headers)
+
+    assert resp.status_code == 200
+    assert resp.json() == []
