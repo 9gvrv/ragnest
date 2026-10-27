@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // Everything is allowed by default (OpenCode's built-in base policy already
+  // grants all actions). Only genuinely sensitive operations prompt below.
+  // Rules are ordered; the LAST matching rule wins.
+  "permissions": [
+    // Baseline: allow all routine work so the agent isn't asked constantly.
+    { "action": "*", "resource": "*", "effect": "allow" },
+
+    // --- Sensitive: reading data outside this project directory ---
+    // Covers read/edit/write/patch/shell on paths outside the project dir
+    // (and worktrees). Narrow exceptions can be added after this rule.
+    { "action": "external_directory", "resource": "*", "effect": "ask" },
+
+    // --- Sensitive: secrets. `.env` holds real Neon credentials ---
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.env.*", "effect": "ask" },
+    // The committed, documented template is safe to read.
+    { "action": "read", "resource": "*.env.example", "effect": "allow" },
+    { "action": "edit", "resource": "*.env", "effect": "ask" },
+    { "action": "edit", "resource": "*.env.*", "effect": "ask" },
+
+    // --- Sensitive: publishing code to GitHub ---
+    // Prompts before any push (matches `git push` with or without args).
+    // Change to "deny" to block pushes entirely.
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+
+    // --- Sensitive: privilege escalation / system-wide changes ---
+    { "action": "shell", "resource": "sudo *", "effect": "ask" },
+  ],
+}
