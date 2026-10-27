@@ -98,3 +98,164 @@ export function login(email: string, password: string) {
 export function getMe(token: string) {
   return request<ApiUser>("/api/v1/users/me", { token });
 }
+
+export type ApiRole = "creator" | "admin" | "member";
+
+export type ApiWorkspace = {
+  id: string;
+  name: string;
+  created_by: string;
+  created_at: string;
+};
+
+export type ApiMember = {
+  user_id: string;
+  email: string;
+  role: ApiRole;
+  joined_at: string;
+};
+
+export type ApiPendingInvitation = {
+  invitation_id: string;
+  workspace_id: string;
+  workspace_name: string;
+  inviter_email: string | null;
+  email: string;
+  role: ApiRole;
+  token: string;
+  expires_at: string;
+  created_at: string;
+};
+
+/**
+ * The public preview carries the same facts as a pending row minus the token
+ * (the page already has it from the URL), plus the invitation's status.
+ */
+export type ApiInvitationPreview = Omit<ApiPendingInvitation, "token"> & {
+  status: "pending" | "accepted" | "declined" | "expired";
+};
+
+export type ApiInvitationCreated = {
+  exists: boolean;
+  invitation_id: string | null;
+  email: string;
+  role: ApiRole;
+  token: string | null;
+  expires_at: string | null;
+  link: string | null;
+  message?: string | null;
+};
+
+export type ApiAcceptedInvitation = {
+  workspace_id: string;
+  role: ApiRole;
+  workspace_name: string;
+};
+
+export function listWorkspaces(token: string) {
+  return request<ApiWorkspace[]>("/api/v1/workspaces", { token });
+}
+
+export function createWorkspace(token: string, name: string) {
+  return request<ApiWorkspace>("/api/v1/workspaces", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+    token,
+  });
+}
+
+export function getWorkspace(token: string, workspaceId: string) {
+  return request<ApiWorkspace>(`/api/v1/workspaces/${workspaceId}`, { token });
+}
+
+export function deleteWorkspace(token: string, workspaceId: string) {
+  return request<void>(`/api/v1/workspaces/${workspaceId}`, {
+    method: "DELETE",
+    token,
+  });
+}
+
+export function listMembers(token: string, workspaceId: string) {
+  return request<ApiMember[]>(`/api/v1/workspaces/${workspaceId}/members`, {
+    token,
+  });
+}
+
+export function removeMember(
+  token: string,
+  workspaceId: string,
+  userId: string,
+) {
+  return request<void>(
+    `/api/v1/workspaces/${workspaceId}/members/${userId}`,
+    { method: "DELETE", token },
+  );
+}
+
+export function checkInvitationEmail(
+  token: string,
+  workspaceId: string,
+  email: string,
+) {
+  return request<{ exists: boolean; user_id: string | null }>(
+    `/api/v1/workspaces/${workspaceId}/invitations/check`,
+    { method: "POST", body: JSON.stringify({ email }), token },
+  );
+}
+
+export function createInvitation(
+  token: string,
+  workspaceId: string,
+  email: string,
+  role: "admin" | "member",
+) {
+  return request<ApiInvitationCreated>(
+    `/api/v1/workspaces/${workspaceId}/invitations`,
+    { method: "POST", body: JSON.stringify({ email, role }), token },
+  );
+}
+
+/** Public: no session token, the invitation token is the capability. */
+export function getInvitationPreview(invitationToken: string) {
+  return request<ApiInvitationPreview>(
+    `/api/v1/invitations/${encodeURIComponent(invitationToken)}`,
+  );
+}
+
+export function listPendingInvitations(token: string) {
+  return request<ApiPendingInvitation[]>("/api/v1/invitations/pending", {
+    token,
+  });
+}
+
+export function acceptInvitation(token: string, invitationToken: string) {
+  return request<ApiAcceptedInvitation>(
+    `/api/v1/invitations/${encodeURIComponent(invitationToken)}/accept`,
+    { method: "POST", token },
+  );
+}
+
+export function declineInvitation(token: string, invitationToken: string) {
+  return request<void>(
+    `/api/v1/invitations/${encodeURIComponent(invitationToken)}/decline`,
+    { method: "POST", token },
+  );
+}
+
+/**
+ * Build the route-handler response for a caught API failure: the API's status
+ * (0 means unreachable, which becomes 502) and the `{detail, fields}` body the
+ * client components already know how to read.
+ */
+export function apiErrorResponse(error: unknown): Response {
+  if (error instanceof ApiError) {
+    return Response.json(
+      { detail: error.message, fields: error.fields },
+      { status: error.status === 0 ? 502 : error.status },
+    );
+  }
+  return Response.json(
+    { detail: "Something went wrong. Try again." },
+    { status: 500 },
+  );
+}
