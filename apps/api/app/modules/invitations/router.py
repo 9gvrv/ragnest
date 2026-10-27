@@ -21,6 +21,18 @@ async def list_pending(
     return [schemas.InvitationPendingRead.model_validate(i) for i in items]
 
 
+@router.get("/{token}", response_model=schemas.InvitationPreviewRead)
+async def preview_invitation(
+    token: str,
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> schemas.InvitationPreviewRead:
+    """Public: the token is the capability, so no session is required."""
+    preview = await service.get_invitation_preview(session, token)
+    if not preview:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invitation not found")
+    return schemas.InvitationPreviewRead.model_validate(preview)
+
+
 @router.post("/{token}/accept", response_model=schemas.InvitationAcceptResponse)
 async def accept_invitation(
     token: str,

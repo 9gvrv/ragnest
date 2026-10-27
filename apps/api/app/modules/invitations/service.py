@@ -143,6 +143,7 @@ async def list_pending_for_user(session: AsyncSession, user: User) -> list[dict]
             User.email.label("inviter_email"),
             Invitation.email,
             Invitation.role,
+            Invitation.token,
             Invitation.expires_at,
             Invitation.created_at,
         )
@@ -152,3 +153,25 @@ async def list_pending_for_user(session: AsyncSession, user: User) -> list[dict]
     )
     res = await session.execute(stmt)
     return [dict(r) for r in res.mappings().all()]
+
+
+async def get_invitation_preview(session: AsyncSession, token: str) -> dict | None:
+    stmt = (
+        select(
+            Invitation.id.label("invitation_id"),
+            Invitation.workspace_id,
+            Workspace.name.label("workspace_name"),
+            User.email.label("inviter_email"),
+            Invitation.email,
+            Invitation.role,
+            Invitation.status,
+            Invitation.expires_at,
+            Invitation.created_at,
+        )
+        .join(Workspace, Workspace.id == Invitation.workspace_id)
+        .join(User, User.id == Invitation.inviter_id, isouter=True)
+        .where(Invitation.token == token)
+    )
+    res = await session.execute(stmt)
+    row = res.mappings().one_or_none()
+    return dict(row) if row else None

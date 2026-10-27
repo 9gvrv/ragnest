@@ -3,6 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
+from app.modules.invitations.models import InvitationStatus
 from app.modules.workspaces.models import WorkspaceRole
 
 
@@ -49,6 +50,23 @@ class InvitationPendingRead(BaseModel):
     inviter_email: str | None = None
     email: str
     role: WorkspaceRole
+    token: str
+    expires_at: datetime
+    created_at: datetime
+
+
+class InvitationPreviewRead(BaseModel):
+    """What a link holder may see before accepting."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    invitation_id: UUID
+    workspace_id: UUID
+    workspace_name: str
+    inviter_email: str | None = None
+    email: str
+    role: WorkspaceRole
+    status: InvitationStatus
     expires_at: datetime
     created_at: datetime
 
