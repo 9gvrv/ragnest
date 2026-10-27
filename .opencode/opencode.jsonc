@@ -1,31 +1,84 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  // Everything is allowed by default (OpenCode's built-in base policy already
-  // grants all actions). Only genuinely sensitive operations prompt below.
-  // Rules are ordered; the LAST matching rule wins.
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Ragnest — shared project OpenCode configuration (committed).
+  //
+  // Monorepo:  apps/api  → FastAPI + uv + ruff + pytest + alembic (Neon)
+  //            apps/web  → Next.js 16 + pnpm + eslint + Tailwind 4
+  //
+  // Project law lives in apps/api/AGENTS.md and apps/web/AGENTS.md (see
+  // the root AGENTS.md) — both are force-loaded below. This is the ONE
+  // OpenCode config for this repo; there is intentionally no root
+  // opencode.jsonc.
+  // ─────────────────────────────────────────────────────────────────────
+
+  // Always load both AGENTS.md files, no matter which directory the
+  // session starts in. They are also auto-discovered when working inside
+  // their own app; this guarantees both are in context for cross-app work.
+  "instructions": [
+    "apps/api/AGENTS.md",
+    "apps/web/AGENTS.md",
+  ],
+
+  // Auto-format files after agent write/edit using available built-ins
+  // (ruff for Python in apps/api; prettier/oxfmt only run if installed).
+  "formatter": true,
+
+  // Don't react to filesystem churn from dependencies, caches, and builds.
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/.venv/**",
+      "**/__pycache__/**",
+      "**/.pytest_cache/**",
+      "**/.next/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+      "docs/_build/**",
+      "**/*.tsbuildinfo",
+    ],
+  },
+
+  // Permissions: ordered rules, LAST MATCH WINS.
+  //
+  // Policy: routine work runs without prompting; only genuinely sensitive
+  // operations ask first, and a few things are hard-denied. Details that
+  // need a prompt (git push, external dirs, secrets, sudo) are listed
+  // explicitly so future sessions can see the intent.
   "permissions": [
-    // Baseline: allow all routine work so the agent isn't asked constantly.
+    // ── Baseline: all routine work is allowed ────────────────────────
     { "action": "*", "resource": "*", "effect": "allow" },
 
-    // --- Sensitive: reading data outside this project directory ---
-    // Covers read/edit/write/patch/shell on paths outside the project dir
-    // (and worktrees). Narrow exceptions can be added after this rule.
+    // ── Ask: reading data outside this repository ────────────────────
+    // read/edit/write/patch/shell on paths outside the project dir and
+    // its worktrees.
     { "action": "external_directory", "resource": "*", "effect": "ask" },
 
-    // --- Sensitive: secrets. `.env` holds real Neon credentials ---
-    { "action": "read", "resource": "*.env", "effect": "ask" },
+    // ── Deny: real secrets. apps/api/.env holds real Neon + JWT keys ─
+    // Never commit, print, or paste it (AGENTS.md). .env.example is the
+    // committed, documented shape and is safe to read.
+    { "action": "read", "resource": "*.env", "effect": "deny" },
+    { "action": "edit", "resource": "*.env", "effect": "deny" },
     { "action": "read", "resource": "*.env.*", "effect": "ask" },
-    // The committed, documented template is safe to read.
-    { "action": "read", "resource": "*.env.example", "effect": "allow" },
-    { "action": "edit", "resource": "*.env", "effect": "ask" },
     { "action": "edit", "resource": "*.env.*", "effect": "ask" },
+    { "action": "read", "resource": "*.env.example", "effect": "allow" },
+    { "action": "edit", "resource": "*.env.example", "effect": "allow" },
 
-    // --- Sensitive: publishing code to GitHub ---
-    // Prompts before any push (matches `git push` with or without args).
-    // Change to "deny" to block pushes entirely.
+    // ── Ask: publishing code to GitHub ──────────────────────────────
+    // Matches `git push` with or without args. Change to "deny" to block.
     { "action": "shell", "resource": "git push *", "effect": "ask" },
 
-    // --- Sensitive: privilege escalation / system-wide changes ---
+    // ── Ask: the machine, not the repo ──────────────────────────────
     { "action": "shell", "resource": "sudo *", "effect": "ask" },
+
+    // ── Ask: lockfiles are machine-managed — change them via uv/pnpm ─
+    { "action": "edit", "resource": "apps/api/uv.lock", "effect": "ask" },
+    { "action": "edit", "resource": "apps/web/pnpm-lock.yaml", "effect": "ask" },
+
+    // ── Hard blocks (not configurable by saved "always" approvals) ──
+    { "action": "shell", "resource": "git push * --force*", "effect": "deny" },
+    { "action": "shell", "resource": "git reset --hard*", "effect": "deny" },
   ],
 }
