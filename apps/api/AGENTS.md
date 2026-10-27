@@ -4,7 +4,8 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-15 (Milestone 2 — users + auth — complete)
+> **Last updated:** 2026-10-27 (Milestone 3 — workspaces, memberships &
+> invitations — API and web complete)
 
 ---
 
@@ -215,9 +216,10 @@ If you add another DB engine (e.g. in Alembic), pass
 - `alembic/env.py` is **async**: it reads `settings.database_url`, sets
   `sqlalchemy.url`, uses `async_engine_from_config` with
   `connect_args=settings.database_connect_args`, and targets `Base.metadata`.
-- The first real domain table is **`users`** (T1 of Milestone 2). The two empty
-  baseline revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart;
-  squashing is optional.
+- The first real domain table is **`users`** (T1 of Milestone 2); Milestone 3
+  adds **`workspaces`**, **`workspace_members`** and **`invitations`**. The two
+  empty baseline revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic
+  wart; squashing is optional.
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
 
@@ -311,13 +313,16 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    JWT (HS256), `POST /api/v1/auth/signup`, `POST /api/v1/auth/login`,
    `GET /api/v1/users/me`, dependency injection, module layout. **Organizations were
    deliberately removed; the workspace is the tenant.**
-3. **Workspaces, roles & invitations** — create workspace, membership, roles,
-   invitations. (Milestone 3)
+3. ✅ **Workspaces, roles & invitations** — create workspace, membership, roles,
+   invitations. The web UI (home, workspace detail, invite links, pending list,
+   public accept) followed in a separate milestone plan. The API also gained the
+   public `GET /api/v1/invitations/{token}` preview and a `token` field on the
+   pending list so the web pages could render real state.
 4. **Documents** — upload txt/pdf/md, store, extract text.
 5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
 
-**Next up: Milestone 3 (Workspaces, roles & invitations).** Design precedes code.
+**Next up: Milestone 4 (Documents).** Design precedes code.
 
 ---
 
@@ -325,4 +330,11 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
 
 - Design of record: `docs/superpowers/specs/2026-10-14-api-foundation-design.md`
 - Task plan: `docs/superpowers/plans/2026-10-14-api-foundation.md`
+- Milestone 3 API design:
+  `docs/superpowers/specs/2026-10-19-workspaces-roles-invitations-design.md`
+- Milestone 3 web design:
+  `docs/superpowers/specs/2026-10-27-workspaces-invitations-web-design.md`
+- Milestone 3 web plan:
+  `docs/superpowers/plans/2026-10-27-workspaces-invitations-web.md`
+- Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`
