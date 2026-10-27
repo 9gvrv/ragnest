@@ -13,9 +13,9 @@ stale; trust this file and the app AGENTS.md files.)
 - `apps/web/AGENTS.md` — web project law: route/proxy patterns, cookie + 401
   rules, design tokens, Next.js 16 quirks.
 
-Both are mandatory reading for any session that edits code. The shared
-`.opencode/opencode.jsonc` force-loads them for OpenCode sessions, but read
-them outright in any other harness.
+Both are mandatory reading for any session that edits code. The repo-root
+`opencode.jsonc` force-loads them for OpenCode sessions, but read them
+outright in any other harness.
 
 ## How we work (applies to both apps)
 
