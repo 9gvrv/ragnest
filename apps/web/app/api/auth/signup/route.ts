@@ -5,11 +5,14 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email : "";
   const password = typeof body?.password === "string" ? body.password : "";
+  const next = typeof body?.next === "string" ? body.next : "";
+  // Only same-site paths: "/x" is fine, "//evil.com" is not.
+  const redirect = next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
   try {
     const result = await signup(email, password);
     await setSessionToken(result.access_token);
-    return Response.json({ user: result.user }, { status: 201 });
+    return Response.json({ user: result.user, redirect }, { status: 201 });
   } catch (error) {
     return errorResponse(error);
   }

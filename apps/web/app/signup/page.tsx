@@ -9,8 +9,14 @@ export const metadata = { title: "Create an account — Ragnest" };
 // Reads the session cookie, so it cannot be prerendered.
 export const instant = false;
 
-export default async function SignupPage() {
-  if (await getSessionToken()) redirect("/");
+export default async function SignupPage({
+  searchParams,
+}: PageProps<"/signup">) {
+  const params = await searchParams;
+  const next = typeof params.next === "string" ? params.next : undefined;
+  const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : null;
+
+  if (await getSessionToken()) redirect(safeNext ?? "/");
 
   return (
     <AuthShell
@@ -19,13 +25,18 @@ export default async function SignupPage() {
       footer={
         <p className="text-[15px] text-muted">
           Already have an account?{" "}
-          <Link href="/login" className="text-action underline-offset-4 hover:underline">
+          <Link
+            href={
+              next ? `/login?next=${encodeURIComponent(next)}` : "/login"
+            }
+            className="text-action underline-offset-4 hover:underline"
+          >
             Sign in
           </Link>
         </p>
       }
     >
-      <AuthForm mode="signup" />
+      <AuthForm mode="signup" nextPath={next} />
     </AuthShell>
   );
 }

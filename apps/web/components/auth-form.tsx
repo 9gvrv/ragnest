@@ -21,7 +21,13 @@ const copy = {
   },
 } as const;
 
-export function AuthForm({ mode }: { mode: Mode }) {
+export function AuthForm({
+  mode,
+  nextPath = "/",
+}: {
+  mode: Mode;
+  nextPath?: string;
+}) {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<Failure | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -42,15 +48,17 @@ export function AuthForm({ mode }: { mode: Mode }) {
       const response = await fetch(labels.endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, next: nextPath }),
       });
 
       if (response.ok) {
-        // The cookie just changed, so any prefetched payload for "/" was built
-        // for a signed-out visitor and would bounce straight back here. A full
-        // navigation discards the client router cache.
-        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-        window.location.assign("/");
+        const result: { redirect?: string } = await response
+          .json()
+          .catch(() => ({}));
+        // The cookie just changed, so any prefetched payload for the target
+        // was built for a signed-out visitor and would bounce straight back
+        // here. A full navigation discards the client router cache.
+        window.location.assign(result.redirect ?? "/");
         return;
       }
 
