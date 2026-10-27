@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignOut } from "@/components/sign-out";
 import { ApiError, getMe } from "@/lib/api";
@@ -72,9 +73,12 @@ export default async function AccountPage() {
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <SignOut />
-        <p className="text-[13px] text-muted">
-          Workspaces arrive in the next milestone.
-        </p>
+        <Link
+          href="/"
+          className="text-[15px] text-action underline-offset-4 hover:underline"
+        >
+          Back to your workspaces
+        </Link>
       </div>
     </main>
   );
