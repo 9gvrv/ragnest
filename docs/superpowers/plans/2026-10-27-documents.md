@@ -1,6 +1,6 @@
 # Documents (Milestone 4) Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 >
 > **This project runs in mentor mode:** the human writes the code; the mentor explains, reviews, and only writes files when a step says so. Steps are still written as concrete, verifiable actions.
 
@@ -50,7 +50,7 @@
 - Consumes: `Base`, `TimestampMixin` from `app/db/base.py`; `Workspace`, `WorkspaceMember` from `app/modules/workspaces/models.py`; `User` from `app/modules/users/models.py`.
 - Produces: `Document` — `id: UUID`, `workspace_id: UUID`, `uploaded_by: UUID`, `filename: str`, `content_type: str`, `size_bytes: int`, `page_count: int | None`, `char_count: int`, `extracted_text: str`, `created_at: datetime`, `updated_at: datetime`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/modules/documents/test_model.py`:
 
@@ -69,12 +69,12 @@ async def test_deleting_workspace_cascades_documents(session_factory):
     # assert await session.get(Document, document_id) is None
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run pytest tests/modules/documents/test_model.py -v`
 Expected: FAIL — `ModuleNotFoundError` / `no such table: documents`; the pragma test returns `0`.
 
-- [ ] **Step 3: Enable SQLite foreign keys and create the model**
+- [x] **Step 3: Enable SQLite foreign keys and create the model**
 
 In `tests/conftest.py`, register a listener on the engine before `create_all`:
 
@@ -92,18 +92,18 @@ def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record):
 
 Add `from app.modules.documents.models import Document  # noqa: F401` to `app/db/models.py`.
 
-- [ ] **Step 4: Generate and apply the migration**
+- [x] **Step 4: Generate and apply the migration**
 
 Run: `uv run alembic revision --autogenerate -m "add documents table"`
 Run: `uv run alembic upgrade head`
 Expected: one new revision creating `documents` plus both indexes.
 
-- [ ] **Step 5: Run the new tests and the full suite**
+- [x] **Step 5: Run the new tests and the full suite**
 
 Run: `uv run pytest -q`
 Expected: all pass — including M3 suites, which now run with real foreign keys.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/modules/documents/__init__.py app/modules/documents/models.py \
@@ -130,12 +130,12 @@ git commit -m "feat(documents): add documents model and migration"
   - `safe_filename(filename: str) -> str`
   - `extract(filename: str, data: bytes) -> Extracted` — pure and synchronous
 
-- [ ] **Step 1: Add the dependency**
+- [x] **Step 1: Add the dependency**
 
 Run: `uv add pypdf`
 Expected: `pyproject.toml` + `uv.lock` updated; no other dependency changes.
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/modules/documents/test_extraction.py` — one test per rule:
 
@@ -155,21 +155,21 @@ def test_too_many_pages_raises_422(monkeypatch)         # MAX_PDF_PAGES -> 2, th
 def test_long_text_is_truncated_to_cap(monkeypatch)     # MAX_TEXT_CHARS -> 10; char_count == 10
 ```
 
-- [ ] **Step 3: Run the tests to verify they fail**
+- [x] **Step 3: Run the tests to verify they fail**
 
 Run: `uv run pytest tests/modules/documents/test_extraction.py -v`
 Expected: FAIL — `ModuleNotFoundError: app.modules.documents.extraction`.
 
-- [ ] **Step 4: Implement extraction**
+- [x] **Step 4: Implement extraction**
 
 Rules the tests pin: lowercased extension drives everything; `safe_filename` replaces `\` with `/`, takes the basename, and rejects an empty result; size is checked on `len(data)`; `.txt`/`.md` decode with `utf-8-sig`; PDF uses `PdfReader`, rejects `is_encrypted`, rejects `len(reader.pages) > MAX_PDF_PAGES`, extracts pages until the accumulated text reaches `MAX_TEXT_CHARS`, joins non-empty pages with `"\n\n"`, and sets `page_count` to the full page count read from the reader; final text is `text[:MAX_TEXT_CHARS]`, and `char_count = len(final text)`; blank text raises `UnprocessableDocument`.
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `uv run pytest tests/modules/documents/test_extraction.py -v`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/modules/documents/extraction.py tests/modules/documents/test_extraction.py \
@@ -197,7 +197,7 @@ git commit -m "feat(documents): extract text from txt, md and pdf"
   - `async get_document(session, workspace_id: UUID, document_id: UUID) -> Document` (raises 404)
   - `async delete_document(session, workspace_id: UUID, document_id: UUID, member: WorkspaceMember) -> None` (raises 404/403)
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/modules/documents/test_service.py`:
 - `test_ingest_stores_extracted_text_and_counts` — calls `ingest()` with txt bytes, asserts row fields match `Extracted`
@@ -208,21 +208,21 @@ git commit -m "feat(documents): extract text from txt, md and pdf"
 - `test_can_manage_uploader_true`, `test_can_manage_creator_true`, `test_can_manage_admin_true`, `test_can_manage_other_member_false`
 - `test_delete_other_members_document_raises_403`
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `uv run pytest tests/modules/documents/test_service.py -v`
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement schemas and service**
+- [x] **Step 3: Implement schemas and service**
 
 Schemas are the two Pydantic models above. In the service: `ingest` calls `await asyncio.to_thread(extract, filename, data)`, then constructs `Document(...)` from the `Extracted` and commits. `get_document` selects by `id` **and** `workspace_id`, raising `HTTPException(404, "Document not found")`. `delete_document` loads via `get_document`, checks `can_manage`, then deletes and commits. `list_documents` filters by `workspace_id` (and `uploaded_by` when `mine` is set) ordered by `created_at.desc(), id.desc()`.
 
-- [ ] **Step 4: Run to verify pass**
+- [x] **Step 4: Run to verify pass**
 
 Run: `uv run pytest tests/modules/documents/test_service.py -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/modules/documents/schemas.py app/modules/documents/service.py \
@@ -244,7 +244,7 @@ git commit -m "feat(documents): add schemas and document service"
 - Consumes: `ingest`, `list_documents`, `get_document`, `delete_document`, `can_manage`, `DocumentSummary`, `DocumentDetail`; `require_workspace_member`; `ExtractionError`.
 - Produces: `router` — `APIRouter(prefix="/workspaces/{workspace_id}/documents", tags=["documents"])`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/modules/documents/conftest.py` — a `seed` fixture creating three users, one workspace, membership rows (creator/admin/member), and returning `{"workspace_id", "headers": {user: auth header}, "ids": {...}}`, built with `create_access_token` and direct `session_factory` inserts (same style as `tests/modules/invitations/test_preview.py`).
 
@@ -252,12 +252,12 @@ git commit -m "feat(documents): add schemas and document service"
 
 `test_permissions.py` — creator deletes another's 204; admin deletes another's 204; member deletes another's 403; foreign-workspace document ID → 404 on GET and DELETE.
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `uv run pytest tests/modules/documents/test_router.py tests/modules/documents/test_permissions.py -v`
 Expected: FAIL — 404 on every route (router not registered).
 
-- [ ] **Step 3: Implement the router**
+- [x] **Step 3: Implement the router**
 
 Four handlers, each taking `member: Annotated[WorkspaceMember, Depends(require_workspace_member)]` and `session: Annotated[AsyncSession, Depends(get_db)]`:
 
@@ -268,17 +268,17 @@ Four handlers, each taking `member: Annotated[WorkspaceMember, Depends(require_w
 
 Register in `app/api/router.py`: `api_v1.include_router(documents_router.router)`.
 
-- [ ] **Step 4: Run to verify pass**
+- [x] **Step 4: Run to verify pass**
 
 Run: `uv run pytest tests/modules/documents -v`
 Expected: PASS.
 
-- [ ] **Step 5: Lint**
+- [x] **Step 5: Lint**
 
 Run: `uv run ruff check app tests && uv run ruff format --check app tests`
 Expected: clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app/modules/documents/router.py app/api/router.py \
@@ -299,12 +299,12 @@ git commit -m "feat(documents): add workspace document endpoints"
 - Consumes: the finished module from Tasks 1–4.
 - Produces: docs that match the code.
 
-- [ ] **Step 1: Run the whole suite and lint**
+- [x] **Step 1: Run the whole suite and lint**
 
 Run: `uv run pytest -q && uv run ruff check app tests && uv run ruff format --check app tests`
 Expected: all pass.
 
-- [ ] **Step 2: Manual end-to-end check against the dev API**
+- [x] **Step 2: Manual end-to-end check against the dev API**
 
 Run: `uv run fastapi dev app/main.py`, sign in, create a workspace, then:
 
@@ -319,14 +319,14 @@ curl -s -X DELETE "$API/api/v1/workspaces/$WS/documents/$DOC" \
 
 Expected: 201 with `page_count`/`char_count`; the list shows the file; DELETE prints `204`.
 
-- [ ] **Step 3: Update AGENTS.md**
+- [x] **Step 3: Update AGENTS.md**
 
 - §3 tree: add `modules/documents/` (models, schemas, extraction, service, router) and its test dir.
 - §7: `documents` is the newest domain table; note text-only storage and the M5 cascade requirement.
 - §13: mark Milestone 4 complete; next is Milestone 5 (Retrieval).
 - §14: point at this plan and the design doc.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add apps/api/AGENTS.md apps/api/README.md

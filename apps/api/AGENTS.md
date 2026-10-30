@@ -96,6 +96,7 @@ apps/api/
 │       │   ├── models.py     # Document (text only; no bytes, no key)
 │       │   ├── schemas.py    # DocumentSummary, DocumentDetail
 │       │   ├── extraction.py # extension allowlist, decode/PDF parse, limits
+│       │   ├── middleware.py # 413 from Content-Length before multipart spool
 │       │   ├── service.py    # ingest, list, get, delete, can_manage
 │       │   └── router.py     # /workspaces/{id}/documents
 │       ├── invitations/
@@ -368,7 +369,9 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    text extraction stored in Postgres (bytes discarded), `?mine=true`, and
    workspace-scoped permissions (`require_workspace_member`; uploader or
    creator/admin may delete). Limits: 5 MB, 500 PDF pages, 1,000,000 stored
-   characters. No web UI yet.
+   characters. No web UI yet. The 5 MB declared-length cap is enforced in
+   `documents/middleware.py` before multipart parsing; the handler reads at
+   most cap+1 bytes so a chunked body cannot be loaded into memory in full.
 5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
 
