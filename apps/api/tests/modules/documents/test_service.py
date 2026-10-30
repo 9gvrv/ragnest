@@ -183,28 +183,28 @@ async def test_get_document_from_other_workspace_raises_404(session_factory):
     assert excinfo.value.status_code == 404
 
 
-def test_can_manage_uploader_true(session_factory):
+def test_can_manage_uploader_true():
     seed = _members()
     document = _document(uploaded_by=seed["plain_member"].user_id)
 
     assert can_manage(seed["plain_member"], document)
 
 
-def test_can_manage_creator_true(session_factory):
+def test_can_manage_creator_true():
     seed = _members()
     document = _document(uploaded_by=seed["plain_member"].user_id)
 
     assert can_manage(seed["creator_member"], document)
 
 
-def test_can_manage_admin_true(session_factory):
+def test_can_manage_admin_true():
     seed = _members()
     document = _document(uploaded_by=seed["plain_member"].user_id)
 
     assert can_manage(seed["admin_member"], document)
 
 
-def test_can_manage_other_member_false(session_factory):
+def test_can_manage_other_member_false():
     seed = _members()
     document = _document(uploaded_by=seed["admin"].id)
 
