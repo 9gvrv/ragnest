@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from pathlib import PurePosixPath
 
 from pypdf import PdfReader
-from pypdf.errors import PyPdfError
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_PDF_PAGES = 500
@@ -100,15 +99,19 @@ def extract(filename: str, data: bytes) -> Extracted:
 def _extract_pdf(data: bytes) -> tuple[str, int]:
     try:
         reader = PdfReader(io.BytesIO(data))
-        if reader.is_encrypted:
-            raise UnprocessableDocument("PDF is encrypted")
-
+        is_encrypted = reader.is_encrypted
         page_count = len(reader.pages)
-        if page_count > MAX_PDF_PAGES:
-            raise UnprocessableDocument("PDF has too many pages")
+    except Exception as exc:  # untrusted input must never 500
+        raise UnprocessableDocument("Could not read PDF") from exc
 
-        parts: list[str] = []
-        accumulated = 0
+    if is_encrypted:
+        raise UnprocessableDocument("PDF is encrypted")
+    if page_count > MAX_PDF_PAGES:
+        raise UnprocessableDocument("PDF has too many pages")
+
+    parts: list[str] = []
+    accumulated = 0
+    try:
         for page in reader.pages:
             page_text = (page.extract_text() or "").rstrip()
             if not page_text:
@@ -117,7 +120,7 @@ def _extract_pdf(data: bytes) -> tuple[str, int]:
             accumulated += len(page_text) + 2
             if accumulated >= MAX_TEXT_CHARS:
                 break
-    except PyPdfError as exc:
+    except Exception as exc:  # untrusted input must never 500
         raise UnprocessableDocument("Could not read PDF") from exc
 
     return "\n\n".join(parts), page_count

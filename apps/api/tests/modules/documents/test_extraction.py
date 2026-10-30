@@ -105,6 +105,14 @@ def test_text_free_pdf_raises_422():
     assert excinfo.value.detail == "No text could be extracted"
 
 
+def test_corrupt_pdf_raises_422():
+    with pytest.raises(UnprocessableDocument) as excinfo:
+        extract("corrupt.pdf", b"%PDF-1.4 not really a pdf")
+
+    assert excinfo.value.status_code == 422
+    assert excinfo.value.detail == "Could not read PDF"
+
+
 def test_too_many_pages_raises_422(monkeypatch):
     monkeypatch.setattr(extraction, "MAX_PDF_PAGES", 2)
 
