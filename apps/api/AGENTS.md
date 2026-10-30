@@ -4,8 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-27 (Milestone 3 — workspaces, memberships &
-> invitations — API and web complete)
+> **Last updated:** 2026-10-30 (Milestone 4 — documents — API complete)
 
 ---
 
@@ -92,11 +91,31 @@ apps/api/
 │   │   └── health.py        # GET /health
 │   └── modules/             # domain feature modules
 │       ├── __init__.py
+│       ├── documents/
+│       │   ├── __init__.py
+│       │   ├── models.py     # Document (text only; no bytes, no key)
+│       │   ├── schemas.py    # DocumentSummary, DocumentDetail
+│       │   ├── extraction.py # extension allowlist, decode/PDF parse, limits
+│       │   ├── service.py    # ingest, list, get, delete, can_manage
+│       │   └── router.py     # /workspaces/{id}/documents
+│       ├── invitations/
+│       │   ├── __init__.py
+│       │   ├── models.py
+│       │   ├── router.py
+│       │   ├── schemas.py
+│       │   └── service.py
 │       ├── users/
 │       │   ├── __init__.py
 │       │   ├── models.py
 │       │   ├── router.py
 │       │   └── schemas.py
+│       ├── workspaces/
+│       │   ├── __init__.py
+│       │   ├── deps.py       # require_workspace_member/admin/creator
+│       │   ├── models.py     # Workspace, WorkspaceMember, WorkspaceRole
+│       │   ├── router.py
+│       │   ├── schemas.py
+│       │   └── service.py
 │       └── auth/
 │           ├── __init__.py
 │           ├── deps.py
@@ -115,13 +134,26 @@ apps/api/
         │   ├── __init__.py
         │   ├── test_login.py
         │   └── test_signup.py
+        ├── documents/
+        │   ├── __init__.py
+        │   ├── conftest.py       # seed fixture: users, workspace, roles, tokens
+        │   ├── fixtures/         # sample txt/md, PDFs, wrong.bin
+        │   ├── test_extraction.py
+        │   ├── test_model.py
+        │   ├── test_service.py
+        │   ├── test_router.py
+        │   └── test_permissions.py
+        ├── invitations/
+        │   ├── __init__.py
+        │   └── test_preview.py
         └── users/
             ├── __init__.py
             ├── test_me.py
             └── test_model.py
 ```
 
-**`app/modules/` now exists** with the first real features (`users`, `auth`). This was growth, not a restructure — no existing file moves.
+**`app/modules/` holds every domain feature** (`auth`, `users`, `workspaces`,
+`invitations`, `documents`). Modules were added over time; no existing file moved.
 
 ### Hard structural rules
 
@@ -217,9 +249,15 @@ If you add another DB engine (e.g. in Alembic), pass
   `sqlalchemy.url`, uses `async_engine_from_config` with
   `connect_args=settings.database_connect_args`, and targets `Base.metadata`.
 - The first real domain table is **`users`** (T1 of Milestone 2); Milestone 3
-  adds **`workspaces`**, **`workspace_members`** and **`invitations`**. The two
-  empty baseline revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic
-  wart; squashing is optional.
+  adds **`workspaces`**, **`workspace_members`** and **`invitations`**;
+  Milestone 4 adds **`documents`** (`25d91090dee5`). The two empty baseline
+  revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart; squashing
+  is optional.
+- **`documents` stores text only.** There is no `storage_key`, no URL, and no
+  file on disk: `extracted_text` is the durable artefact, `char_count` always
+  equals its length, and `page_count` is `NULL` for txt/md. When Milestone 5
+  adds `document_chunks`, its `document_id` **must** be `ON DELETE CASCADE`
+  (the documents row is hard-deleted).
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
 
@@ -236,13 +274,19 @@ If you add another DB engine (e.g. in Alembic), pass
   order — the `os.environ.setdefault(...)` must stay above the `app.*` imports. The
   session factory uses `StaticPool` so the in-memory schema (created via
   `Base.metadata.create_all`) persists for all database-dependent tests.
+- **SQLite foreign keys are ON.** The engine registers a `connect` listener
+  that executes `PRAGMA foreign_keys=ON`; without it SQLite silently ignores
+  every `ON DELETE CASCADE` and FK constraint. Keep the listener when touching
+  the fixture, and do not assume a cascade test proves anything unless the
+  pragma test (`tests/modules/documents/test_model.py`) passes.
 - Fixtures live in the **root `tests/conftest.py`**: `client` (httpx
   `AsyncClient` bound via `ASGITransport`) and `session_factory` (async SQLite
   sessionmaker). A subdir may add its own `conftest.py` for local fixtures.
 - **Test layout mirrors the app:** `tests/api/`, `tests/core/`, `tests/db/`, and
   `tests/modules/<feature>/` for domain code (`tests/modules/auth/`,
-  `tests/modules/users/`). **Every test subdirectory needs an `__init__.py`** —
-  otherwise pytest's default import mode breaks when two files share a basename.
+  `tests/modules/users/`, `tests/modules/documents/`). **Every test subdirectory
+  needs an `__init__.py`** — otherwise pytest's default import mode breaks when
+  two files share a basename.
 - Test names/fixtures use plain absolute imports (`from app.core.config import
 Settings`); moving test files does not change imports.
 
@@ -319,11 +363,16 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    public `GET /api/v1/invitations/{token}` preview and a `token` field on the
    pending list so the web pages could render real state; preview and pending
    list both treat a past-`expires_at` invitation as expired.
-4. **Documents** — upload txt/pdf/md, store, extract text.
+4. ✅ **Documents** — `POST`/`GET`/`DELETE` under
+   `/api/v1/workspaces/{workspace_id}/documents`, multipart txt/md/pdf upload,
+   text extraction stored in Postgres (bytes discarded), `?mine=true`, and
+   workspace-scoped permissions (`require_workspace_member`; uploader or
+   creator/admin may delete). Limits: 5 MB, 500 PDF pages, 1,000,000 stored
+   characters. No web UI yet.
 5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
 
-**Next up: Milestone 4 (Documents).** Design precedes code.
+**Next up: Milestone 5 (Retrieval).** Design precedes code.
 
 ---
 
@@ -337,5 +386,9 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
   `docs/superpowers/specs/2026-10-27-workspaces-invitations-web-design.md`
 - Milestone 3 web plan:
   `docs/superpowers/plans/2026-10-27-workspaces-invitations-web.md`
+- Milestone 4 documents design:
+  `docs/superpowers/specs/2026-10-27-documents-design.md`
+- Milestone 4 documents plan:
+  `docs/superpowers/plans/2026-10-27-documents.md`
 - Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`
