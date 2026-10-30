@@ -221,5 +221,8 @@ __marimo__/
 
 # OpenCode config is committed at the repo root as opencode.jsonc.
 
+# Harness-generated system skills (project skills live in .opencode/skills/)
+/skills/
+
 # Superpowers plugin state (task briefs, progress, test logs — auto-created)
 .superpowers/
