@@ -4,6 +4,7 @@ from pathlib import Path
 from sqlalchemy import func, select
 
 from app.modules.documents.extraction import MAX_UPLOAD_BYTES
+from app.modules.documents.middleware import MAX_REQUEST_BYTES
 from app.modules.documents.models import Document
 
 from .conftest import insert_document
@@ -30,6 +31,11 @@ def fixture(name: str) -> bytes:
 
 def documents_url(seed) -> str:
     return f"/api/v1/workspaces/{seed['workspace_id']}/documents"
+
+
+async def document_count(session_factory) -> int:
+    async with session_factory() as session:
+        return await session.scalar(select(func.count()).select_from(Document))
 
 
 async def test_upload_txt_returns_summary(client, seed):
@@ -179,12 +185,10 @@ async def test_delete_own_document_returns_204_and_removes_row(client, seed, ses
     )
     assert detail.status_code == 404
 
-    async with session_factory() as session:
-        count = await session.scalar(select(func.count()).select_from(Document))
-    assert count == 0
+    assert await document_count(session_factory) == 0
 
 
-async def test_unsupported_extension_returns_415(client, seed):
+async def test_unsupported_extension_returns_415(client, seed, session_factory):
     resp = await client.post(
         documents_url(seed),
         headers=seed["headers"]["member"],
@@ -192,22 +196,37 @@ async def test_unsupported_extension_returns_415(client, seed):
     )
 
     assert resp.status_code == 415
+    assert await document_count(session_factory) == 0
 
 
-async def test_declared_content_length_over_cap_returns_413(client, seed):
+async def test_declared_content_length_over_cap_returns_413(client, seed, session_factory):
     resp = await client.post(
         documents_url(seed),
         headers={
             **seed["headers"]["member"],
-            "content-length": str(MAX_UPLOAD_BYTES + 1),
+            "content-length": str(MAX_REQUEST_BYTES + 1),
         },
         files={"file": ("big.txt", b"small body", "text/plain")},
     )
 
     assert resp.status_code == 413
+    assert await document_count(session_factory) == 0
 
 
-async def test_empty_file_returns_422(client, seed):
+async def test_actual_oversize_file_returns_413(client, seed, session_factory):
+    resp = await client.post(
+        documents_url(seed),
+        headers=seed["headers"]["member"],
+        files={
+            "file": ("big.txt", b"a" * (MAX_UPLOAD_BYTES + 1), "text/plain"),
+        },
+    )
+
+    assert resp.status_code == 413
+    assert await document_count(session_factory) == 0
+
+
+async def test_empty_file_returns_422(client, seed, session_factory):
     resp = await client.post(
         documents_url(seed),
         headers=seed["headers"]["member"],
@@ -215,9 +234,10 @@ async def test_empty_file_returns_422(client, seed):
     )
 
     assert resp.status_code == 422
+    assert await document_count(session_factory) == 0
 
 
-async def test_bad_utf8_returns_422(client, seed):
+async def test_bad_utf8_returns_422(client, seed, session_factory):
     resp = await client.post(
         documents_url(seed),
         headers=seed["headers"]["member"],
@@ -225,6 +245,18 @@ async def test_bad_utf8_returns_422(client, seed):
     )
 
     assert resp.status_code == 422
+    assert await document_count(session_factory) == 0
+
+
+async def test_null_byte_text_returns_422(client, seed, session_factory):
+    resp = await client.post(
+        documents_url(seed),
+        headers=seed["headers"]["member"],
+        files={"file": ("nul.txt", b"he\x00llo", "text/plain")},
+    )
+
+    assert resp.status_code == 422
+    assert await document_count(session_factory) == 0
 
 
 async def test_text_free_pdf_returns_422_and_writes_no_row(client, seed, session_factory):
@@ -235,10 +267,7 @@ async def test_text_free_pdf_returns_422_and_writes_no_row(client, seed, session
     )
 
     assert resp.status_code == 422
-
-    async with session_factory() as session:
-        count = await session.scalar(select(func.count()).select_from(Document))
-    assert count == 0
+    assert await document_count(session_factory) == 0
 
 
 async def test_non_member_gets_403_on_every_route(client, seed):

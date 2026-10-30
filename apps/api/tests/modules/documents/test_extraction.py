@@ -113,6 +113,19 @@ def test_corrupt_pdf_raises_422():
     assert excinfo.value.detail == "Could not read PDF"
 
 
+def test_null_byte_in_text_raises_422():
+    with pytest.raises(UnprocessableDocument) as excinfo:
+        extract("nul.txt", b"he\x00llo")
+
+    assert excinfo.value.status_code == 422
+    assert excinfo.value.detail == "Text contains null bytes"
+
+
+def test_null_byte_in_filename_raises_422():
+    with pytest.raises(UnprocessableDocument):
+        extract("bad\x00name.txt", b"hello")
+
+
 def test_too_many_pages_raises_422(monkeypatch):
     monkeypatch.setattr(extraction, "MAX_PDF_PAGES", 2)
 

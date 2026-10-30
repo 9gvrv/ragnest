@@ -52,6 +52,9 @@ def safe_filename(filename: str) -> str:
     name = filename.replace("\\", "/").rsplit("/", 1)[-1]
     if not name:
         raise UnprocessableDocument("Invalid filename")
+    if "\x00" in name:
+        # PostgreSQL text/varchar cannot store NUL, and no real filename has it.
+        raise UnprocessableDocument("Invalid filename")
     if len(name) > MAX_FILENAME_CHARS:
         raise UnprocessableDocument("Filename is too long")
     return name
@@ -84,6 +87,10 @@ def extract(filename: str, data: bytes) -> Extracted:
         page_count = None
 
     final_text = text[:MAX_TEXT_CHARS]
+    if "\x00" in final_text:
+        # PostgreSQL text cannot store NUL; a UTF-16LE file without a BOM hits
+        # this after decoding as valid UTF-8. Fail here, not at INSERT.
+        raise UnprocessableDocument("Text contains null bytes")
     if not final_text.strip():
         raise UnprocessableDocument("No text could be extracted")
 
@@ -100,12 +107,17 @@ def _extract_pdf(data: bytes) -> tuple[str, int]:
     try:
         reader = PdfReader(io.BytesIO(data))
         is_encrypted = reader.is_encrypted
-        page_count = len(reader.pages)
     except Exception as exc:  # untrusted input must never 500
         raise UnprocessableDocument("Could not read PDF") from exc
 
     if is_encrypted:
         raise UnprocessableDocument("PDF is encrypted")
+
+    try:
+        page_count = len(reader.pages)
+    except Exception as exc:  # untrusted input must never 500
+        raise UnprocessableDocument("Could not read PDF") from exc
+
     if page_count > MAX_PDF_PAGES:
         raise UnprocessableDocument("PDF has too many pages")
 

@@ -72,3 +72,6 @@ async def test_foreign_workspace_document_returns_404(client, seed, session_fact
     assert detail.status_code == 404
     assert detail.json() == {"detail": "Document not found"}
     assert delete.status_code == 404
+
+    async with session_factory() as session:
+        assert await session.get(Document, foreign.id) is not None

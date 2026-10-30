@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import load_only
 
 from app.modules.documents.extraction import extract, safe_filename
 from app.modules.documents.models import Document
@@ -48,7 +49,23 @@ async def list_documents(
     workspace_id: UUID,
     mine: UUID | None = None,
 ) -> list[Document]:
-    stmt = select(Document).where(Document.workspace_id == workspace_id)
+    stmt = (
+        select(Document)
+        .options(
+            load_only(
+                Document.id,
+                Document.workspace_id,
+                Document.uploaded_by,
+                Document.filename,
+                Document.content_type,
+                Document.size_bytes,
+                Document.page_count,
+                Document.char_count,
+                Document.created_at,
+            )
+        )
+        .where(Document.workspace_id == workspace_id)
+    )
     if mine is not None:
         stmt = stmt.where(Document.uploaded_by == mine)
     stmt = stmt.order_by(Document.created_at.desc(), Document.id.desc())

@@ -1,7 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
@@ -16,20 +16,13 @@ router = APIRouter(prefix="/workspaces/{workspace_id}/documents", tags=["documen
 @router.post("", response_model=schemas.DocumentSummary, status_code=status.HTTP_201_CREATED)
 async def upload_document(
     workspace_id: UUID,
-    request: Request,
     file: Annotated[UploadFile, File()],
     member: Annotated[WorkspaceMember, Depends(require_workspace_member)],
     session: Annotated[AsyncSession, Depends(get_db)],
 ) -> schemas.DocumentSummary:
-    declared_length = request.headers.get("content-length")
-    if (
-        declared_length is not None
-        and declared_length.isdigit()
-        and int(declared_length) > MAX_UPLOAD_BYTES
-    ):
-        raise HTTPException(status_code=413, detail="File is larger than 5 MB")
-
-    data = await file.read()
+    # Read no more than the cap plus one byte, so a chunked upload without a
+    # Content-Length cannot be loaded into memory in full.
+    data = await file.read(MAX_UPLOAD_BYTES + 1)
     try:
         document = await service.ingest(
             session, workspace_id, member.user_id, file.filename or "", data
