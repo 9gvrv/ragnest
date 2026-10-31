@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { DeleteDocumentButton } from "@/components/delete-document-button";
 import { DeleteWorkspaceButton } from "@/components/delete-workspace-button";
 import { InviteForm } from "@/components/invite-form";
 import { RemoveMemberButton } from "@/components/remove-member-button";
+import { UploadDocumentForm } from "@/components/upload-document-form";
 import {
   ApiError,
   getMe,
   getWorkspace,
+  listDocuments,
   listMembers,
+  type ApiDocument,
   type ApiMember,
   type ApiRole,
 } from "@/lib/api";
 import { parseApiDate } from "@/lib/dates";
+import { canManageDocument, formatBytes, formatCount } from "@/lib/documents";
 import { getSessionToken } from "@/lib/session";
 
 // Reads the session cookie and calls the API, so it cannot be prerendered.
@@ -49,8 +54,11 @@ function RoleTag({ role }: { role: ApiRole }) {
 
 export default async function WorkspacePage({
   params,
+  searchParams,
 }: PageProps<"/workspaces/[id]">) {
   const { id } = await params;
+  const query = await searchParams;
+  const mine = query.mine === "true";
   const token = await getSessionToken();
   if (!token) {
     redirect(`/login?next=${encodeURIComponent(`/workspaces/${id}`)}`);
@@ -59,11 +67,13 @@ export default async function WorkspacePage({
   let workspace;
   let members;
   let me;
+  let documents;
   try {
-    [workspace, members, me] = await Promise.all([
+    [workspace, members, me, documents] = await Promise.all([
       getWorkspace(token, id),
       listMembers(token, id),
       getMe(token),
+      listDocuments(token, id, mine),
     ]);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -93,6 +103,19 @@ export default async function WorkspacePage({
   };
   const hasRemovableMember = members.some(canRemove);
 
+  const canDeleteDocument = (document: ApiDocument) =>
+    canManageDocument(myRole, me.id, document);
+  const hasDeletableDocument = documents.some(canDeleteDocument);
+  const hasPageCounts = documents.some(
+    (document) => document.page_count !== null,
+  );
+
+  const documentsPath = `/workspaces/${workspace.id}`;
+  const filterClass = (active: boolean) =>
+    active
+      ? "text-foreground"
+      : "text-muted transition-colors duration-150 hover:text-foreground";
+
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
       <header>
@@ -109,6 +132,125 @@ export default async function WorkspacePage({
           Created {dateFormat.format(parseApiDate(workspace.created_at))}
         </p>
       </header>
+
+      <section aria-labelledby="documents-heading" className="mt-12">
+        <div className="flex items-baseline justify-between border-b border-border pb-2">
+          <h2
+            id="documents-heading"
+            className="text-sm font-semibold text-foreground"
+          >
+            Documents
+          </h2>
+          <span className="font-mono text-xs text-muted tabular-nums">
+            {documents.length}
+          </span>
+        </div>
+
+        <nav
+          aria-label="Filter documents"
+          className="mt-3 flex items-center gap-4 text-sm"
+        >
+          <Link
+            href={documentsPath}
+            aria-current={mine ? undefined : "page"}
+            className={filterClass(!mine)}
+          >
+            All
+          </Link>
+          <Link
+            href={`${documentsPath}?mine=true`}
+            aria-current={mine ? "page" : undefined}
+            className={filterClass(mine)}
+          >
+            Mine
+          </Link>
+        </nav>
+
+        <UploadDocumentForm workspaceId={workspace.id} />
+
+        {documents.length === 0 ? (
+          <p className="mt-6 text-sm text-muted">
+            {mine
+              ? "You haven't uploaded any documents in this workspace yet."
+              : "No documents yet. Upload one to get started."}
+          </p>
+        ) : (
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted">
+                  <th scope="col" className="py-2 font-medium">
+                    Document
+                  </th>
+                  <th scope="col" className="py-2 font-medium">
+                    Size
+                  </th>
+                  {hasPageCounts ? (
+                    <th scope="col" className="py-2 font-medium">
+                      Pages
+                    </th>
+                  ) : null}
+                  <th scope="col" className="py-2 font-medium">
+                    Characters
+                  </th>
+                  <th scope="col" className="py-2 font-medium">
+                    Added
+                  </th>
+                  {hasDeletableDocument ? (
+                    <th scope="col" className="py-2 text-right font-medium">
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  ) : null}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {documents.map((document) => (
+                  <tr key={document.id}>
+                    <td className="py-3 pr-4 text-sm">
+                      <Link
+                        href={`${documentsPath}/documents/${document.id}`}
+                        className="font-medium break-all text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
+                      >
+                        {document.filename}
+                      </Link>
+                      <span className="mt-0.5 block text-xs text-muted">
+                        {document.content_type}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted tabular-nums">
+                      {formatBytes(document.size_bytes)}
+                    </td>
+                    {hasPageCounts ? (
+                      <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted tabular-nums">
+                        {document.page_count !== null
+                          ? formatCount(document.page_count)
+                          : null}
+                      </td>
+                    ) : null}
+                    <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted tabular-nums">
+                      {formatCount(document.char_count)}
+                    </td>
+                    <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted">
+                      {dateFormat.format(parseApiDate(document.created_at))}
+                    </td>
+                    {hasDeletableDocument ? (
+                      <td className="py-3 text-right">
+                        {canDeleteDocument(document) ? (
+                          <DeleteDocumentButton
+                            workspaceId={workspace.id}
+                            documentId={document.id}
+                            filename={document.filename}
+                          />
+                        ) : null}
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       <section aria-labelledby="members-heading" className="mt-12">
         <div className="flex items-baseline justify-between border-b border-border pb-2">
