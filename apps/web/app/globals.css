@@ -4,6 +4,7 @@
   /* One semantic token set, shared by both themes. */
   --color-background: #ffffff;
   --color-surface: #fafafa;
+  --color-elevated: #f2f2f4;
   --color-border: #eaeaea;
   --color-control: #8f8f8f;
   --color-foreground: #171717;
@@ -22,16 +23,17 @@
 }
 
 /*
- * Scoped dark surface for the marketing shell (landing, login, signup).
+ * Scoped dark surface for the landing, auth, and workspaces-picker pages.
  * It re-declares the semantic tokens on a wrapper element, so Tailwind
  * utilities resolve to the dark values there while every other page keeps
  * following the visitor's OS preference.
  */
-.marketing {
+.dark-surface {
   color-scheme: dark;
 
   --color-background: #08090a;
   --color-surface: #0e0f11;
+  --color-elevated: #15161a;
   --color-border: rgba(255, 255, 255, 0.08);
   --color-control: rgba(255, 255, 255, 0.16);
   --color-foreground: #f7f8f8;
@@ -56,6 +58,7 @@
   :root {
     --color-background: #000000;
     --color-surface: #0a0a0a;
+    --color-elevated: #15161a;
     --color-border: #333333;
     --color-control: #737373;
     --color-foreground: #ededed;

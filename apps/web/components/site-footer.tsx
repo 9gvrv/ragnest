@@ -1,9 +1,10 @@
+import { Container } from "@/components/container";
 import { site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-6 py-6 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <Container className="flex flex-col gap-3 py-6 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>
           © {site.year} {site.name}
         </p>
@@ -19,7 +20,7 @@ export function SiteFooter() {
             </a>
           ))}
         </p>
-      </div>
+      </Container>
     </footer>
   );
 }
