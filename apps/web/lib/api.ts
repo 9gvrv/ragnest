@@ -57,7 +57,10 @@ async function request<T>(
   const { token, ...rest } = init;
   const headers = new Headers(rest.headers);
   headers.set("Accept", "application/json");
-  if (rest.body) headers.set("Content-Type", "application/json");
+  // FormData must keep the browser/undici-generated multipart boundary.
+  if (rest.body && !(rest.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   let response: Response;
@@ -113,6 +116,22 @@ export type ApiMember = {
   email: string;
   role: ApiRole;
   joined_at: string;
+};
+
+export type ApiDocument = {
+  id: string;
+  workspace_id: string;
+  uploaded_by: string;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  page_count: number | null;
+  char_count: number;
+  created_at: string;
+};
+
+export type ApiDocumentDetail = ApiDocument & {
+  extracted_text: string;
 };
 
 export type ApiPendingInvitation = {
@@ -188,6 +207,58 @@ export function removeMember(
 ) {
   return request<void>(
     `/api/v1/workspaces/${workspaceId}/members/${userId}`,
+    { method: "DELETE", token },
+  );
+}
+
+export function listDocuments(
+  token: string,
+  workspaceId: string,
+  mine = false,
+) {
+  const query = mine ? "?mine=true" : "";
+  return request<ApiDocument[]>(
+    `/api/v1/workspaces/${workspaceId}/documents${query}`,
+    { token },
+  );
+}
+
+export function getDocument(
+  token: string,
+  workspaceId: string,
+  documentId: string,
+) {
+  return request<ApiDocumentDetail>(
+    `/api/v1/workspaces/${workspaceId}/documents/${documentId}`,
+    { token },
+  );
+}
+
+/**
+ * Multipart upload. The `FormData` is passed through untouched so the fetch
+ * implementation sets the boundary; never set `Content-Type` by hand here.
+ */
+export function uploadDocument(
+  token: string,
+  workspaceId: string,
+  file: File,
+) {
+  const body = new FormData();
+  body.set("file", file);
+  return request<ApiDocument>(`/api/v1/workspaces/${workspaceId}/documents`, {
+    method: "POST",
+    body,
+    token,
+  });
+}
+
+export function deleteDocument(
+  token: string,
+  workspaceId: string,
+  documentId: string,
+) {
+  return request<void>(
+    `/api/v1/workspaces/${workspaceId}/documents/${documentId}`,
     { method: "DELETE", token },
   );
 }
