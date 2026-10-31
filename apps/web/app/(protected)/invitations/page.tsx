@@ -35,7 +35,7 @@ export default async function InvitationsPage() {
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
       <header>
         <Link
-          href="/"
+          href="/workspaces"
           className="text-sm font-semibold tracking-tight text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
         >
           Ragnest
@@ -81,7 +81,7 @@ export default async function InvitationsPage() {
         <div className="mt-12 rounded-lg border border-border bg-surface px-5 py-6">
           <p className="text-sm text-muted">No pending invitations.</p>
           <Link
-            href="/"
+            href="/workspaces"
             className="mt-3 inline-block text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
           >
             Back to your workspaces

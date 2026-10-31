@@ -74,7 +74,7 @@ export default async function AccountPage() {
       <div className="mt-10 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
         <SignOut />
         <Link
-          href="/"
+          href="/workspaces"
           className="text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
         >
           Back to your workspaces

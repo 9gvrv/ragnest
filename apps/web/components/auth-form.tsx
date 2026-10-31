@@ -23,7 +23,7 @@ const copy = {
 
 export function AuthForm({
   mode,
-  nextPath = "/",
+  nextPath = "/workspaces",
 }: {
   mode: Mode;
   nextPath?: string;

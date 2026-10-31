@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-27 (web Milestone 3 — workspaces & invitations)
+> **Last updated:** 2026-10-31 (landing/auth dark marketing surface)
 
 ---
 
@@ -48,12 +48,13 @@ apps/web/
 ├── app/
 │   ├── layout.tsx                 # fonts + document shell
 │   ├── globals.css                # Tailwind 4 theme tokens
+│   ├── page.tsx                   # public landing (/)
 │   ├── login/page.tsx             # public sign-in
 │   ├── signup/page.tsx            # public sign-up
 │   ├── invite/[token]/page.tsx    # public invite accept page
 │   ├── (protected)/
 │   │   ├── layout.tsx             # cookie-presence guard
-│   │   ├── page.tsx               # workspaces home (/)
+│   │   ├── workspaces/page.tsx    # workspaces home (/workspaces)
 │   │   ├── account/page.tsx       # /account
 │   │   ├── invitations/page.tsx   # /invitations
 │   │   └── workspaces/[id]/page.tsx
@@ -65,8 +66,8 @@ apps/web/
 │       ├── workspaces/[id]/invitations/route.ts
 │       ├── workspaces/[id]/invitations/check/route.ts
 │       └── invitations/[token]/{accept,decline}/route.ts
-├── components/                    # Button, Field, SignOut, forms, actions
-└── lib/                           # api.ts, session.ts, dates.ts, token.ts
+├── components/                    # Button, Field, SiteShell, forms, actions
+└── lib/                           # api.ts, session.ts, dates.ts, token.ts, site.ts
 ```
 
 - Pages under `app/(protected)/` are wrapped by `app/(protected)/layout.tsx`,
@@ -117,7 +118,8 @@ apps/web/
 
 | Route | Access | Purpose |
 | --- | --- | --- |
-| `/` | signed in | Workspaces home: pending-invite banner, workspace list, create form |
+| `/` | public | Landing page: hero, product preview. Static; does not read the cookie |
+| `/workspaces` | signed in | Workspaces home: pending-invite banner, workspace list, create form |
 | `/account` | signed in | Email, account id, member since, token expiry |
 | `/workspaces/[id]` | member | Members table; invite form for admin/creator; remove for the matrix below; delete for creator |
 | `/invitations` | signed in | Pending invitations with accept/decline |
@@ -143,7 +145,8 @@ The viewer's own role comes from the members list, matched by
 - **`?next=` resumption.** Login/signup accept `next` in the request body. The
   value must survive `safeNextPath()` (`lib/next-path.ts`): a leading `/`, no
   backslash or control characters, and a parsed origin equal to this site
-  (`/\evil.com` and `//evil.com` both fall back to `/`). `AuthForm` reads
+  (`/\evil.com` and `//evil.com` both fall back to the default
+  `/workspaces`). `AuthForm` reads
   `redirect` and does a full navigation. The auth pages pass `next` through to
   the form and to the link that switches between login and signup, and only
   bounce a cookie-holding visitor when `getMe()` confirms the session is live
@@ -161,13 +164,30 @@ The viewer's own role comes from the members list, matched by
 
 ## 7. Design language
 
-Ink-on-paper Tailwind 4 tokens (defined in `app/globals.css`): `paper`, `ink`,
-`muted`, `action`, `saffron`, `rule`, `control`, `danger`; `font-sans`
-(Archivo) for UI and `font-serif` (Newsreader) for headings/prose. Container is
-`max-w-136 mx-auto px-6`; the header motif is a small tracking-wide `Ragnest`
-wordmark in `text-action`, then a serif `<h1>`. Reuse `Button` and `Field`.
-Saffron is reserved for the retrieved-sentence motif and the pending-invite
-signal — do not spend it on ordinary chrome. No new dependencies.
+Neutral Vercel/Geist minimalism. Semantic Tailwind 4 tokens live in
+`app/globals.css`: `background`, `surface`, `border`, `control`, `foreground`,
+`muted`, `accent`, `danger`, with automatic dark values via
+`prefers-color-scheme` (there is no theme toggle). Geist Sans is the UI face;
+Geist Mono is for IDs and citation refs. There is no serif or display face. The
+scale is 12/14/16/20/24/32/48, headings at weight 600 with tight tracking.
+Structure comes from 1px borders, never shadows; radii are 6px for controls and
+8px for panels. Exactly one accent (blue) is used for links, focus rings, and
+state highlights; primary buttons are solid `foreground` with inverse text.
+Motion is limited to 150ms color/border transitions and is disabled under
+`prefers-reduced-motion`. The app container is `max-w-3xl mx-auto px-6`; the
+header is a plain `Ragnest` wordmark followed by an `h1`. Reuse `Button` and
+`Field`. No new dependencies.
+
+**Marketing surface.** `/`, `/login`, and `/signup` share `SiteShell`
+(`site-nav`, `site-footer`) and are deliberately dark in both OS themes: the
+`marketing` class in `globals.css` re-declares the semantic tokens on the
+wrapper (background `#08090a`, foreground `#f7f8f8`, muted `#8b9099`, accent
+`#7c9cff`, borders `rgba(255,255,255,.08)`), so nothing outside that subtree
+changes. One soft radial glow at the top is the only decoration; there is no
+second typeface, no grid, and no gradient text. Marketing pages use a
+`max-w-6xl` container, tight `-0.04em` tracking on large headings, and a white
+pill for the primary CTA. The preview image path and the footer's placeholder
+name/social links live in `lib/site.ts`.
 
 ---
 

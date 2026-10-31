@@ -23,7 +23,7 @@ export default async function SignupPage({
   if (token) {
     // A cookie is not proof of a live session: see the login page.
     const user = await getMe(token).catch(() => null);
-    if (user) redirect(next ?? "/");
+    if (user) redirect(next ?? "/workspaces");
   }
 
   return (

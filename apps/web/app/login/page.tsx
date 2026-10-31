@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     // been rejected. Only bounce when the API accepts it, or / and /login
     // would redirect to each other forever.
     const user = await getMe(token).catch(() => null);
-    if (user) redirect(next ?? "/");
+    if (user) redirect(next ?? "/workspaces");
   }
 
   return (

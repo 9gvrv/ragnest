@@ -97,7 +97,7 @@ export default async function WorkspacePage({
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
       <header>
         <Link
-          href="/"
+          href="/workspaces"
           className="text-sm font-semibold tracking-tight text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
         >
           Ragnest
@@ -235,7 +235,7 @@ function NoAccess() {
         do belong to.
       </p>
       <Link
-        href="/"
+        href="/workspaces"
         className="mt-8 text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
       >
         Back to your workspaces

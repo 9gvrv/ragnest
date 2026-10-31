@@ -35,7 +35,7 @@ export function DeleteWorkspaceButton({
 
       if (response.status === 204) {
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-        window.location.assign("/");
+        window.location.assign("/workspaces");
         return;
       }
 
@@ -58,12 +58,12 @@ export function DeleteWorkspaceButton({
         type="button"
         onClick={remove}
         disabled={pending}
-        className="rounded-[3px] border border-rule px-4 py-2 text-[15px] text-danger transition-colors hover:border-danger disabled:opacity-60"
+        className="inline-flex h-9 items-center justify-center rounded-md border border-border px-4 text-sm font-medium text-danger transition-colors duration-150 hover:border-danger/60 hover:bg-danger/5 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {pending ? "Deleting…" : "Delete workspace"}
       </button>
       {failure ? (
-        <p role="alert" className="mt-2 text-[13px] text-danger">
+        <p role="alert" className="mt-2 text-sm text-danger">
           {failure}
         </p>
       ) : null}
