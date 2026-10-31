@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-31 (landing/auth dark marketing surface)
+> **Last updated:** 2026-10-31 (wide marketing container; Slack-style workspace picker)
 
 ---
 
@@ -66,7 +66,7 @@ apps/web/
 │       ├── workspaces/[id]/invitations/route.ts
 │       ├── workspaces/[id]/invitations/check/route.ts
 │       └── invitations/[token]/{accept,decline}/route.ts
-├── components/                    # Button, Field, SiteShell, forms, actions
+├── components/                    # Button, Field, Container, SiteShell, forms, actions
 └── lib/                           # api.ts, session.ts, dates.ts, token.ts, site.ts
 ```
 
@@ -178,16 +178,17 @@ Motion is limited to 150ms color/border transitions and is disabled under
 header is a plain `Ragnest` wordmark followed by an `h1`. Reuse `Button` and
 `Field`. No new dependencies.
 
-**Marketing surface.** `/`, `/login`, and `/signup` share `SiteShell`
-(`site-nav`, `site-footer`) and are deliberately dark in both OS themes: the
-`marketing` class in `globals.css` re-declares the semantic tokens on the
-wrapper (background `#08090a`, foreground `#f7f8f8`, muted `#8b9099`, accent
+**Dark surface.** `/`, `/login`, `/signup`, and `/workspaces` share
+`SiteShell` (`site-nav`, `site-footer`) or the `dark-surface` wrapper and are
+deliberately dark in both OS themes: the `dark-surface` class in `globals.css`
+re-declares the semantic tokens on the wrapper (background `#08090a`, surface
+`#0e0f11`, elevated `#15161a`, foreground `#f7f8f8`, muted `#8b9099`, accent
 `#7c9cff`, borders `rgba(255,255,255,.08)`), so nothing outside that subtree
 changes. One soft radial glow at the top is the only decoration; there is no
-second typeface, no grid, and no gradient text. Marketing pages use a
-`max-w-6xl` container, tight `-0.04em` tracking on large headings, and a white
-pill for the primary CTA. The preview image path and the footer's placeholder
-name/social links live in `lib/site.ts`.
+second typeface, no grid, and no gradient text. Marketing pages align to the
+shared `Container` (`max-w-7xl`, `px-6 lg:px-8`), use tight `-0.04em` tracking
+on large headings, and a white pill for the primary CTA. The preview image path
+and the footer's placeholder name/social links live in `lib/site.ts`.
 
 ---
 
