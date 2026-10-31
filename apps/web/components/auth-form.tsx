@@ -112,12 +112,12 @@ export function AuthForm({
       />
 
       {failure ? (
-        <p role="alert" className="text-[13px] text-danger">
+        <p role="alert" className="text-sm text-danger">
           {failure.detail}
         </p>
       ) : null}
 
-      <Button type="submit" pending={pending}>
+      <Button type="submit" pending={pending} className="h-10 w-full">
         {labels.submit}
       </Button>
     </form>

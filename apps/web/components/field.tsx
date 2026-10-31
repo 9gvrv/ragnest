@@ -20,22 +20,25 @@ export function Field({ label, hint, error, id, ...props }: FieldProps) {
 
   return (
     <div>
-      <label htmlFor={fieldId} className="block text-[13px] font-medium">
+      <label
+        htmlFor={fieldId}
+        className="block text-sm font-medium text-foreground"
+      >
         {label}
       </label>
       <input
         id={fieldId}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className="mt-2 w-full border-0 border-b border-control bg-transparent py-2 text-[15px] focus:border-action aria-invalid:border-danger"
+        className="mt-2 block h-10 w-full rounded-md border border-control bg-background px-3 text-base text-foreground transition-colors duration-150 placeholder:text-muted/70 hover:border-foreground/60 focus:border-foreground aria-invalid:border-danger"
         {...props}
       />
       {error ? (
-        <p id={`${fieldId}-error`} className="mt-2 text-[13px] text-danger">
+        <p id={`${fieldId}-error`} className="mt-2 text-sm text-danger">
           {error}
         </p>
       ) : hint ? (
-        <p id={`${fieldId}-hint`} className="mt-2 text-[13px] text-muted">
+        <p id={`${fieldId}-hint`} className="mt-2 text-sm text-muted">
           {hint}
         </p>
       ) : null}

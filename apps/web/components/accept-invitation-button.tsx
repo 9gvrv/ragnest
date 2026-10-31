@@ -96,7 +96,7 @@ export function AcceptInvitationButton({
       </Button>
 
       {problem ? (
-        <div role="alert" className="mt-4 max-w-[55ch] text-[13px] text-danger">
+        <div role="alert" className="mt-4 max-w-prose text-sm text-danger">
           {problem.kind === "mismatch" ? (
             <>
               <p>
@@ -106,7 +106,7 @@ export function AcceptInvitationButton({
                 type="button"
                 onClick={switchAccount}
                 disabled={switching}
-                className="mt-2 text-left text-action underline-offset-4 hover:underline disabled:opacity-60"
+                className="mt-2 text-left text-accent underline-offset-4 transition-colors duration-150 hover:underline disabled:opacity-50"
               >
                 {switching
                   ? "Signing out…"

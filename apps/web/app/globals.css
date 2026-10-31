@@ -1,19 +1,68 @@
 @import "tailwindcss";
 
 @theme {
-  /* Ink on paper: the palette comes from the product, not from a template. */
-  --color-paper: #f8f6f1;
-  --color-ink: #171a2b;
-  --color-muted: #5b5f73;
-  --color-action: #2b3a8f;
-  --color-saffron: #f5c445;
-  --color-rule: #ddd9ce;
-  /* Controls need 3:1 against the page; --color-rule is a hairline for text. */
-  --color-control: #8f8a78;
-  --color-danger: #a3341f;
+  /* One semantic token set, shared by both themes. */
+  --color-background: #ffffff;
+  --color-surface: #fafafa;
+  --color-border: #eaeaea;
+  --color-control: #8f8f8f;
+  --color-foreground: #171717;
+  --color-muted: #666666;
+  --color-accent: #0070f3;
+  --color-danger: #d1242f;
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+/*
+ * Scoped dark surface for the marketing shell (landing, login, signup).
+ * It re-declares the semantic tokens on a wrapper element, so Tailwind
+ * utilities resolve to the dark values there while every other page keeps
+ * following the visitor's OS preference.
+ */
+.marketing {
+  color-scheme: dark;
+
+  --color-background: #08090a;
+  --color-surface: #0e0f11;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-control: rgba(255, 255, 255, 0.16);
+  --color-foreground: #f7f8f8;
+  --color-muted: #8b9099;
+  --color-accent: #7c9cff;
+  --color-danger: #ff7b72;
+
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(
+      80rem 36rem at 50% -14rem,
+      rgba(124, 156, 255, 0.14),
+      transparent 70%
+    ),
+    linear-gradient(180deg, #0a0b0d 0%, #08090a 38%);
+  background-repeat: no-repeat;
+  color: var(--color-foreground);
+}
+
+/* Dark values override the theme tokens; utilities resolve through the vars. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #000000;
+    --color-surface: #0a0a0a;
+    --color-border: #333333;
+    --color-control: #737373;
+    --color-foreground: #ededed;
+    --color-muted: #a1a1a1;
+    --color-accent: #3291ff;
+    --color-danger: #ff6369;
+  }
 }
 
 @layer base {
@@ -23,45 +72,30 @@
   }
 
   body {
-    background: var(--color-paper);
-    color: var(--color-ink);
+    background: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.5;
   }
 
   ::selection {
-    background: var(--color-saffron);
-    color: var(--color-ink);
+    background: var(--color-foreground);
+    color: var(--color-background);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-action);
-    outline-offset: 3px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
     border-radius: 2px;
   }
 }
 
-/* The one orchestrated moment: the retrieved sentence is marked on arrival. */
-@keyframes mark-sweep {
-  from {
-    background-size: 0% 100%;
-  }
-  to {
-    background-size: 100% 100%;
-  }
-}
-
-.retrieved-mark {
-  background-image: linear-gradient(var(--color-saffron), var(--color-saffron));
-  background-repeat: no-repeat;
-  background-position: 0 92%;
-  background-size: 100% 58%;
-  animation: mark-sweep 700ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .retrieved-mark {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

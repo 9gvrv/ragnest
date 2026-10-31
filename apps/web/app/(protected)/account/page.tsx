@@ -35,38 +35,38 @@ export default async function AccountPage() {
   const expires = tokenExpiry(token);
 
   return (
-    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
-      <p className="text-[13px] font-medium tracking-[0.08em] text-action">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
+      <p className="text-sm font-semibold tracking-tight text-foreground">
         Ragnest
       </p>
 
-      <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-[1.1] tracking-[-0.02em]">
+      <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
         You&apos;re signed in.
       </h1>
 
-      <p className="mt-5 max-w-[60ch] font-serif text-[17px] leading-[1.65] text-muted">
+      <p className="mt-4 max-w-prose text-base leading-7 text-muted">
         The API recognised your token. This is the account it belongs to.
       </p>
 
-      <dl className="mt-10 divide-y divide-rule border-y border-rule">
+      <dl className="mt-10 divide-y divide-border border-y border-border">
         <div className="py-4">
-          <dt className="text-[13px] text-muted">Email</dt>
-          <dd className="mt-1 text-[15px]">{user.email}</dd>
+          <dt className="text-sm text-muted">Email</dt>
+          <dd className="mt-1 text-base">{user.email}</dd>
         </div>
         <div className="py-4">
-          <dt className="text-[13px] text-muted">Account ID</dt>
-          <dd className="mt-1 font-mono text-[13px] break-all">{user.id}</dd>
+          <dt className="text-sm text-muted">Account ID</dt>
+          <dd className="mt-1 font-mono text-sm break-all">{user.id}</dd>
         </div>
         <div className="py-4">
-          <dt className="text-[13px] text-muted">Member since</dt>
-          <dd className="mt-1 text-[15px]">
+          <dt className="text-sm text-muted">Member since</dt>
+          <dd className="mt-1 text-base">
             {dateFormat.format(parseApiDate(user.created_at))}
           </dd>
         </div>
         {expires ? (
           <div className="py-4">
-            <dt className="text-[13px] text-muted">Signed in until</dt>
-            <dd className="mt-1 text-[15px]">{dateFormat.format(expires)}</dd>
+            <dt className="text-sm text-muted">Signed in until</dt>
+            <dd className="mt-1 text-base">{dateFormat.format(expires)}</dd>
           </div>
         ) : null}
       </dl>
@@ -75,7 +75,7 @@ export default async function AccountPage() {
         <SignOut />
         <Link
           href="/"
-          className="text-[15px] text-action underline-offset-4 hover:underline"
+          className="text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
         >
           Back to your workspaces
         </Link>

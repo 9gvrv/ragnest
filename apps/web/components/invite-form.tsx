@@ -126,7 +126,7 @@ export function InviteForm({ workspaceId }: { workspaceId: string }) {
 
   return (
     <div>
-      <form onSubmit={onSubmit} noValidate className="max-w-[40ch] space-y-5">
+      <form onSubmit={onSubmit} noValidate className="max-w-sm space-y-5">
         <Field
           label="Email"
           name="email"
@@ -137,17 +137,20 @@ export function InviteForm({ workspaceId }: { workspaceId: string }) {
           error={fieldErrors.email}
         />
 
-        {hint ? <p className="text-[13px] text-muted">{hint}</p> : null}
+        {hint ? <p className="text-sm text-muted">{hint}</p> : null}
 
         <div>
-          <label htmlFor="invite-role" className="block text-[13px] font-medium">
+          <label
+            htmlFor="invite-role"
+            className="block text-sm font-medium text-foreground"
+          >
             Role
           </label>
           <select
             id="invite-role"
             name="role"
             defaultValue="member"
-            className="mt-2 w-full border-0 border-b border-control bg-transparent py-2 text-[15px] focus:border-action"
+            className="mt-2 block h-10 w-full rounded-md border border-control bg-background px-3 text-base text-foreground transition-colors duration-150 hover:border-foreground/60 focus:border-foreground"
           >
             <option value="member">member — can search the documents</option>
             <option value="admin">
@@ -157,7 +160,7 @@ export function InviteForm({ workspaceId }: { workspaceId: string }) {
         </div>
 
         {failure ? (
-          <p role="alert" className="text-[13px] text-danger">
+          <p role="alert" className="text-sm text-danger">
             {failure}
           </p>
         ) : null}
@@ -168,19 +171,19 @@ export function InviteForm({ workspaceId }: { workspaceId: string }) {
       </form>
 
       {created ? (
-        <div className="mt-6 border border-rule p-4">
-          <p className="text-[13px] text-muted">
+        <div className="mt-6 rounded-lg border border-border bg-surface p-4">
+          <p className="text-sm text-muted">
             Share this link with {created.email}. They can sign in or create an
             account with that address, then join as {created.role}.
           </p>
           <div className="mt-3 flex items-start gap-3">
-            <code className="min-w-0 flex-1 font-mono text-[13px] break-all">
+            <code className="min-w-0 flex-1 font-mono text-sm break-all">
               {created.link}
             </code>
             <button
               type="button"
               onClick={copyLink}
-              className="shrink-0 rounded-[3px] border border-rule px-3 py-1.5 text-[13px] text-action transition-colors hover:border-action"
+              className="shrink-0 rounded-md border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
             >
               {copied ? "Copied" : "Copy link"}
             </button>

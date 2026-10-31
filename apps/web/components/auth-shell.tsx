@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import { SiteShell } from "@/components/site-shell";
 
 /**
- * The frame every auth screen sits in: wordmark, headline, one paragraph of
- * orientation, the retrieved-sentence motif, then whatever the screen needs.
+ * The frame every auth screen sits in: the same dark chrome as the landing
+ * page, then one quiet column with the headline, a line of orientation, and
+ * the form.
  */
 export function AuthShell({
   title,
@@ -16,39 +18,21 @@ export function AuthShell({
   footer?: ReactNode;
 }) {
   return (
-    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
-      <header>
-        <p className="text-[13px] font-medium tracking-[0.08em] text-action">
-          Ragnest
-        </p>
-        <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-[1.1] tracking-[-0.02em]">
+    <SiteShell>
+      <main className="mx-auto flex w-full max-w-[380px] flex-1 flex-col justify-center px-6 py-16 sm:py-24">
+        <h1 className="text-[clamp(1.875rem,5vw,2.5rem)] leading-[1.1] font-semibold tracking-[-0.035em] text-balance">
           {title}
         </h1>
-        <p className="mt-5 max-w-[60ch] font-serif text-[17px] leading-[1.65] text-muted">
+        <p className="mt-4 text-[15px] leading-6 text-pretty text-muted">
           {intro}
         </p>
-      </header>
 
-      <RetrievedSentence />
+        <div className="mt-10">{children}</div>
 
-      <div className="mt-10">{children}</div>
-
-      {footer ? <div className="pt-12">{footer}</div> : null}
-    </main>
-  );
-}
-
-function RetrievedSentence() {
-  return (
-    <figure className="mt-9 border-l border-rule pl-5">
-      <blockquote className="max-w-[60ch] font-serif text-[17px] leading-[1.65]">
-        <mark className="retrieved-mark bg-transparent">
-          30 days from the invoice date.
-        </mark>
-      </blockquote>
-      <figcaption className="mt-2 text-[13px] text-muted">
-        refund-policy.pdf, page 3
-      </figcaption>
-    </figure>
+        {footer ? (
+          <div className="mt-8 border-t border-border pt-6">{footer}</div>
+        ) : null}
+      </main>
+    </SiteShell>
   );
 }

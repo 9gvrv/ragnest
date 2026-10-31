@@ -31,11 +31,11 @@ export default async function SignupPage({
       title="Start asking your documents."
       intro="Create an account, then upload what you want to search. Every answer comes back with the file and page it came from."
       footer={
-        <p className="text-[15px] text-muted">
+        <p className="text-sm text-muted">
           Already have an account?{" "}
           <Link
             href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"}
-            className="text-action underline-offset-4 hover:underline"
+            className="text-accent underline-offset-4 transition-colors duration-150 hover:underline"
           >
             Sign in
           </Link>

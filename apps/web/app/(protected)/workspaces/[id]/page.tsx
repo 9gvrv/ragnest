@@ -41,7 +41,7 @@ export async function generateMetadata({
 
 function RoleTag({ role }: { role: ApiRole }) {
   return (
-    <span className="inline-block rounded-[3px] border border-rule px-1.5 py-0.5 text-[12px] leading-normal text-muted">
+    <span className="inline-flex items-center rounded-md border border-border bg-foreground/5 px-2 py-0.5 font-mono text-xs leading-normal text-muted">
       {role}
     </span>
   );
@@ -94,31 +94,31 @@ export default async function WorkspacePage({
   const hasRemovableMember = members.some(canRemove);
 
   return (
-    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
       <header>
         <Link
           href="/"
-          className="text-[13px] font-medium tracking-[0.08em] text-action underline-offset-4 hover:underline"
+          className="text-sm font-semibold tracking-tight text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
         >
           Ragnest
         </Link>
-        <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-[1.1] tracking-[-0.02em]">
+        <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
           {workspace.name}
         </h1>
-        <p className="mt-3 text-[13px] text-muted">
+        <p className="mt-3 text-sm text-muted">
           Created {dateFormat.format(parseApiDate(workspace.created_at))}
         </p>
       </header>
 
       <section aria-labelledby="members-heading" className="mt-12">
-        <div className="flex items-baseline justify-between border-b border-rule pb-2">
+        <div className="flex items-baseline justify-between border-b border-border pb-2">
           <h2
             id="members-heading"
-            className="text-[13px] font-medium tracking-[0.08em] text-muted"
+            className="text-sm font-semibold text-foreground"
           >
             Members
           </h2>
-          <span className="text-[13px] text-muted tabular-nums">
+          <span className="font-mono text-xs text-muted tabular-nums">
             {members.length}
           </span>
         </div>
@@ -126,40 +126,40 @@ export default async function WorkspacePage({
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-rule text-[13px] text-muted">
-                <th scope="col" className="py-2 font-normal">
+              <tr className="border-b border-border text-xs text-muted">
+                <th scope="col" className="py-2 font-medium">
                   Member
                 </th>
-                <th scope="col" className="py-2 font-normal">
+                <th scope="col" className="py-2 font-medium">
                   Role
                 </th>
-                <th scope="col" className="py-2 font-normal">
+                <th scope="col" className="py-2 font-medium">
                   Joined
                 </th>
                 {hasRemovableMember ? (
-                  <th scope="col" className="py-2 text-right font-normal">
+                  <th scope="col" className="py-2 text-right font-medium">
                     <span className="sr-only">Actions</span>
                   </th>
                 ) : null}
               </tr>
             </thead>
-            <tbody className="divide-y divide-rule">
+            <tbody className="divide-y divide-border">
               {members.map((member) => (
                 <tr key={member.user_id}>
-                  <td className="py-4 pr-4 text-[15px] break-all">
+                  <td className="py-3 pr-4 text-sm break-all">
                     {member.email}
                     {member.user_id === me.id ? (
-                      <span className="ml-2 text-[13px] text-muted">you</span>
+                      <span className="ml-2 text-xs text-muted">you</span>
                     ) : null}
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-3 pr-4">
                     <RoleTag role={member.role} />
                   </td>
-                  <td className="py-4 pr-4 text-[13px] whitespace-nowrap text-muted">
+                  <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted">
                     {dateFormat.format(parseApiDate(member.joined_at))}
                   </td>
                   {hasRemovableMember ? (
-                    <td className="py-4 text-right">
+                    <td className="py-3 text-right">
                       {canRemove(member) ? (
                         <RemoveMemberButton
                           workspaceId={workspace.id}
@@ -180,15 +180,15 @@ export default async function WorkspacePage({
         <section aria-labelledby="invite-heading" className="mt-12">
           <h2
             id="invite-heading"
-            className="text-[13px] font-medium tracking-[0.08em] text-muted"
+            className="text-sm font-semibold text-foreground"
           >
             Invite someone
           </h2>
-          <p className="mt-3 max-w-[55ch] font-serif text-[17px] leading-[1.65] text-muted">
+          <p className="mt-3 max-w-prose text-sm leading-6 text-muted">
             Ragnest doesn&apos;t send email yet. Create a link and send it
             yourself.
           </p>
-          <div className="mt-5">
+          <div className="mt-4">
             <InviteForm workspaceId={workspace.id} />
           </div>
         </section>
@@ -197,19 +197,19 @@ export default async function WorkspacePage({
       {myRole === "creator" ? (
         <section
           aria-labelledby="delete-heading"
-          className="mt-16 border-t border-rule pt-8"
+          className="mt-16 border-t border-border pt-8"
         >
           <h2
             id="delete-heading"
-            className="text-[13px] font-medium tracking-[0.08em] text-muted"
+            className="text-sm font-semibold text-foreground"
           >
             Delete this workspace
           </h2>
-          <p className="mt-3 max-w-[55ch] font-serif text-[17px] leading-[1.65] text-muted">
+          <p className="mt-3 max-w-prose text-sm leading-6 text-muted">
             Everything inside goes with it, for every member. This can&apos;t be
             undone.
           </p>
-          <div className="mt-5">
+          <div className="mt-4">
             <DeleteWorkspaceButton
               workspaceId={workspace.id}
               workspaceName={workspace.name}
@@ -223,20 +223,20 @@ export default async function WorkspacePage({
 
 function NoAccess() {
   return (
-    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
-      <p className="text-[13px] font-medium tracking-[0.08em] text-action">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
+      <p className="text-sm font-semibold tracking-tight text-foreground">
         Ragnest
       </p>
-      <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-[1.1] tracking-[-0.02em]">
+      <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
         You&apos;re not a member of this workspace.
       </h1>
-      <p className="mt-5 max-w-[60ch] font-serif text-[17px] leading-[1.65] text-muted">
+      <p className="mt-4 max-w-prose text-base leading-7 text-muted">
         Ask whoever invited you for a new link, or go back to the workspaces you
         do belong to.
       </p>
       <Link
         href="/"
-        className="mt-8 text-[15px] text-action underline-offset-4 hover:underline"
+        className="mt-8 text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
       >
         Back to your workspaces
       </Link>

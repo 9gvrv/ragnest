@@ -58,12 +58,12 @@ export function RemoveMemberButton({
         onClick={remove}
         disabled={pending}
         aria-label={`Remove ${email} from this workspace`}
-        className="text-[13px] text-danger underline-offset-4 hover:underline disabled:opacity-60"
+        className="text-sm text-muted transition-colors duration-150 hover:text-danger disabled:opacity-50"
       >
         {pending ? "Removing…" : "Remove"}
       </button>
       {failure ? (
-        <span role="alert" className="text-right text-[12px] text-danger">
+        <span role="alert" className="text-right text-xs text-danger">
           {failure}
         </span>
       ) : null}

@@ -31,13 +31,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       title="Welcome back."
       intro="Sign in to get back to your workspaces and the documents in them."
       footer={
-        <p className="text-[15px] text-muted">
+        <p className="text-sm text-muted">
           New to Ragnest?{" "}
           <Link
             href={
               next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"
             }
-            className="text-action underline-offset-4 hover:underline"
+            className="text-accent underline-offset-4 transition-colors duration-150 hover:underline"
           >
             Create an account
           </Link>

@@ -39,15 +39,15 @@ export default async function WorkspacesPage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-136 flex-1 flex-col px-6 pt-[14vh] pb-20">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
       <header>
-        <p className="text-[13px] font-medium tracking-[0.08em] text-action">
+        <p className="text-sm font-semibold tracking-tight text-foreground">
           Ragnest
         </p>
-        <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,3rem)] leading-[1.1] tracking-[-0.02em]">
+        <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
           Your workspaces.
         </h1>
-        <p className="mt-5 max-w-[60ch] font-serif text-[17px] leading-[1.65] text-muted">
+        <p className="mt-4 max-w-prose text-base leading-7 text-muted">
           Each workspace holds its own documents. Start one, then invite the
           people who should be able to search it.
         </p>
@@ -56,44 +56,44 @@ export default async function WorkspacesPage() {
       {pending.length > 0 ? (
         <Link
           href="/invitations"
-          className="group mt-10 flex items-baseline gap-3 border-y border-rule py-4 text-[15px] transition-colors hover:text-action"
+          className="group mt-10 flex items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3 text-sm transition-colors duration-150 hover:border-control"
         >
-          <span aria-hidden className="size-2 shrink-0 bg-saffron" />
+          <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-accent" />
           <span>
             You have {pending.length} pending invitation
             {pending.length === 1 ? "" : "s"}.
           </span>
-          <span className="ml-auto shrink-0 text-action underline-offset-4 group-hover:underline">
+          <span className="ml-auto shrink-0 text-accent group-hover:underline">
             Review
           </span>
         </Link>
       ) : null}
 
       <section aria-labelledby="workspaces-heading" className="mt-12">
-        <div className="flex items-baseline justify-between border-b border-rule pb-2">
+        <div className="flex items-baseline justify-between border-b border-border pb-2">
           <h2
             id="workspaces-heading"
-            className="text-[13px] font-medium tracking-[0.08em] text-muted"
+            className="text-sm font-semibold text-foreground"
           >
             Workspaces
           </h2>
-          <span className="text-[13px] text-muted tabular-nums">
+          <span className="font-mono text-xs text-muted tabular-nums">
             {workspaces.length}
           </span>
         </div>
 
         {workspaces.length > 0 ? (
-          <ul className="divide-y divide-rule">
+          <ul className="divide-y divide-border">
             {workspaces.map((workspace) => (
               <li key={workspace.id}>
                 <Link
                   href={`/workspaces/${workspace.id}`}
-                  className="group flex items-baseline justify-between gap-6 py-5"
+                  className="group flex items-baseline justify-between gap-6 py-4"
                 >
-                  <span className="font-serif text-[22px] leading-tight group-hover:text-action">
+                  <span className="text-base font-medium transition-colors duration-150 group-hover:text-accent">
                     {workspace.name}
                   </span>
-                  <span className="shrink-0 text-[13px] text-muted">
+                  <span className="shrink-0 text-sm text-muted">
                     Since {dateFormat.format(parseApiDate(workspace.created_at))}
                   </span>
                 </Link>
@@ -101,26 +101,26 @@ export default async function WorkspacesPage() {
             ))}
           </ul>
         ) : (
-          <p className="py-8 font-serif text-[17px] leading-[1.65] text-muted">
+          <p className="py-8 text-sm text-muted">
             No workspaces yet. Create one to get started.
           </p>
         )}
       </section>
 
       <section aria-labelledby="create-heading" className="mt-12">
-        <h2 id="create-heading" className="text-[13px] font-medium tracking-[0.08em] text-muted">
+        <h2 id="create-heading" className="text-sm font-semibold text-foreground">
           New workspace
         </h2>
-        <div className="mt-5">
+        <div className="mt-4">
           <CreateWorkspaceForm />
         </div>
       </section>
 
-      <footer className="mt-16 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-rule pt-6">
+      <footer className="mt-16 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-border pt-6">
         <SignOut />
         <Link
           href="/account"
-          className="text-[15px] text-action underline-offset-4 hover:underline"
+          className="text-sm text-accent underline-offset-4 transition-colors duration-150 hover:underline"
         >
           Your account
         </Link>

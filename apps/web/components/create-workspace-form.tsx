@@ -64,7 +64,7 @@ export function CreateWorkspaceForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="max-w-[36ch] space-y-5">
+    <form onSubmit={onSubmit} noValidate className="max-w-sm space-y-5">
       <Field
         label="Workspace name"
         name="name"
@@ -75,7 +75,7 @@ export function CreateWorkspaceForm() {
       />
 
       {failure ? (
-        <p role="alert" className="text-[13px] text-danger">
+        <p role="alert" className="text-sm text-danger">
           {failure.detail}
         </p>
       ) : null}

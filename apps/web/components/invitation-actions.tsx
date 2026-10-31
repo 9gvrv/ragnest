@@ -64,7 +64,7 @@ export function InvitationActions({ token }: { token: string }) {
           type="button"
           onClick={() => run("decline")}
           disabled={pending !== null}
-          className="text-[13px] text-muted underline-offset-4 hover:text-ink hover:underline disabled:opacity-60"
+          className="text-sm text-muted underline-offset-4 transition-colors duration-150 hover:text-foreground hover:underline disabled:opacity-50"
         >
           {pending === "decline" ? "Declining…" : "Decline"}
         </button>
@@ -78,7 +78,7 @@ export function InvitationActions({ token }: { token: string }) {
         </Button>
       </div>
       {failure ? (
-        <p role="alert" className="text-right text-[13px] text-danger">
+        <p role="alert" className="text-right text-sm text-danger">
           {failure}
         </p>
       ) : null}
