@@ -1,0 +1,69 @@
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
+import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
+import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
+import type { ApiRole, ApiUser, ApiWorkspace } from "@/lib/api";
+
+type WorkspaceShellProps = {
+  workspace: ApiWorkspace;
+  me: ApiUser;
+  myRole: ApiRole;
+  children: ReactNode;
+};
+
+export function WorkspaceShell({
+  workspace,
+  me,
+  myRole,
+  children,
+}: WorkspaceShellProps) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      setMobileOpen(false);
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
+
+  return (
+    <div className="flex h-full min-h-0">
+      {mobileOpen ? (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-30 bg-background/70 lg:hidden"
+        />
+      ) : null}
+
+      <WorkspaceSidebar
+        workspace={workspace}
+        me={me}
+        myRole={myRole}
+        open={mobileOpen}
+        collapsed={collapsed}
+        onClose={() => setMobileOpen(false)}
+        onCollapse={() => setCollapsed(true)}
+      />
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <WorkspaceTopbar
+          workspace={workspace}
+          collapsed={collapsed}
+          onOpenMobile={() => setMobileOpen(true)}
+          onExpand={() => setCollapsed(false)}
+        />
+        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+      </div>
+    </div>
+  );
+}

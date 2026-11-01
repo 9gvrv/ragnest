@@ -6,6 +6,7 @@ import { DeleteWorkspaceButton } from "@/components/delete-workspace-button";
 import { InviteForm } from "@/components/invite-form";
 import { RemoveMemberButton } from "@/components/remove-member-button";
 import { UploadDocumentForm } from "@/components/upload-document-form";
+import { WorkspaceShell } from "@/components/workspace/workspace-shell";
 import {
   ApiError,
   getMe,
@@ -117,8 +118,9 @@ export default async function WorkspacePage({
       : "text-muted transition-colors duration-150 hover:text-foreground";
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
-      <header>
+    <WorkspaceShell workspace={workspace} me={me} myRole={myRole}>
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-16 pb-20">
+        <header>
         <Link
           href="/workspaces"
           className="text-sm font-semibold tracking-tight text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
@@ -359,7 +361,8 @@ export default async function WorkspacePage({
           </div>
         </section>
       ) : null}
-    </main>
+      </main>
+    </WorkspaceShell>
   );
 }
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function SignOut() {
+export function SignOut({ className }: { className?: string }) {
   const [pending, setPending] = useState(false);
 
   async function signOut() {
@@ -18,7 +18,12 @@ export function SignOut() {
       type="button"
       onClick={signOut}
       disabled={pending}
-      className="text-sm text-muted transition-colors duration-150 hover:text-foreground disabled:opacity-50"
+      className={[
+        "text-sm text-muted transition-colors duration-150 hover:text-foreground disabled:opacity-50",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {pending ? "Signing out…" : "Sign out"}
     </button>

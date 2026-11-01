@@ -5,9 +5,11 @@ import { useState } from "react";
 export function DeleteWorkspaceButton({
   workspaceId,
   workspaceName,
+  variant = "default",
 }: {
   workspaceId: string;
   workspaceName: string;
+  variant?: "default" | "menu";
 }) {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -58,12 +60,16 @@ export function DeleteWorkspaceButton({
         type="button"
         onClick={remove}
         disabled={pending}
-        className="inline-flex h-9 items-center justify-center rounded-md border border-border px-4 text-sm font-medium text-danger transition-colors duration-150 hover:border-danger/60 hover:bg-danger/5 disabled:cursor-not-allowed disabled:opacity-50"
+        className={
+          variant === "menu"
+            ? "flex w-full items-center rounded-md px-2.5 py-2 text-left text-sm text-danger transition-colors duration-150 hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-50"
+            : "inline-flex h-9 items-center justify-center rounded-md border border-border px-4 text-sm font-medium text-danger transition-colors duration-150 hover:border-danger/60 hover:bg-danger/5 disabled:cursor-not-allowed disabled:opacity-50"
+        }
       >
         {pending ? "Deleting…" : "Delete workspace"}
       </button>
       {failure ? (
-        <p role="alert" className="mt-2 text-sm text-danger">
+        <p role="alert" className="mt-2 px-2.5 text-xs text-danger">
           {failure}
         </p>
       ) : null}
