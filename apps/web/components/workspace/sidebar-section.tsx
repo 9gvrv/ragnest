@@ -51,7 +51,7 @@ export function SidebarSection({
           <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
             {title}
           </span>
-          <span className="rounded-full border border-border bg-elevated px-1.5 py-0.5 font-mono text-[11px] leading-none tabular-nums text-muted">
+          <span className="rounded-full border border-border bg-elevated px-1.5 py-0.5 font-mono text-xs leading-none tabular-nums text-muted">
             {count}
           </span>
         </button>

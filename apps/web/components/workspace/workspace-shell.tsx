@@ -43,6 +43,13 @@ export function WorkspaceShell({
   const [uploadRequest, setUploadRequest] = useState(0);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
+  const sidebarCloseRef = useRef<HTMLButtonElement>(null);
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null);
+
+  function closeMobile() {
+    setMobileOpen(false);
+    mobileTriggerRef.current?.focus();
+  }
 
   function handleNewChat() {
     setMobileOpen(false);
@@ -52,7 +59,7 @@ export function WorkspaceShell({
   function requestUpload() {
     setDocumentsOpen(true);
     setCollapsed(false);
-    setMobileOpen(true);
+    if (window.matchMedia("(max-width: 1023px)").matches) setMobileOpen(true);
     setUploadRequest((value) => value + 1);
   }
 
@@ -63,10 +70,13 @@ export function WorkspaceShell({
 
   useEffect(() => {
     if (!mobileOpen) return;
+    sidebarCloseRef.current?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape" || event.defaultPrevented) return;
+      if (document.querySelector("dialog[open]")) return;
       setMobileOpen(false);
+      mobileTriggerRef.current?.focus();
     }
 
     document.addEventListener("keydown", onKeyDown);
@@ -80,7 +90,7 @@ export function WorkspaceShell({
           type="button"
           tabIndex={-1}
           aria-hidden="true"
-          onClick={() => setMobileOpen(false)}
+          onClick={closeMobile}
           className="fixed inset-0 z-30 bg-background/70 lg:hidden"
         />
       ) : null}
@@ -100,9 +110,10 @@ export function WorkspaceShell({
         chats={chats}
         onNewChat={handleNewChat}
         uploadButtonRef={uploadButtonRef}
+        closeButtonRef={sidebarCloseRef}
         open={mobileOpen}
         collapsed={collapsed}
-        onClose={() => setMobileOpen(false)}
+        onClose={closeMobile}
         onCollapse={() => setCollapsed(true)}
       />
 
@@ -110,6 +121,7 @@ export function WorkspaceShell({
         <WorkspaceTopbar
           workspace={workspace}
           collapsed={collapsed}
+          triggerRef={mobileTriggerRef}
           onOpenMobile={() => setMobileOpen(true)}
           onExpand={() => setCollapsed(false)}
         />

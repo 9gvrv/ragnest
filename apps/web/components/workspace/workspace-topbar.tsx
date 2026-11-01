@@ -1,5 +1,6 @@
 "use client";
 
+import type { RefObject } from "react";
 import {
   MenuIcon,
   PanelLeftIcon,
@@ -9,6 +10,7 @@ import type { ApiWorkspace } from "@/lib/api";
 type WorkspaceTopbarProps = {
   workspace: ApiWorkspace;
   collapsed: boolean;
+  triggerRef: RefObject<HTMLButtonElement | null>;
   onOpenMobile: () => void;
   onExpand: () => void;
 };
@@ -16,6 +18,7 @@ type WorkspaceTopbarProps = {
 export function WorkspaceTopbar({
   workspace,
   collapsed,
+  triggerRef,
   onOpenMobile,
   onExpand,
 }: WorkspaceTopbarProps) {
@@ -23,6 +26,7 @@ export function WorkspaceTopbar({
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/80 px-3 backdrop-blur-sm sm:px-5">
       <button
         type="button"
+        ref={triggerRef}
         onClick={onOpenMobile}
         aria-label="Open sidebar"
         className="grid size-9 place-items-center rounded-md text-muted transition-colors duration-150 hover:bg-surface hover:text-foreground lg:hidden"

@@ -10,13 +10,6 @@ export function initialsFromEmail(email: string) {
   return local.slice(0, 2).toUpperCase();
 }
 
-export function initialsFromName(name: string) {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "?";
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
-  return `${words[0][0]}${words[1][0]}`.toUpperCase();
-}
-
 /**
  * Mirrors the API's member-removal rule: a creator may remove admins and
  * members, an admin may remove plain members, nobody removes themselves or the

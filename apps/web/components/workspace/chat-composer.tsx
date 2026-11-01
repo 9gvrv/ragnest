@@ -79,7 +79,7 @@ export function ChatComposer({
               : "Ask a question about your documents"
           }
           aria-describedby={hintId}
-          className="block max-h-[200px] min-h-14 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-base leading-6 text-foreground placeholder:text-muted/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          className="block max-h-[200px] min-h-16 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-base leading-6 text-foreground placeholder:text-muted/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         />
 
         <div className="flex items-center justify-between gap-3 px-3 pb-3">

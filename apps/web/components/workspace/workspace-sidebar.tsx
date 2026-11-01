@@ -39,6 +39,7 @@ type WorkspaceSidebarProps = {
   chats: WorkspaceChat[];
   onNewChat: () => void;
   uploadButtonRef: RefObject<HTMLButtonElement | null>;
+  closeButtonRef: RefObject<HTMLButtonElement | null>;
   open: boolean;
   collapsed: boolean;
   onClose: () => void;
@@ -60,6 +61,7 @@ export function WorkspaceSidebar({
   chats,
   onNewChat,
   uploadButtonRef,
+  closeButtonRef,
   open,
   collapsed,
   onClose,
@@ -112,6 +114,7 @@ export function WorkspaceSidebar({
 
           <button
             type="button"
+            ref={closeButtonRef}
             onClick={onClose}
             aria-label="Close sidebar"
             className="grid size-8 place-items-center rounded-md text-muted transition-colors duration-150 hover:bg-surface hover:text-foreground lg:hidden"
@@ -130,7 +133,7 @@ export function WorkspaceSidebar({
           className="mt-1 inline-flex items-center gap-1 rounded-sm text-xs text-muted transition-colors duration-150 hover:text-foreground"
         >
           <ArrowLeftIcon className="size-3.5" />
-          All workspaces
+          Back to workspaces
         </Link>
       </div>
 
