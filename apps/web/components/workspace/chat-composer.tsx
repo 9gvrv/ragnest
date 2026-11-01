@@ -12,19 +12,24 @@ import { ArrowUpIcon } from "@/components/workspace/icons";
 
 type ChatComposerProps = {
   workspaceName: string;
+  hasDocuments: boolean;
   inputRef: RefObject<HTMLTextAreaElement | null>;
   onSubmitQuestion: (question: string) => void;
+  onUploadRequest: () => void;
 };
 
 export function ChatComposer({
   workspaceName,
+  hasDocuments,
   inputRef,
   onSubmitQuestion,
+  onUploadRequest,
 }: ChatComposerProps) {
   const [value, setValue] = useState("");
   const id = useId();
   const hintId = `${id}-hint`;
-  const canSend = value.trim().length > 0;
+  const disabled = !hasDocuments;
+  const canSend = !disabled && value.trim().length > 0;
 
   useEffect(() => {
     const element = inputRef.current;
@@ -47,38 +52,65 @@ export function ChatComposer({
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="rounded-xl border border-border bg-surface transition-colors duration-150 focus-within:border-accent/60"
-    >
-      <label htmlFor={id} className="sr-only">
-        Ask about {workspaceName}
-      </label>
-      <textarea
-        id={id}
-        ref={inputRef}
-        rows={1}
-        value={value}
-        onChange={(event) => setValue(event.target.value)}
-        onKeyDown={onKeyDown}
-        placeholder="Ask a question about your documents"
-        aria-describedby={hintId}
-        className="block max-h-[200px] min-h-14 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-base leading-6 text-foreground placeholder:text-muted/70 focus-visible:outline-none"
-      />
+    <div>
+      <form
+        onSubmit={submit}
+        className={[
+          "rounded-xl border bg-surface transition-colors duration-150",
+          disabled
+            ? "border-border/70 bg-surface/60"
+            : "border-border focus-within:border-accent/60",
+        ].join(" ")}
+      >
+        <label htmlFor={id} className="sr-only">
+          Ask about {workspaceName}
+        </label>
+        <textarea
+          id={id}
+          ref={inputRef}
+          rows={1}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          onKeyDown={onKeyDown}
+          disabled={disabled}
+          placeholder={
+            disabled
+              ? "Upload a document to start asking questions"
+              : "Ask a question about your documents"
+          }
+          aria-describedby={hintId}
+          className="block max-h-[200px] min-h-14 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-base leading-6 text-foreground placeholder:text-muted/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+        />
 
-      <div className="flex items-center justify-between gap-3 px-3 pb-3">
-        <p id={hintId} className="text-xs leading-5 text-muted">
-          Answers cite the documents in this workspace.
-        </p>
-        <button
-          type="submit"
-          disabled={!canSend}
-          aria-label="Send question"
-          className="grid size-9 shrink-0 place-items-center rounded-lg bg-foreground text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:bg-foreground/10 disabled:text-muted"
-        >
-          <ArrowUpIcon className="size-4" />
-        </button>
-      </div>
-    </form>
+        <div className="flex items-center justify-between gap-3 px-3 pb-3">
+          <p id={hintId} className="text-xs leading-5 text-muted">
+            {disabled
+              ? "Chat is locked until a document is added."
+              : "Answers cite the documents in this workspace."}
+          </p>
+          <button
+            type="submit"
+            disabled={!canSend}
+            aria-label="Send question"
+            className="grid size-9 shrink-0 place-items-center rounded-lg bg-foreground text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:bg-foreground/10 disabled:text-muted"
+          >
+            <ArrowUpIcon className="size-4" />
+          </button>
+        </div>
+      </form>
+
+      {disabled ? (
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-xs leading-5 text-muted">
+          <span>Upload a document to unlock the chat.</span>
+          <button
+            type="button"
+            onClick={onUploadRequest}
+            className="font-medium text-accent underline-offset-4 transition-colors duration-150 hover:underline"
+          >
+            Upload a document
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

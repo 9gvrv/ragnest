@@ -40,6 +40,7 @@ export function WorkspaceShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [membersOpen, setMembersOpen] = useState(true);
+  const [uploadRequest, setUploadRequest] = useState(0);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
 
@@ -47,6 +48,18 @@ export function WorkspaceShell({
     setMobileOpen(false);
     requestAnimationFrame(() => composerRef.current?.focus());
   }
+
+  function requestUpload() {
+    setDocumentsOpen(true);
+    setCollapsed(false);
+    setMobileOpen(true);
+    setUploadRequest((value) => value + 1);
+  }
+
+  useEffect(() => {
+    if (uploadRequest === 0) return;
+    uploadButtonRef.current?.focus();
+  }, [uploadRequest]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -102,8 +115,10 @@ export function WorkspaceShell({
         />
         <ChatArea
           workspaceName={workspace.name}
+          hasDocuments={allDocuments.length > 0}
           messages={messages}
           composerRef={composerRef}
+          onUploadRequest={requestUpload}
         />
       </div>
     </div>

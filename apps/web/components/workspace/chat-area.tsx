@@ -6,14 +6,18 @@ import type { ChatMessage } from "@/lib/chats";
 
 type ChatAreaProps = {
   workspaceName: string;
+  hasDocuments: boolean;
   messages: ChatMessage[];
   composerRef: RefObject<HTMLTextAreaElement | null>;
+  onUploadRequest: () => void;
 };
 
 export function ChatArea({
   workspaceName,
+  hasDocuments,
   messages,
   composerRef,
+  onUploadRequest,
 }: ChatAreaProps) {
   function onSubmitQuestion(question: string) {
     // TODO: wire to backend
@@ -30,15 +34,19 @@ export function ChatArea({
                 What would you like to know about {workspaceName}?
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Ragnest answers only from the documents in this workspace.
+                {hasDocuments
+                  ? "Ragnest answers only from the documents in this workspace."
+                  : "Add a document in the sidebar to unlock the chat."}
               </p>
             </div>
 
             <div className="mt-8">
               <ChatComposer
                 workspaceName={workspaceName}
+                hasDocuments={hasDocuments}
                 inputRef={composerRef}
                 onSubmitQuestion={onSubmitQuestion}
+                onUploadRequest={onUploadRequest}
               />
             </div>
           </div>
@@ -75,8 +83,10 @@ export function ChatArea({
         <div className="mx-auto w-full max-w-[780px]">
           <ChatComposer
             workspaceName={workspaceName}
+            hasDocuments={hasDocuments}
             inputRef={composerRef}
             onSubmitQuestion={onSubmitQuestion}
+            onUploadRequest={onUploadRequest}
           />
         </div>
       </div>
