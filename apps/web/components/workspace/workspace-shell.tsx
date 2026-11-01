@@ -5,6 +5,7 @@ import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
 import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
 import type {
   ApiDocument,
+  ApiMember,
   ApiRole,
   ApiUser,
   ApiWorkspace,
@@ -17,6 +18,7 @@ type WorkspaceShellProps = {
   allDocuments: ApiDocument[];
   documents: ApiDocument[];
   mine: boolean;
+  members: ApiMember[];
   children: ReactNode;
 };
 
@@ -27,11 +29,13 @@ export function WorkspaceShell({
   allDocuments,
   documents,
   mine,
+  members,
   children,
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [documentsOpen, setDocumentsOpen] = useState(true);
+  const [membersOpen, setMembersOpen] = useState(true);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -67,6 +71,9 @@ export function WorkspaceShell({
         mine={mine}
         documentsOpen={documentsOpen}
         onToggleDocuments={() => setDocumentsOpen((value) => !value)}
+        members={members}
+        membersOpen={membersOpen}
+        onToggleMembers={() => setMembersOpen((value) => !value)}
         uploadButtonRef={uploadButtonRef}
         open={mobileOpen}
         collapsed={collapsed}

@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { UserMinusIcon } from "@/components/workspace/icons";
 
 export function RemoveMemberButton({
   workspaceId,
   userId,
   email,
+  variant = "text",
 }: {
   workspaceId: string;
   userId: string;
   email: string;
+  variant?: "text" | "icon";
 }) {
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -52,18 +55,35 @@ export function RemoveMemberButton({
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="relative flex flex-col items-end gap-1">
       <button
         type="button"
         onClick={remove}
         disabled={pending}
         aria-label={`Remove ${email} from this workspace`}
-        className="text-sm text-muted transition-colors duration-150 hover:text-danger disabled:opacity-50"
+        className={
+          variant === "icon"
+            ? "grid size-7 place-items-center rounded-md text-muted transition-colors duration-150 hover:bg-elevated hover:text-danger disabled:opacity-50"
+            : "text-sm text-muted transition-colors duration-150 hover:text-danger disabled:opacity-50"
+        }
       >
-        {pending ? "Removing…" : "Remove"}
+        {variant === "icon" ? (
+          <UserMinusIcon className="size-3.5" />
+        ) : pending ? (
+          "Removing…"
+        ) : (
+          "Remove"
+        )}
       </button>
       {failure ? (
-        <span role="alert" className="text-right text-xs text-danger">
+        <span
+          role="alert"
+          className={
+            variant === "icon"
+              ? "absolute top-full right-0 z-10 mt-1 w-40 rounded-md border border-border bg-background p-2 text-left text-xs text-danger"
+              : "text-right text-xs text-danger"
+          }
+        >
           {failure}
         </span>
       ) : null}

@@ -11,10 +11,12 @@ import {
   PanelLeftIcon,
   XIcon,
 } from "@/components/workspace/icons";
+import { MembersSection } from "@/components/workspace/members-section";
 import { Menu } from "@/components/workspace/menu";
 import { UserMenu } from "@/components/workspace/user-menu";
 import type {
   ApiDocument,
+  ApiMember,
   ApiRole,
   ApiUser,
   ApiWorkspace,
@@ -29,6 +31,9 @@ type WorkspaceSidebarProps = {
   mine: boolean;
   documentsOpen: boolean;
   onToggleDocuments: () => void;
+  members: ApiMember[];
+  membersOpen: boolean;
+  onToggleMembers: () => void;
   uploadButtonRef: RefObject<HTMLButtonElement | null>;
   open: boolean;
   collapsed: boolean;
@@ -45,6 +50,9 @@ export function WorkspaceSidebar({
   mine,
   documentsOpen,
   onToggleDocuments,
+  members,
+  membersOpen,
+  onToggleMembers,
   uploadButtonRef,
   open,
   collapsed,
@@ -133,6 +141,14 @@ export function WorkspaceSidebar({
             open={documentsOpen}
             onToggle={onToggleDocuments}
             uploadButtonRef={uploadButtonRef}
+          />
+          <MembersSection
+            workspaceId={workspace.id}
+            members={members}
+            me={me}
+            myRole={myRole}
+            open={membersOpen}
+            onToggle={onToggleMembers}
           />
         </div>
         <div className="min-h-0 flex-1" />

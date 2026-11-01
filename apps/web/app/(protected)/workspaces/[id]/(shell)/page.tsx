@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { DeleteWorkspaceButton } from "@/components/delete-workspace-button";
-import { InviteForm } from "@/components/invite-form";
-import { RemoveMemberButton } from "@/components/remove-member-button";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
 import {
   ApiError,
@@ -11,8 +8,6 @@ import {
   getWorkspace,
   listDocuments,
   listMembers,
-  type ApiMember,
-  type ApiRole,
 } from "@/lib/api";
 import { parseApiDate } from "@/lib/dates";
 import { getSessionToken } from "@/lib/session";
@@ -39,14 +34,6 @@ export async function generateMetadata({
   } catch {
     return { title: "Workspace — Ragnest" };
   }
-}
-
-function RoleTag({ role }: { role: ApiRole }) {
-  return (
-    <span className="inline-flex items-center rounded-md border border-border bg-foreground/5 px-2 py-0.5 font-mono text-xs leading-normal text-muted">
-      {role}
-    </span>
-  );
 }
 
 export default async function WorkspacePage({
@@ -92,16 +79,6 @@ export default async function WorkspacePage({
   const myRole = members.find((member) => member.user_id === me.id)?.role;
   if (!myRole) return <NoAccess />;
 
-  const canInvite = myRole === "creator" || myRole === "admin";
-  const canRemove = (member: ApiMember) => {
-    if (member.user_id === me.id) return false; // never yourself
-    if (member.role === "creator") return false; // never the creator
-    if (myRole === "creator") return true;
-    if (myRole === "admin") return member.role === "member";
-    return false; // plain members manage nobody
-  };
-  const hasRemovableMember = members.some(canRemove);
-
   const documents = mine
     ? allDocuments.filter((document) => document.uploaded_by === me.id)
     : allDocuments;
@@ -114,6 +91,7 @@ export default async function WorkspacePage({
       allDocuments={allDocuments}
       documents={documents}
       mine={mine}
+      members={members}
     >
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-16 pb-20">
         <header>
@@ -130,114 +108,6 @@ export default async function WorkspacePage({
           Created {dateFormat.format(parseApiDate(workspace.created_at))}
         </p>
       </header>
-
-      <section aria-labelledby="members-heading" className="mt-12">
-        <div className="flex items-baseline justify-between border-b border-border pb-2">
-          <h2
-            id="members-heading"
-            className="text-sm font-semibold text-foreground"
-          >
-            Members
-          </h2>
-          <span className="font-mono text-xs text-muted tabular-nums">
-            {members.length}
-          </span>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-border text-xs text-muted">
-                <th scope="col" className="py-2 font-medium">
-                  Member
-                </th>
-                <th scope="col" className="py-2 font-medium">
-                  Role
-                </th>
-                <th scope="col" className="py-2 font-medium">
-                  Joined
-                </th>
-                {hasRemovableMember ? (
-                  <th scope="col" className="py-2 text-right font-medium">
-                    <span className="sr-only">Actions</span>
-                  </th>
-                ) : null}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {members.map((member) => (
-                <tr key={member.user_id}>
-                  <td className="py-3 pr-4 text-sm break-all">
-                    {member.email}
-                    {member.user_id === me.id ? (
-                      <span className="ml-2 text-xs text-muted">you</span>
-                    ) : null}
-                  </td>
-                  <td className="py-3 pr-4">
-                    <RoleTag role={member.role} />
-                  </td>
-                  <td className="py-3 pr-4 text-sm whitespace-nowrap text-muted">
-                    {dateFormat.format(parseApiDate(member.joined_at))}
-                  </td>
-                  {hasRemovableMember ? (
-                    <td className="py-3 text-right">
-                      {canRemove(member) ? (
-                        <RemoveMemberButton
-                          workspaceId={workspace.id}
-                          userId={member.user_id}
-                          email={member.email}
-                        />
-                      ) : null}
-                    </td>
-                  ) : null}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {canInvite ? (
-        <section aria-labelledby="invite-heading" className="mt-12">
-          <h2
-            id="invite-heading"
-            className="text-sm font-semibold text-foreground"
-          >
-            Invite someone
-          </h2>
-          <p className="mt-3 max-w-prose text-sm leading-6 text-muted">
-            Ragnest doesn&apos;t send email yet. Create a link and send it
-            yourself.
-          </p>
-          <div className="mt-4">
-            <InviteForm workspaceId={workspace.id} />
-          </div>
-        </section>
-      ) : null}
-
-      {myRole === "creator" ? (
-        <section
-          aria-labelledby="delete-heading"
-          className="mt-16 border-t border-border pt-8"
-        >
-          <h2
-            id="delete-heading"
-            className="text-sm font-semibold text-foreground"
-          >
-            Delete this workspace
-          </h2>
-          <p className="mt-3 max-w-prose text-sm leading-6 text-muted">
-            Everything inside goes with it, for every member. This can&apos;t be
-            undone.
-          </p>
-          <div className="mt-4">
-            <DeleteWorkspaceButton
-              workspaceId={workspace.id}
-              workspaceName={workspace.name}
-            />
-          </div>
-        </section>
-      ) : null}
       </main>
     </WorkspaceShell>
   );
