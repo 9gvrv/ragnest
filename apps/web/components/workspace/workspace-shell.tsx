@@ -38,8 +38,12 @@ export function WorkspaceShell({
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [documentsOpen, setDocumentsOpen] = useState(true);
-  const [membersOpen, setMembersOpen] = useState(true);
+  // An empty workspace opens the secondary sections so the first upload is
+  // obvious; once documents exist, Chats gets the room and they start closed.
+  const [documentsOpen, setDocumentsOpen] = useState(
+    allDocuments.length === 0,
+  );
+  const [membersOpen, setMembersOpen] = useState(allDocuments.length === 0);
   const [uploadRequest, setUploadRequest] = useState(0);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
