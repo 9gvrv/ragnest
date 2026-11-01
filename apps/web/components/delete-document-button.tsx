@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { TrashIcon } from "@/components/workspace/icons";
 import { documentFailure } from "@/lib/documents";
 
 export function DeleteDocumentButton({
@@ -9,6 +11,8 @@ export function DeleteDocumentButton({
   filename,
   backHref,
   align = "end",
+  variant = "text",
+  refreshOnDelete = false,
 }: {
   workspaceId: string;
   documentId: string;
@@ -16,7 +20,11 @@ export function DeleteDocumentButton({
   /** Where to go after the row is gone; defaults to the current page. */
   backHref?: string;
   align?: "start" | "end";
+  variant?: "text" | "icon";
+  /** Re-render the server page in place instead of navigating. */
+  refreshOnDelete?: boolean;
 }) {
+  const router = useRouter();
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
 
@@ -45,6 +53,12 @@ export function DeleteDocumentButton({
       }
 
       if (response.status === 204) {
+        if (refreshOnDelete) {
+          // Re-fetch the server page so the list and the chat gate update
+          // without losing the sidebar's state.
+          router.refresh();
+          return;
+        }
         // Full navigation so no cached document list survives the delete.
         window.location.assign(
           backHref ?? window.location.pathname + window.location.search,
@@ -78,9 +92,19 @@ export function DeleteDocumentButton({
         onClick={remove}
         disabled={pending}
         aria-label={`Delete ${filename}`}
-        className="text-sm text-muted transition-colors duration-150 hover:text-danger disabled:cursor-not-allowed disabled:opacity-50"
+        className={
+          variant === "icon"
+            ? "grid size-7 place-items-center rounded-md text-muted transition-colors duration-150 hover:bg-elevated hover:text-danger disabled:cursor-not-allowed disabled:opacity-50"
+            : "text-sm text-muted transition-colors duration-150 hover:text-danger disabled:cursor-not-allowed disabled:opacity-50"
+        }
       >
-        {pending ? "Deleting…" : "Delete"}
+        {variant === "icon" ? (
+          <TrashIcon className="size-3.5" />
+        ) : pending ? (
+          "Deleting…"
+        ) : (
+          "Delete"
+        )}
       </button>
       {failure ? (
         <p

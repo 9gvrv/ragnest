@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import type { RefObject } from "react";
 import { DeleteWorkspaceButton } from "@/components/delete-workspace-button";
 import { LogoMark } from "@/components/logo";
+import { DocumentsSection } from "@/components/workspace/documents-section";
 import {
   ArrowLeftIcon,
   MoreHorizontalIcon,
@@ -11,12 +13,23 @@ import {
 } from "@/components/workspace/icons";
 import { Menu } from "@/components/workspace/menu";
 import { UserMenu } from "@/components/workspace/user-menu";
-import type { ApiRole, ApiUser, ApiWorkspace } from "@/lib/api";
+import type {
+  ApiDocument,
+  ApiRole,
+  ApiUser,
+  ApiWorkspace,
+} from "@/lib/api";
 
 type WorkspaceSidebarProps = {
   workspace: ApiWorkspace;
   me: ApiUser;
   myRole: ApiRole;
+  allDocumentsCount: number;
+  documents: ApiDocument[];
+  mine: boolean;
+  documentsOpen: boolean;
+  onToggleDocuments: () => void;
+  uploadButtonRef: RefObject<HTMLButtonElement | null>;
   open: boolean;
   collapsed: boolean;
   onClose: () => void;
@@ -27,6 +40,12 @@ export function WorkspaceSidebar({
   workspace,
   me,
   myRole,
+  allDocumentsCount,
+  documents,
+  mine,
+  documentsOpen,
+  onToggleDocuments,
+  uploadButtonRef,
   open,
   collapsed,
   onClose,
@@ -101,7 +120,23 @@ export function WorkspaceSidebar({
         </Link>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col" />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="max-h-[60%] shrink-0 overflow-y-auto">
+          <DocumentsSection
+            workspaceId={workspace.id}
+            documentsPath={`/workspaces/${workspace.id}`}
+            totalCount={allDocumentsCount}
+            documents={documents}
+            mine={mine}
+            myRole={myRole}
+            userId={me.id}
+            open={documentsOpen}
+            onToggle={onToggleDocuments}
+            uploadButtonRef={uploadButtonRef}
+          />
+        </div>
+        <div className="min-h-0 flex-1" />
+      </div>
 
       <footer className="shrink-0 border-t border-border p-2">
         <UserMenu me={me} />

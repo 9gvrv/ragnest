@@ -1,14 +1,22 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
 import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
-import type { ApiRole, ApiUser, ApiWorkspace } from "@/lib/api";
+import type {
+  ApiDocument,
+  ApiRole,
+  ApiUser,
+  ApiWorkspace,
+} from "@/lib/api";
 
 type WorkspaceShellProps = {
   workspace: ApiWorkspace;
   me: ApiUser;
   myRole: ApiRole;
+  allDocuments: ApiDocument[];
+  documents: ApiDocument[];
+  mine: boolean;
   children: ReactNode;
 };
 
@@ -16,10 +24,15 @@ export function WorkspaceShell({
   workspace,
   me,
   myRole,
+  allDocuments,
+  documents,
+  mine,
   children,
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [documentsOpen, setDocumentsOpen] = useState(true);
+  const uploadButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -49,6 +62,12 @@ export function WorkspaceShell({
         workspace={workspace}
         me={me}
         myRole={myRole}
+        allDocumentsCount={allDocuments.length}
+        documents={documents}
+        mine={mine}
+        documentsOpen={documentsOpen}
+        onToggleDocuments={() => setDocumentsOpen((value) => !value)}
+        uploadButtonRef={uploadButtonRef}
         open={mobileOpen}
         collapsed={collapsed}
         onClose={() => setMobileOpen(false)}
