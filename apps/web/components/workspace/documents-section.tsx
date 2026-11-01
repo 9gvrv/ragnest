@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { RefObject } from "react";
 import { DeleteDocumentButton } from "@/components/delete-document-button";
 import { SidebarSection } from "@/components/workspace/sidebar-section";
+import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
 import { UploadDocumentForm } from "@/components/upload-document-form";
 import type { ApiDocument, ApiRole } from "@/lib/api";
 import { canManageDocument, formatBytes, formatCount } from "@/lib/documents";
@@ -41,39 +42,35 @@ export function DocumentsSection({
       open={open}
       onToggle={onToggle}
     >
-      <div className="flex h-full min-h-0 flex-col px-3 pb-3">
-        <div className="shrink-0">
+      <div className="flex h-full min-h-0 flex-col pb-3">
+        <div className="shrink-0 px-3">
           <UploadDocumentForm
             workspaceId={workspaceId}
             buttonRef={uploadButtonRef}
           />
-        </div>
 
-        <div
-          role="group"
-          aria-label="Filter documents"
-          className="mt-3 flex shrink-0 items-center gap-0.5 rounded-md border border-border bg-background p-0.5"
-        >
-          <FilterLink
-            href={documentsPath}
-            active={!mine}
-            label="All"
-          />
-          <FilterLink
-            href={`${documentsPath}?mine=true`}
-            active={mine}
-            label="Mine"
-          />
+          <div
+            role="group"
+            aria-label="Filter documents"
+            className="mt-3 flex items-center gap-0.5 rounded-md border border-border bg-background p-0.5"
+          >
+            <FilterLink href={documentsPath} active={!mine} label="All" />
+            <FilterLink
+              href={`${documentsPath}?mine=true`}
+              active={mine}
+              label="Mine"
+            />
+          </div>
         </div>
 
         {documents.length === 0 ? (
-          <p className="mt-3 shrink-0 px-1 text-xs leading-5 text-muted">
+          <p className="mt-3 shrink-0 px-3 text-xs leading-5 text-muted">
             {mine
               ? "You haven't uploaded any documents in this workspace yet."
               : "No documents yet. Upload one to start chatting."}
           </p>
         ) : (
-          <ul className="mt-3 max-h-[220px] min-h-0 space-y-0.5 overflow-y-auto py-1">
+          <ul className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 py-1`}>
             {documents.map((document) => (
               <li
                 key={document.id}

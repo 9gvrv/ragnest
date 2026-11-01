@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { InviteForm } from "@/components/invite-form";
 import { RemoveMemberButton } from "@/components/remove-member-button";
 import { SidebarSection } from "@/components/workspace/sidebar-section";
+import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
 import { UserPlusIcon, XIcon } from "@/components/workspace/icons";
 import type { ApiMember, ApiRole, ApiUser } from "@/lib/api";
 import { canRemoveMember, initialsFromEmail } from "@/lib/workspace";
@@ -35,30 +36,27 @@ export function MembersSection({
       open={open}
       onToggle={onToggle}
     >
-      <div className="flex h-full min-h-0 flex-col px-3 pb-3">
+      <div className="flex h-full min-h-0 flex-col pb-3">
         {canInvite ? (
-          <button
-            type="button"
-            onClick={() => dialogRef.current?.showModal()}
-            className="flex w-full shrink-0 items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
-          >
-            <span
-              aria-hidden="true"
-              className="grid size-7 shrink-0 place-items-center rounded-md border border-border bg-elevated text-muted"
+          <div className="shrink-0 px-3">
+            <button
+              type="button"
+              onClick={() => dialogRef.current?.showModal()}
+              className="flex h-12 w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
             >
-              <UserPlusIcon className="size-3.5" />
-            </span>
-            Invite member
-          </button>
+              <span
+                aria-hidden="true"
+                className="grid size-7 shrink-0 place-items-center rounded-md border border-border bg-elevated text-muted"
+              >
+                <UserPlusIcon className="size-3.5" />
+              </span>
+              Invite member
+            </button>
+          </div>
         ) : null}
 
         <ul
-          className={[
-            "max-h-[220px] min-h-0 space-y-0.5 overflow-y-auto py-1",
-            canInvite ? "mt-3" : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
+          className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 py-1`}
         >
           {members.map((member) => {
             const isMe = member.user_id === me.id;

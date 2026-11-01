@@ -131,10 +131,10 @@ export function UploadDocumentForm({
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
         className={[
-          "flex w-full items-center gap-2 rounded-lg border border-dashed px-2.5 py-2 text-left transition-colors duration-150 disabled:cursor-wait disabled:opacity-70",
+          "flex h-12 w-full items-center gap-2 rounded-lg border border-dashed px-2.5 text-left transition-colors duration-150 disabled:cursor-wait disabled:opacity-70",
           dragging
             ? "border-accent bg-accent/5"
-            : "border-control hover:border-foreground/50 hover:bg-surface",
+            : "border-border hover:border-control hover:bg-surface",
         ].join(" ")}
       >
         <span

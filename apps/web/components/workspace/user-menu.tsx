@@ -15,7 +15,7 @@ export function UserMenu({ me }: { me: ApiUser }) {
     <Menu
       label="Account menu"
       side="top"
-      triggerClassName="flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors duration-150 hover:bg-surface"
+      triggerClassName="flex w-full items-center gap-2 rounded-md px-1 py-1.5 text-left transition-colors duration-150 hover:bg-surface"
       trigger={
         <>
           <span

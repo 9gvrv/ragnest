@@ -3,6 +3,15 @@
 import { useId, type ReactNode } from "react";
 import { ChevronDownIcon } from "@/components/workspace/icons";
 
+/** The count pill shared by every sidebar section header. */
+export function SectionCount({ count }: { count: number }) {
+  return (
+    <span className="shrink-0 rounded-full border border-border bg-elevated px-1.5 py-0.5 font-mono text-xs leading-none tabular-nums text-muted">
+      {count}
+    </span>
+  );
+}
+
 type SidebarSectionProps = {
   title: string;
   count: number;
@@ -42,7 +51,7 @@ export function SidebarSection({
           aria-expanded={open}
           aria-controls={contentId}
           onClick={onToggle}
-          className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-surface"
+          className="flex h-8 w-full items-center gap-2 px-3 text-left transition-colors duration-150 hover:bg-surface"
         >
           <ChevronDownIcon
             className={[
@@ -53,9 +62,7 @@ export function SidebarSection({
           <span className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
             {title}
           </span>
-          <span className="rounded-full border border-border bg-elevated px-1.5 py-0.5 font-mono text-xs leading-none tabular-nums text-muted">
-            {count}
-          </span>
+          <SectionCount count={count} />
         </button>
       </h2>
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { MessageIcon, PlusIcon } from "@/components/workspace/icons";
+import { SectionCount } from "@/components/workspace/sidebar-section";
+import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
 import type { WorkspaceChat } from "@/lib/chats";
 import { parseApiDate } from "@/lib/dates";
 
@@ -25,23 +27,22 @@ export function ChatsSection({
       aria-labelledby="chats-heading"
       className="flex min-h-0 flex-[1_1_160px] flex-col"
     >
-      <div className="flex shrink-0 items-center justify-between gap-2 px-3 pt-3">
+      <div className="flex h-8 shrink-0 items-center gap-2 px-3">
+        <span aria-hidden="true" className="size-3.5 shrink-0" />
         <h2
           id="chats-heading"
-          className="text-sm font-semibold text-foreground"
+          className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground"
         >
           Chats
         </h2>
-        <span className="font-mono text-xs text-muted tabular-nums">
-          {chats.length}
-        </span>
+        <SectionCount count={chats.length} />
       </div>
 
       <div className="shrink-0 px-3 pt-2">
         <button
           type="button"
           onClick={onNewChat}
-          className="flex w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
+          className="flex h-12 w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
         >
           <span
             aria-hidden="true"
@@ -53,7 +54,7 @@ export function ChatsSection({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
+      <div className={`${sidebarScroll} flex-1 px-2 py-2`}>
         {chats.length === 0 ? (
           <p className="px-1 py-2 text-xs leading-5 text-muted">
             No chats yet. Ask a question to start one.

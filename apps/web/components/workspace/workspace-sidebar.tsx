@@ -76,10 +76,10 @@ export function WorkspaceSidebar({
         collapsed ? "lg:hidden" : "",
       ].join(" ")}
     >
-      <div className="flex h-14 shrink-0 items-center gap-1 border-b border-border px-2.5">
+      <div className="flex h-14 shrink-0 items-center gap-1 border-b border-border px-2">
         <Link
           href="/workspaces"
-          className="flex min-w-0 items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors duration-150 hover:bg-surface"
+          className="flex min-w-0 items-center gap-2 rounded-md px-1 py-1.5 transition-colors duration-150 hover:bg-surface"
         >
           <LogoMark />
           <span className="truncate text-sm font-semibold tracking-tight text-foreground">
@@ -124,7 +124,7 @@ export function WorkspaceSidebar({
         </div>
       </div>
 
-      <div className="shrink-0 px-4 pt-4 pb-3">
+      <div className="shrink-0 px-3 pt-4 pb-3">
         <p className="truncate text-base font-semibold tracking-[-0.01em] text-foreground">
           {workspace.name}
         </p>
@@ -163,7 +163,7 @@ export function WorkspaceSidebar({
         <ChatsSection chats={chats} onNewChat={onNewChat} />
       </div>
 
-      <footer className="shrink-0 border-t border-border p-2">
+      <footer className="shrink-0 border-t border-border px-2 py-2">
         <UserMenu me={me} />
       </footer>
     </aside>
