@@ -35,12 +35,12 @@ export function MembersSection({
       open={open}
       onToggle={onToggle}
     >
-      <div className="px-3 pb-3">
+      <div className="flex h-full min-h-0 flex-col px-3 pb-3">
         {canInvite ? (
           <button
             type="button"
             onClick={() => dialogRef.current?.showModal()}
-            className="flex w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
+            className="flex w-full shrink-0 items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-2 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
           >
             <span
               aria-hidden="true"
@@ -54,7 +54,7 @@ export function MembersSection({
 
         <ul
           className={[
-            "max-h-56 space-y-0.5 overflow-y-auto",
+            "max-h-[220px] min-h-0 space-y-0.5 overflow-y-auto py-1",
             canInvite ? "mt-3" : "",
           ]
             .filter(Boolean)

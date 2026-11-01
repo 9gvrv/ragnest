@@ -137,29 +137,29 @@ export function WorkspaceSidebar({
         </Link>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="max-h-[60%] shrink-0 overflow-y-auto">
-          <DocumentsSection
-            workspaceId={workspace.id}
-            documentsPath={`/workspaces/${workspace.id}`}
-            totalCount={allDocumentsCount}
-            documents={documents}
-            mine={mine}
-            myRole={myRole}
-            userId={me.id}
-            open={documentsOpen}
-            onToggle={onToggleDocuments}
-            uploadButtonRef={uploadButtonRef}
-          />
-          <MembersSection
-            workspaceId={workspace.id}
-            members={members}
-            me={me}
-            myRole={myRole}
-            open={membersOpen}
-            onToggle={onToggleMembers}
-          />
-        </div>
+      {/* One scroll model: Documents and Members are capped, shrinkable blocks;
+          Chats takes the remaining height and scrolls on its own. */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <DocumentsSection
+          workspaceId={workspace.id}
+          documentsPath={`/workspaces/${workspace.id}`}
+          totalCount={allDocumentsCount}
+          documents={documents}
+          mine={mine}
+          myRole={myRole}
+          userId={me.id}
+          open={documentsOpen}
+          onToggle={onToggleDocuments}
+          uploadButtonRef={uploadButtonRef}
+        />
+        <MembersSection
+          workspaceId={workspace.id}
+          members={members}
+          me={me}
+          myRole={myRole}
+          open={membersOpen}
+          onToggle={onToggleMembers}
+        />
         <ChatsSection chats={chats} onNewChat={onNewChat} />
       </div>
 

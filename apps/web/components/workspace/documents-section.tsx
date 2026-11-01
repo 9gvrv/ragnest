@@ -41,16 +41,18 @@ export function DocumentsSection({
       open={open}
       onToggle={onToggle}
     >
-      <div className="px-3 pb-3">
-        <UploadDocumentForm
-          workspaceId={workspaceId}
-          buttonRef={uploadButtonRef}
-        />
+      <div className="flex h-full min-h-0 flex-col px-3 pb-3">
+        <div className="shrink-0">
+          <UploadDocumentForm
+            workspaceId={workspaceId}
+            buttonRef={uploadButtonRef}
+          />
+        </div>
 
         <div
           role="group"
           aria-label="Filter documents"
-          className="mt-3 flex items-center gap-0.5 rounded-md border border-border bg-background p-0.5"
+          className="mt-3 flex shrink-0 items-center gap-0.5 rounded-md border border-border bg-background p-0.5"
         >
           <FilterLink
             href={documentsPath}
@@ -65,13 +67,13 @@ export function DocumentsSection({
         </div>
 
         {documents.length === 0 ? (
-          <p className="mt-3 px-1 text-xs leading-5 text-muted">
+          <p className="mt-3 shrink-0 px-1 text-xs leading-5 text-muted">
             {mine
               ? "You haven't uploaded any documents in this workspace yet."
               : "No documents yet. Upload one to start chatting."}
           </p>
         ) : (
-          <ul className="mt-3 max-h-[38vh] space-y-0.5 overflow-y-auto lg:max-h-64">
+          <ul className="mt-3 max-h-[220px] min-h-0 space-y-0.5 overflow-y-auto py-1">
             {documents.map((document) => (
               <li
                 key={document.id}

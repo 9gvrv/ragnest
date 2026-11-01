@@ -23,7 +23,7 @@ export function ChatsSection({
   return (
     <section
       aria-labelledby="chats-heading"
-      className="flex min-h-0 flex-1 flex-col"
+      className="flex min-h-0 flex-[1_1_160px] flex-col"
     >
       <div className="flex shrink-0 items-center justify-between gap-2 px-3 pt-3">
         <h2

@@ -32,9 +32,11 @@ export function SidebarSection({
   return (
     <section
       aria-labelledby={headingId}
-      className={["border-b border-border", className].filter(Boolean).join(" ")}
+      className={["flex min-h-0 flex-col border-b border-border", className]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <h2 id={headingId}>
+      <h2 id={headingId} className="shrink-0">
         <button
           type="button"
           aria-expanded={open}
@@ -60,11 +62,11 @@ export function SidebarSection({
       <div
         id={contentId}
         className={[
-          "grid transition-[grid-template-rows] duration-200 ease-out",
+          "grid min-h-0 transition-[grid-template-rows] duration-200 ease-out",
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         ].join(" ")}
       >
-        <div className="overflow-hidden" inert={!open}>
+        <div className="min-h-0 overflow-hidden" inert={!open}>
           {children}
         </div>
       </div>
