@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChatArea } from "@/components/workspace/chat-area";
 import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
 import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
 import type {
@@ -10,7 +11,7 @@ import type {
   ApiUser,
   ApiWorkspace,
 } from "@/lib/api";
-import type { WorkspaceChat } from "@/lib/chats";
+import type { ChatMessage, WorkspaceChat } from "@/lib/chats";
 
 type WorkspaceShellProps = {
   workspace: ApiWorkspace;
@@ -21,7 +22,7 @@ type WorkspaceShellProps = {
   mine: boolean;
   members: ApiMember[];
   chats: WorkspaceChat[];
-  children: ReactNode;
+  messages: ChatMessage[];
 };
 
 export function WorkspaceShell({
@@ -33,16 +34,18 @@ export function WorkspaceShell({
   mine,
   members,
   chats,
-  children,
+  messages,
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [membersOpen, setMembersOpen] = useState(true);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
 
   function handleNewChat() {
     setMobileOpen(false);
+    requestAnimationFrame(() => composerRef.current?.focus());
   }
 
   useEffect(() => {
@@ -97,7 +100,11 @@ export function WorkspaceShell({
           onOpenMobile={() => setMobileOpen(true)}
           onExpand={() => setCollapsed(false)}
         />
-        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+        <ChatArea
+          workspaceName={workspace.name}
+          messages={messages}
+          composerRef={composerRef}
+        />
       </div>
     </div>
   );

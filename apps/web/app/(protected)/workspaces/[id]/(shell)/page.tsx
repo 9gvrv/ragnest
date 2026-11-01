@@ -9,18 +9,11 @@ import {
   listDocuments,
   listMembers,
 } from "@/lib/api";
-import { parseApiDate } from "@/lib/dates";
-import type { WorkspaceChat } from "@/lib/chats";
+import type { ChatMessage, WorkspaceChat } from "@/lib/chats";
 import { getSessionToken } from "@/lib/session";
 
 // Reads the session cookie and calls the API, so it cannot be prerendered.
 export const instant = false;
-
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
 
 export async function generateMetadata({
   params,
@@ -86,6 +79,7 @@ export default async function WorkspacePage({
 
   // No chat backend yet. Typed placeholders keep the list easy to wire up.
   const chats: WorkspaceChat[] = [];
+  const messages: ChatMessage[] = [];
 
   return (
     <WorkspaceShell
@@ -97,37 +91,21 @@ export default async function WorkspacePage({
       mine={mine}
       members={members}
       chats={chats}
-    >
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-16 pb-20">
-        <header>
-        <Link
-          href="/workspaces"
-          className="text-sm font-semibold tracking-tight text-foreground underline-offset-4 transition-colors duration-150 hover:text-accent hover:underline"
-        >
-          Ragnest
-        </Link>
-        <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-          {workspace.name}
-        </h1>
-        <p className="mt-3 text-sm text-muted">
-          Created {dateFormat.format(parseApiDate(workspace.created_at))}
-        </p>
-      </header>
-      </main>
-    </WorkspaceShell>
+      messages={messages}
+    />
   );
 }
 
 function NoAccess() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-24 pb-20">
+    <main className="flex h-full flex-col items-center justify-center overflow-y-auto px-6 py-16 text-center">
       <p className="text-sm font-semibold tracking-tight text-foreground">
         Ragnest
       </p>
-      <h1 className="mt-10 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+      <h1 className="mt-8 max-w-xl text-3xl font-semibold tracking-[-0.03em] text-balance text-foreground">
         You&apos;re not a member of this workspace.
       </h1>
-      <p className="mt-4 max-w-prose text-base leading-7 text-muted">
+      <p className="mt-4 max-w-md text-sm leading-6 text-muted">
         Ask whoever invited you for a new link, or go back to the workspaces you
         do belong to.
       </p>
