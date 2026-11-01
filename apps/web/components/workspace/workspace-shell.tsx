@@ -10,6 +10,7 @@ import type {
   ApiUser,
   ApiWorkspace,
 } from "@/lib/api";
+import type { WorkspaceChat } from "@/lib/chats";
 
 type WorkspaceShellProps = {
   workspace: ApiWorkspace;
@@ -19,6 +20,7 @@ type WorkspaceShellProps = {
   documents: ApiDocument[];
   mine: boolean;
   members: ApiMember[];
+  chats: WorkspaceChat[];
   children: ReactNode;
 };
 
@@ -30,6 +32,7 @@ export function WorkspaceShell({
   documents,
   mine,
   members,
+  chats,
   children,
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
@@ -37,6 +40,10 @@ export function WorkspaceShell({
   const [documentsOpen, setDocumentsOpen] = useState(true);
   const [membersOpen, setMembersOpen] = useState(true);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
+
+  function handleNewChat() {
+    setMobileOpen(false);
+  }
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -74,6 +81,8 @@ export function WorkspaceShell({
         members={members}
         membersOpen={membersOpen}
         onToggleMembers={() => setMembersOpen((value) => !value)}
+        chats={chats}
+        onNewChat={handleNewChat}
         uploadButtonRef={uploadButtonRef}
         open={mobileOpen}
         collapsed={collapsed}

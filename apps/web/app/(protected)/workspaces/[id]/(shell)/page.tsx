@@ -10,6 +10,7 @@ import {
   listMembers,
 } from "@/lib/api";
 import { parseApiDate } from "@/lib/dates";
+import type { WorkspaceChat } from "@/lib/chats";
 import { getSessionToken } from "@/lib/session";
 
 // Reads the session cookie and calls the API, so it cannot be prerendered.
@@ -83,6 +84,9 @@ export default async function WorkspacePage({
     ? allDocuments.filter((document) => document.uploaded_by === me.id)
     : allDocuments;
 
+  // No chat backend yet. Typed placeholders keep the list easy to wire up.
+  const chats: WorkspaceChat[] = [];
+
   return (
     <WorkspaceShell
       workspace={workspace}
@@ -92,6 +96,7 @@ export default async function WorkspacePage({
       documents={documents}
       mine={mine}
       members={members}
+      chats={chats}
     >
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 pt-16 pb-20">
         <header>

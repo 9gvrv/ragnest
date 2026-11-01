@@ -5,6 +5,7 @@ import type { RefObject } from "react";
 import { DeleteWorkspaceButton } from "@/components/delete-workspace-button";
 import { LogoMark } from "@/components/logo";
 import { DocumentsSection } from "@/components/workspace/documents-section";
+import { ChatsSection } from "@/components/workspace/chats-section";
 import {
   ArrowLeftIcon,
   MoreHorizontalIcon,
@@ -21,6 +22,7 @@ import type {
   ApiUser,
   ApiWorkspace,
 } from "@/lib/api";
+import type { WorkspaceChat } from "@/lib/chats";
 
 type WorkspaceSidebarProps = {
   workspace: ApiWorkspace;
@@ -34,6 +36,8 @@ type WorkspaceSidebarProps = {
   members: ApiMember[];
   membersOpen: boolean;
   onToggleMembers: () => void;
+  chats: WorkspaceChat[];
+  onNewChat: () => void;
   uploadButtonRef: RefObject<HTMLButtonElement | null>;
   open: boolean;
   collapsed: boolean;
@@ -53,6 +57,8 @@ export function WorkspaceSidebar({
   members,
   membersOpen,
   onToggleMembers,
+  chats,
+  onNewChat,
   uploadButtonRef,
   open,
   collapsed,
@@ -151,7 +157,7 @@ export function WorkspaceSidebar({
             onToggle={onToggleMembers}
           />
         </div>
-        <div className="min-h-0 flex-1" />
+        <ChatsSection chats={chats} onNewChat={onNewChat} />
       </div>
 
       <footer className="shrink-0 border-t border-border p-2">
