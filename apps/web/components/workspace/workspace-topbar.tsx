@@ -1,14 +1,11 @@
 "use client";
 
 import type { RefObject } from "react";
-import {
-  MenuIcon,
-  PanelLeftIcon,
-} from "@/components/workspace/icons";
-import type { ApiWorkspace } from "@/lib/api";
+import { MenuIcon, PanelLeftIcon } from "@/components/workspace/icons";
 
 type WorkspaceTopbarProps = {
-  workspace: ApiWorkspace;
+  chatTitle: string;
+  documentCount: number;
   collapsed: boolean;
   triggerRef: RefObject<HTMLButtonElement | null>;
   onOpenMobile: () => void;
@@ -16,7 +13,8 @@ type WorkspaceTopbarProps = {
 };
 
 export function WorkspaceTopbar({
-  workspace,
+  chatTitle,
+  documentCount,
   collapsed,
   triggerRef,
   onOpenMobile,
@@ -45,9 +43,17 @@ export function WorkspaceTopbar({
         </button>
       ) : null}
 
-      <h1 className="min-w-0 truncate text-sm font-medium text-foreground">
-        {workspace.name}
+      <h1 className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
+        {chatTitle}
       </h1>
+
+      <p className="hidden shrink-0 text-xs text-muted sm:block">
+        {documentCount === 0
+          ? "No documents yet"
+          : `Searching ${documentCount} document${
+              documentCount === 1 ? "" : "s"
+            }`}
+      </p>
     </header>
   );
 }

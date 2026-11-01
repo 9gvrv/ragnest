@@ -123,7 +123,8 @@ export function WorkspaceShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <WorkspaceTopbar
-          workspace={workspace}
+          chatTitle="New chat"
+          documentCount={allDocuments.length}
           collapsed={collapsed}
           triggerRef={mobileTriggerRef}
           onOpenMobile={() => setMobileOpen(true)}
@@ -132,6 +133,7 @@ export function WorkspaceShell({
         <ChatArea
           workspaceName={workspace.name}
           hasDocuments={allDocuments.length > 0}
+          documentNames={allDocuments.map((document) => document.filename)}
           messages={messages}
           composerRef={composerRef}
           onUploadRequest={requestUpload}

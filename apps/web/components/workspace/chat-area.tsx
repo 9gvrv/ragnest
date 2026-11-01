@@ -7,6 +7,7 @@ import type { ChatMessage } from "@/lib/chats";
 type ChatAreaProps = {
   workspaceName: string;
   hasDocuments: boolean;
+  documentNames: string[];
   messages: ChatMessage[];
   composerRef: RefObject<HTMLTextAreaElement | null>;
   onUploadRequest: () => void;
@@ -15,6 +16,7 @@ type ChatAreaProps = {
 export function ChatArea({
   workspaceName,
   hasDocuments,
+  documentNames,
   messages,
   composerRef,
   onUploadRequest,
@@ -49,6 +51,27 @@ export function ChatArea({
                 onUploadRequest={onUploadRequest}
               />
             </div>
+
+            {hasDocuments ? (
+              <ul
+                aria-label="Documents in this workspace"
+                className="mt-3 flex flex-wrap items-center justify-center gap-1.5"
+              >
+                {documentNames.slice(0, 3).map((name, index) => (
+                  <li
+                    key={`${name}-${index}`}
+                    className="max-w-[180px] truncate rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted"
+                  >
+                    {name}
+                  </li>
+                ))}
+                {documentNames.length > 3 ? (
+                  <li className="rounded-full border border-border px-2.5 py-1 text-xs text-muted">
+                    +{documentNames.length - 3} more
+                  </li>
+                ) : null}
+              </ul>
+            ) : null}
           </div>
         </div>
       </main>
