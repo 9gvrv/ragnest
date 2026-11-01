@@ -56,40 +56,42 @@ export function MembersSection({
         ) : null}
 
         <ul
-          className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 py-1`}
+          className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 pt-1 pb-2`}
         >
           {members.map((member) => {
             const isMe = member.user_id === me.id;
             return (
               <li
                 key={member.user_id}
-                className="group relative flex items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors duration-150 hover:bg-surface"
+                className="group relative flex h-10 items-center gap-2 rounded-md px-1 transition-colors duration-150 hover:bg-surface"
               >
                 <span
                   aria-hidden="true"
-                  className="grid size-7 shrink-0 place-items-center rounded-full border border-border bg-elevated text-[10px] font-semibold text-muted"
+                  className="grid size-6 shrink-0 place-items-center rounded-full border border-border bg-elevated text-[10px] font-semibold text-muted"
                 >
                   {initialsFromEmail(member.email)}
                 </span>
 
-                <div className="min-w-0 flex-1">
-                  <p className="flex min-w-0 items-center gap-1.5">
-                    <span className="truncate text-sm text-foreground">
-                      {member.email}
-                    </span>
-                    {isMe ? (
-                      <span className="shrink-0 rounded-full border border-border px-1.5 py-0.5 text-[10px] leading-none text-muted">
-                        you
-                      </span>
-                    ) : null}
-                  </p>
-                  <span className="mt-1 inline-flex rounded border border-border bg-foreground/5 px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
+                <span
+                  title={member.email}
+                  className="min-w-0 flex-1 truncate text-sm text-foreground"
+                >
+                  {member.email}
+                </span>
+
+                <span className="flex shrink-0 items-center gap-1">
+                  <span className="rounded border border-border bg-foreground/5 px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
                     {member.role}
                   </span>
-                </div>
+                  {isMe ? (
+                    <span className="rounded-full border border-border px-1.5 py-0.5 text-[10px] leading-none text-muted">
+                      you
+                    </span>
+                  ) : null}
+                </span>
 
                 {canRemoveMember(myRole, me.id, member) ? (
-                  <div className="shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                  <div className="w-7 shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
                     <RemoveMemberButton
                       workspaceId={workspaceId}
                       userId={member.user_id}

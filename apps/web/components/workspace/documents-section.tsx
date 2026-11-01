@@ -7,7 +7,7 @@ import { SidebarSection } from "@/components/workspace/sidebar-section";
 import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
 import { UploadDocumentForm } from "@/components/upload-document-form";
 import type { ApiDocument, ApiRole } from "@/lib/api";
-import { canManageDocument, formatBytes, formatCount } from "@/lib/documents";
+import { canManageDocument, formatBytes } from "@/lib/documents";
 import { documentKind } from "@/lib/workspace";
 
 type DocumentsSectionProps = {
@@ -70,38 +70,34 @@ export function DocumentsSection({
               : "No documents yet. Upload one to start chatting."}
           </p>
         ) : (
-          <ul className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 py-1`}>
+          <ul className={`${sidebarScroll} mt-3 max-h-[220px] space-y-0.5 px-2 pt-1 pb-2`}>
             {documents.map((document) => (
               <li
                 key={document.id}
-                className="group relative flex items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors duration-150 hover:bg-surface"
+                className="group relative flex h-10 items-center gap-2 rounded-md px-1 transition-colors duration-150 hover:bg-surface"
               >
                 <span
                   aria-hidden="true"
-                  className="grid size-7 shrink-0 place-items-center rounded-md border border-border bg-elevated font-mono text-[10px] font-medium text-muted"
+                  className="grid size-6 shrink-0 place-items-center rounded-md border border-border bg-elevated font-mono text-[10px] font-medium text-muted"
                 >
                   {documentKind(document.filename)}
                 </span>
 
                 <Link
                   href={`${documentsPath}/documents/${document.id}`}
-                  className="min-w-0 flex-1 rounded-sm"
+                  title={document.filename}
+                  className="flex min-w-0 flex-1 items-center gap-2 rounded-sm"
                 >
-                  <span className="block truncate text-sm text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
                     {document.filename}
                   </span>
-                  <span className="mt-0.5 block truncate text-xs text-muted tabular-nums">
+                  <span className="shrink-0 text-xs text-muted tabular-nums">
                     {formatBytes(document.size_bytes)}
-                    {document.page_count !== null
-                      ? `, ${formatCount(document.page_count)} page${
-                          document.page_count === 1 ? "" : "s"
-                        }`
-                      : ""}
                   </span>
                 </Link>
 
                 {canManageDocument(myRole, userId, document) ? (
-                  <div className="shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                  <div className="w-7 shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
                     <DeleteDocumentButton
                       workspaceId={workspaceId}
                       documentId={document.id}

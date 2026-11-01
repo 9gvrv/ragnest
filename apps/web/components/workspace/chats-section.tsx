@@ -66,7 +66,7 @@ export function ChatsSection({
                 <button
                   type="button"
                   onClick={() => onSelectChat?.(chat)}
-                  className="group flex w-full items-center gap-2 rounded-md px-1.5 py-1.5 text-left transition-colors duration-150 hover:bg-surface"
+                  className="group flex h-10 w-full items-center gap-2 rounded-md px-1 text-left transition-colors duration-150 hover:bg-surface"
                 >
                   <MessageIcon className="size-3.5 shrink-0 text-muted" />
                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">
