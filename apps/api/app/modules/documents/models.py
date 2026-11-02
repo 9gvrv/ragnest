@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import ForeignKey, Index, String, Text
+from sqlalchemy import DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, TimestampMixin
@@ -22,3 +23,7 @@ class Document(Base, TimestampMixin):
     page_count: Mapped[int | None] = mapped_column()
     char_count: Mapped[int] = mapped_column()
     extracted_text: Mapped[str] = mapped_column(Text)
+    embedding_status: Mapped[str] = mapped_column(
+        String(16), default="pending", server_default="pending"
+    )
+    indexed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
