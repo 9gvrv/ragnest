@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-30 (Milestone 4 — documents — API complete)
+> **Last updated:** 2026-11-02 (Milestone 5 — retrieval — API complete)
 
 ---
 
@@ -105,6 +105,18 @@ apps/api/
 │       │   ├── router.py
 │       │   ├── schemas.py
 │       │   └── service.py
+│       ├── retrieval/
+│       │   ├── __init__.py
+│       │   ├── backfill.py    # python -m app.modules.retrieval.backfill
+│       │   ├── chunking.py    # offset-preserving recursive chunker
+│       │   ├── constants.py   # model, dimension, chunk and search limits
+│       │   ├── deps.py        # get_embedding_provider, get_session_factory
+│       │   ├── embeddings.py  # EmbeddingProvider protocol + Gemini client
+│       │   ├── models.py      # DocumentChunk
+│       │   ├── router.py      # POST /workspaces/{id}/search
+│       │   ├── schemas.py     # SearchRequest, SearchResult
+│       │   ├── service.py     # index_document, search
+│       │   └── types.py       # vector(768) on PG, JSON on SQLite
 │       ├── users/
 │       │   ├── __init__.py
 │       │   ├── models.py
@@ -147,6 +159,16 @@ apps/api/
         ├── invitations/
         │   ├── __init__.py
         │   └── test_preview.py
+        ├── retrieval/
+        │   ├── __init__.py
+        │   ├── conftest.py       # seed fixture (creator/admin/member/outsider)
+        │   ├── test_backfill.py
+        │   ├── test_chunking.py
+        │   ├── test_embeddings.py
+        │   ├── test_model.py
+        │   ├── test_search.py
+        │   ├── test_service.py
+        │   └── test_upload.py
         └── users/
             ├── __init__.py
             ├── test_me.py
@@ -230,9 +252,12 @@ If you add another DB engine (e.g. in Alembic), pass
 - `.env` is **gitignored** and holds the real credentials. Never commit it, never
   print it, never paste it into logs.
 - `.env.example` is committed and documents the shape:
-  `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `ACCESS_TOKEN_EXPIRE_MINUTES`.
+  `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`,
+  `ACCESS_TOKEN_EXPIRE_MINUTES`.
 - Settings fields: `APP_NAME` (default `"Ragnest API"`), `LOG_LEVEL` (default
-  `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`).
+  `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**),
+  `GEMINI_API` (**required**, Gemini embeddings), `ACCESS_TOKEN_EXPIRE_MINUTES`
+  (default `30`).
 - `SECRET_KEY` is used for HS256 JWTs; tokens expire after `ACCESS_TOKEN_EXPIRE_MINUTES`.
 - The project uses `pwdlib[argon2]` for password hashing and `PyJWT` for token signing; `EmailStr` validation is provided by `email-validator`.
 - A module-level `settings = Settings()` exists; `Settings()` is instantiated at
@@ -251,14 +276,21 @@ If you add another DB engine (e.g. in Alembic), pass
   `connect_args=settings.database_connect_args`, and targets `Base.metadata`.
 - The first real domain table is **`users`** (T1 of Milestone 2); Milestone 3
   adds **`workspaces`**, **`workspace_members`** and **`invitations`**;
-  Milestone 4 adds **`documents`** (`25d91090dee5`). The two empty baseline
-  revisions (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart; squashing
-  is optional.
+  Milestone 4 adds **`documents`** (`25d91090dee5`); Milestone 5 adds
+  **`document_chunks`** plus `documents.embedding_status`/`indexed_at`
+  (`299585b2a1a6`). The two empty baseline revisions
+  (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart; squashing is
+  optional.
+- **Milestone 5 uses pgvector in the same database.** The migration runs
+  `CREATE EXTENSION IF NOT EXISTS vector` and creates an HNSW cosine index
+  (`ix_document_chunks_embedding_hnsw`). No second database or vector service
+  exists. `app/modules/retrieval/types.py` declares `Vector(768)` with a JSON
+  SQLite variant, so tests need no Postgres. `document_chunks.document_id` and
+  `.workspace_id` are both `ON DELETE CASCADE`.
 - **`documents` stores text only.** There is no `storage_key`, no URL, and no
   file on disk: `extracted_text` is the durable artefact, `char_count` always
-  equals its length, and `page_count` is `NULL` for txt/md. When Milestone 5
-  adds `document_chunks`, its `document_id` **must** be `ON DELETE CASCADE`
-  (the documents row is hard-deleted).
+  equals its length, and `page_count` is `NULL` for txt/md. `document_chunks`
+  cascades from the hard-deleted document (and from the workspace).
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
 
@@ -281,13 +313,27 @@ If you add another DB engine (e.g. in Alembic), pass
   the fixture, and do not assume a cascade test proves anything unless the
   pragma test (`tests/modules/documents/test_model.py`) passes.
 - Fixtures live in the **root `tests/conftest.py`**: `client` (httpx
-  `AsyncClient` bound via `ASGITransport`) and `session_factory` (async SQLite
-  sessionmaker). A subdir may add its own `conftest.py` for local fixtures.
+  `AsyncClient` bound via `ASGITransport`), `app` (the FastAPI app with
+  dependency overrides), `session_factory` (async SQLite sessionmaker),
+  `fake_embeddings` and `failing_embeddings`. A subdir may add its own
+  `conftest.py` for local fixtures.
+- **Embeddings never hit the network in tests.** `fake_embeddings` is a
+  deterministic bag-of-tokens vector; `tests/conftest.py` overrides
+  `get_embedding_provider` and `get_session_factory`, so upload background
+  tasks use the same in-memory SQLite and the fake provider. The real Gemini
+  client is tested with `httpx.MockTransport` in
+  `tests/modules/retrieval/test_embeddings.py`.
+- **Background tasks run inside the test request.** Starlette executes
+  `BackgroundTasks` before `AsyncClient.post` returns, so a document reaches
+  `ready`/`failed` by the time the test reads it back — but the 201 response
+  body was serialized earlier and therefore says `pending`. Assert the settled
+  status through `GET /documents/{id}`.
 - **Test layout mirrors the app:** `tests/api/`, `tests/core/`, `tests/db/`, and
   `tests/modules/<feature>/` for domain code (`tests/modules/auth/`,
-  `tests/modules/users/`, `tests/modules/documents/`). **Every test subdirectory
-  needs an `__init__.py`** — otherwise pytest's default import mode breaks when
-  two files share a basename.
+  `tests/modules/users/`, `tests/modules/documents/`,
+  `tests/modules/retrieval/`). **Every test subdirectory needs an
+  `__init__.py`** — otherwise pytest's default import mode breaks when two
+  files share a basename.
 - Test names/fixtures use plain absolute imports (`from app.core.config import
 Settings`); moving test files does not change imports.
 
@@ -372,10 +418,17 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    characters. No web UI yet. The 5 MB declared-length cap is enforced in
    `documents/middleware.py` before multipart parsing; the handler reads at
    most cap+1 bytes so a chunked body cannot be loaded into memory in full.
-5. **Retrieval** — chunk, embed, store vectors, search scoped to a workspace.
+5. ✅ **Retrieval** — offset-preserving chunking, Gemini
+   `gemini-embedding-001` at 768 dimensions (`RETRIEVAL_DOCUMENT` for chunks,
+   `RETRIEVAL_QUERY` for queries, manual L2 normalisation), pgvector storage in
+   the same Neon database, background indexing on upload with
+   `pending|indexing|ready|failed` status, `POST .../documents/{id}/reindex`,
+   `POST /api/v1/workspaces/{workspace_id}/search`, and
+   `python -m app.modules.retrieval.backfill` for pre-existing documents. No
+   chat/answer generation and no web UI yet.
 6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
 
-**Next up: Milestone 5 (Retrieval).** Design precedes code.
+**Next up: Milestone 6 (Chat/RAG).** Design precedes code.
 
 ---
 
@@ -393,5 +446,9 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
   `docs/superpowers/specs/2026-10-27-documents-design.md`
 - Milestone 4 documents plan:
   `docs/superpowers/plans/2026-10-27-documents.md`
+- Milestone 5 retrieval design:
+  `docs/superpowers/specs/2026-11-02-retrieval-design.md`
+- Milestone 5 retrieval plan:
+  `docs/superpowers/plans/2026-11-02-retrieval.md`
 - Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`
