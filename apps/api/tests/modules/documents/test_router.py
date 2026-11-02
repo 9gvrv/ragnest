@@ -20,6 +20,8 @@ SUMMARY_KEYS = {
     "size_bytes",
     "page_count",
     "char_count",
+    "embedding_status",
+    "indexed_at",
     "created_at",
 }
 DETAIL_KEYS = SUMMARY_KEYS | {"extracted_text"}

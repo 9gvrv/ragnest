@@ -18,11 +18,12 @@ from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
-import app.db.models  # noqa: F401  (register all models on Base.metadata)
+import app.db.models
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import create_app
 from app.modules.retrieval.constants import EMBEDDING_DIM
+from app.modules.retrieval.deps import get_embedding_provider, get_session_factory
 from app.modules.retrieval.embeddings import EmbeddingProviderError
 
 
@@ -94,13 +95,20 @@ async def session_factory():
 
 
 @pytest_asyncio.fixture
-async def client(session_factory):
-    app = create_app()
+async def app(session_factory, fake_embeddings):
+    application = create_app()
 
     async def override_get_db():
         async with session_factory() as session:
             yield session
 
-    app.dependency_overrides[get_db] = override_get_db
+    application.dependency_overrides[get_db] = override_get_db
+    application.dependency_overrides[get_embedding_provider] = lambda: fake_embeddings
+    application.dependency_overrides[get_session_factory] = lambda: session_factory
+    return application
+
+
+@pytest_asyncio.fixture
+async def client(app):
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c

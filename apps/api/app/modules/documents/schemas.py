@@ -15,8 +15,14 @@ class DocumentSummary(BaseModel):
     size_bytes: int
     page_count: int | None
     char_count: int
+    embedding_status: str
+    indexed_at: datetime | None
     created_at: datetime
 
 
 class DocumentDetail(DocumentSummary):
     extracted_text: str
+
+
+class ReindexResponse(BaseModel):
+    embedding_status: str

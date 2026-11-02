@@ -61,6 +61,8 @@ async def list_documents(
                 Document.size_bytes,
                 Document.page_count,
                 Document.char_count,
+                Document.embedding_status,
+                Document.indexed_at,
                 Document.created_at,
             )
         )
