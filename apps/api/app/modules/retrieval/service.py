@@ -6,10 +6,12 @@ the document row for ``reindex``/backfill to repair.
 """
 
 import logging
+import math
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.modules.documents.models import Document
@@ -79,3 +81,102 @@ async def _mark_failed(
             return
         document.embedding_status = "failed"
         await session.commit()
+
+
+@dataclass(frozen=True)
+class SearchHit:
+    chunk_id: UUID
+    document_id: UUID
+    filename: str
+    chunk_index: int
+    content: str
+    score: float
+    char_start: int
+    char_end: int
+
+
+async def search(
+    session: AsyncSession,
+    workspace_id: UUID,
+    query_vector: list[float],
+    top_k: int,
+) -> list[SearchHit]:
+    if session.get_bind().dialect.name == "postgresql":
+        return await _search_postgres(session, workspace_id, query_vector, top_k)
+    return await _search_python(session, workspace_id, query_vector, top_k)
+
+
+async def _search_postgres(
+    session: AsyncSession,
+    workspace_id: UUID,
+    query_vector: list[float],
+    top_k: int,
+) -> list[SearchHit]:
+    distance = DocumentChunk.embedding.cosine_distance(query_vector)
+    stmt = (
+        select(DocumentChunk, Document.filename, (1 - distance).label("score"))
+        .join(Document, Document.id == DocumentChunk.document_id)
+        .where(
+            DocumentChunk.workspace_id == workspace_id,
+            DocumentChunk.embedding_model == EMBEDDING_MODEL,
+        )
+        .order_by(distance, DocumentChunk.document_id, DocumentChunk.chunk_index)
+        .limit(top_k)
+    )
+    rows = (await session.execute(stmt)).all()
+    return [
+        SearchHit(
+            chunk_id=chunk.id,
+            document_id=chunk.document_id,
+            filename=filename,
+            chunk_index=chunk.chunk_index,
+            content=chunk.content,
+            score=float(score),
+            char_start=chunk.char_start,
+            char_end=chunk.char_end,
+        )
+        for chunk, filename, score in rows
+    ]
+
+
+async def _search_python(
+    session: AsyncSession,
+    workspace_id: UUID,
+    query_vector: list[float],
+    top_k: int,
+) -> list[SearchHit]:
+    stmt = (
+        select(DocumentChunk, Document.filename)
+        .join(Document, Document.id == DocumentChunk.document_id)
+        .where(
+            DocumentChunk.workspace_id == workspace_id,
+            DocumentChunk.embedding_model == EMBEDDING_MODEL,
+        )
+    )
+    rows = (await session.execute(stmt)).all()
+    hits = [
+        SearchHit(
+            chunk_id=chunk.id,
+            document_id=chunk.document_id,
+            filename=filename,
+            chunk_index=chunk.chunk_index,
+            content=chunk.content,
+            score=_cosine_similarity(chunk.embedding, query_vector),
+            char_start=chunk.char_start,
+            char_end=chunk.char_end,
+        )
+        for chunk, filename in rows
+    ]
+    hits.sort(key=lambda hit: (-hit.score, str(hit.document_id), hit.chunk_index))
+    return hits[:top_k]
+
+
+def _cosine_similarity(left: list[float], right: list[float]) -> float:
+    if len(left) != len(right):
+        return 0.0
+    dot = sum(a * b for a, b in zip(left, right, strict=True))
+    left_norm = math.sqrt(sum(value * value for value in left))
+    right_norm = math.sqrt(sum(value * value for value in right))
+    if not left_norm or not right_norm:
+        return 0.0
+    return dot / (left_norm * right_norm)
