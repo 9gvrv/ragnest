@@ -4,6 +4,7 @@ Alembic autogenerate and the test harness import this module. Feature code
 should import models from their own module directly.
 """
 
+from app.modules.chat.models import Conversation, Message  # noqa: F401
 from app.modules.documents.models import Document  # noqa: F401
 from app.modules.invitations.models import Invitation  # noqa: F401
 from app.modules.retrieval.models import DocumentChunk  # noqa: F401
