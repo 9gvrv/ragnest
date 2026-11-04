@@ -25,7 +25,7 @@ SYSTEM_PROMPT = (
     "Sources:"
 )
 
-_CITATION = re.compile(r"\[(\d+)\]")
+_CITATION = re.compile(r"[\[［【](\d+)[\]］】]")
 
 
 @dataclass(frozen=True)

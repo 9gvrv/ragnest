@@ -95,6 +95,10 @@ def test_parse_cited_keeps_valid_unique_markers():
     assert parse_cited("no markers", 3) == []
 
 
+def test_parse_cited_accepts_full_width_brackets():
+    assert parse_cited("a 【1】 b ［2］ c [3]", 3) == [1, 2, 3]
+
+
 def test_make_title_collapses_and_truncates():
     assert make_title("  hello \n world  ") == "hello world"
     assert len(make_title("x" * 200)) == CHAT_TITLE_CHARS
