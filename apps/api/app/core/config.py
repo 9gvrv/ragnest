@@ -1,6 +1,7 @@
 from pathlib import Path
 from urllib.parse import parse_qs, parse_qsl, urlencode, urlsplit, urlunsplit
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,6 +21,14 @@ class Settings(BaseSettings):
         env_file=Path(__file__).resolve().parents[2] / ".env",
         extra="ignore",
     )
+
+    @model_validator(mode="after")
+    def _blank_llm_values_use_defaults(self) -> "Settings":
+        """An empty key in `.env` must not blank out a working default."""
+        self.LLM_BASE_URL = self.LLM_BASE_URL.strip() or "https://api.groq.com/openai/v1"
+        self.LLM_MODEL = self.LLM_MODEL.strip() or "openai/gpt-oss-120b"
+        self.LLM_REASONING_EFFORT = self.LLM_REASONING_EFFORT.strip()
+        return self
 
     # Changes the URL scheme and removes incompatible parameters.
     @property

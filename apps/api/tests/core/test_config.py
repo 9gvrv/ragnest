@@ -40,5 +40,12 @@ def test_access_token_expiry_defaults_to_30_minutes():
     assert settings.ACCESS_TOKEN_EXPIRE_MINUTES == 30
 
 
+def test_blank_llm_settings_fall_back_to_defaults():
+    s = Settings(DATABASE_URL=NEON, LLM_BASE_URL="", LLM_MODEL="")
+
+    assert s.LLM_BASE_URL == "https://api.groq.com/openai/v1"
+    assert s.LLM_MODEL == "openai/gpt-oss-120b"
+
+
 def test_secret_key_is_loaded():
     assert settings.SECRET_KEY
