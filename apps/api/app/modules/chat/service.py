@@ -33,13 +33,22 @@ class PreparedExchange:
     no_context: bool
 
 
+def _utcnow_naive() -> datetime:
+    """TimestampMixin columns are TIMESTAMP WITHOUT TIME ZONE on Postgres.
+
+    asyncpg rejects aware datetimes for them, so conversation timestamps stay
+    naive UTC; message timestamps live in a timezone-aware column and keep UTC.
+    """
+    return datetime.now(UTC).replace(tzinfo=None)
+
+
 async def create_conversation(
     session: AsyncSession,
     workspace_id: UUID,
     created_by: UUID,
     title: str | None = None,
 ) -> Conversation:
-    now = datetime.now(UTC)
+    now = _utcnow_naive()
     conversation = Conversation(
         workspace_id=workspace_id,
         created_by=created_by,
@@ -141,7 +150,7 @@ async def prepare_exchange(
 
     if conversation.title == DEFAULT_TITLE:
         conversation.title = make_title(question)
-    conversation.updated_at = now
+    conversation.updated_at = _utcnow_naive()
 
     assistant_message_id = uuid4()
     if not hits:
@@ -207,7 +216,7 @@ async def persist_assistant(
         )
         conversation = await session.get(Conversation, conversation_id)
         if conversation is not None:
-            conversation.updated_at = now
+            conversation.updated_at = _utcnow_naive()
         await session.commit()
 
 
