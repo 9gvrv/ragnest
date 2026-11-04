@@ -1,9 +1,11 @@
+import json
 from uuid import uuid4
 
 import pytest
 from fastapi import HTTPException
 
 from app.modules.chat import service
+from app.modules.chat.constants import NO_CONTEXT_REPLY
 from tests.modules.chat.conftest import (
     insert_conversation,
     insert_message,
@@ -149,3 +151,120 @@ async def test_service_filters_by_author_and_workspace(session_factory, seed):
             )
 
     assert raised.value.status_code == 404
+
+
+def _parse_sse(text: str) -> list[tuple[str, dict]]:
+    events: list[tuple[str, dict]] = []
+    for block in text.split("\n\n"):
+        block = block.strip()
+        if not block:
+            continue
+        name = None
+        data = None
+        for line in block.splitlines():
+            if line.startswith("event: "):
+                name = line.removeprefix("event: ")
+            elif line.startswith("data: "):
+                data = json.loads(line.removeprefix("data: "))
+        if name is not None and data is not None:
+            events.append((name, data))
+    return events
+
+
+async def _upload(client, workspace_id, headers, text: str, filename: str) -> dict:
+    response = await client.post(
+        f"/api/v1/workspaces/{workspace_id}/documents",
+        headers=headers,
+        files={"file": (filename, text.encode(), "text/plain")},
+    )
+    assert response.status_code == 201
+    return response.json()
+
+
+async def _create(client, workspace_id, headers, title: str | None = None) -> dict:
+    response = await client.post(
+        _url(workspace_id), json={"title": title} if title else {}, headers=headers
+    )
+    assert response.status_code == 201
+    return response.json()
+
+
+async def _ask(client, workspace_id, conversation_id, headers, content: str):
+    return await client.post(
+        f"{_url(workspace_id)}/{conversation_id}/messages",
+        headers=headers,
+        json={"content": content},
+    )
+
+
+async def test_streams_grounded_answer_and_persists(client, seed, fake_llm):
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    await _upload(client, workspace_id, headers, "alpha alpha alpha", "alpha.txt")
+    conversation = await _create(client, workspace_id, headers)
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/event-stream")
+    events = _parse_sse(response.text)
+    assert events[0][0] == "sources"
+    assert events[-1][0] == "done"
+    assert events[0][1]["no_context"] is False
+    assert events[0][1]["sources"][0]["n"] == 1
+    assert events[0][1]["sources"][0]["filename"] == "alpha.txt"
+    tokens = "".join(data["delta"] for name, data in events if name == "token")
+    assert tokens == "Grounded answer [1]"
+    assert events[-1][1]["cited"] == [1]
+    assert events[-1][1]["finish_reason"] == "stop"
+
+    detail = await client.get(f"{_url(workspace_id)}/{conversation['id']}", headers=headers)
+    messages = detail.json()["messages"]
+    assert [message["role"] for message in messages] == ["user", "assistant"]
+    assert messages[0]["content"] == "alpha"
+    assert messages[1]["content"] == "Grounded answer [1]"
+    assert messages[1]["citations"][0]["filename"] == "alpha.txt"
+    assert messages[1]["citations"][0]["excerpt"] == "alpha alpha alpha"
+    assert messages[1]["finish_reason"] == "stop"
+    assert messages[1]["model"] == "openai/gpt-oss-120b"
+    assert fake_llm.calls
+
+
+async def test_empty_workspace_refuses_without_calling_the_model(client, seed, fake_llm):
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    conversation = await _create(client, workspace_id, headers)
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "anything")
+
+    assert response.status_code == 200
+    events = _parse_sse(response.text)
+    assert [name for name, _ in events] == ["sources", "token", "done"]
+    assert events[0][1]["sources"] == []
+    assert events[0][1]["no_context"] is True
+    assert events[1][1]["delta"] == NO_CONTEXT_REPLY
+    assert events[2][1]["finish_reason"] == "no_context"
+    assert fake_llm.calls == []
+
+    detail = await client.get(f"{_url(workspace_id)}/{conversation['id']}", headers=headers)
+    messages = detail.json()["messages"]
+    assert messages[1]["content"] == NO_CONTEXT_REPLY
+    assert messages[1]["finish_reason"] == "no_context"
+    assert messages[1]["citations"] == []
+
+
+async def test_title_comes_from_the_first_question(client, seed):
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    conversation = await _create(client, workspace_id, headers)
+
+    await _ask(
+        client,
+        workspace_id,
+        conversation["id"],
+        headers,
+        "  How do I   retry?  ",
+    )
+
+    detail = await client.get(f"{_url(workspace_id)}/{conversation['id']}", headers=headers)
+    assert detail.json()["title"] == "How do I retry?"
