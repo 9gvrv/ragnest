@@ -1,4 +1,6 @@
+import asyncio
 import json
+import logging
 from collections.abc import AsyncIterator
 from typing import Annotated
 from uuid import UUID
@@ -12,12 +14,14 @@ from app.db.session import get_db
 from app.modules.chat import schemas, service
 from app.modules.chat.constants import CHAT_MAX_OUTPUT_TOKENS, NO_CONTEXT_REPLY
 from app.modules.chat.deps import get_llm_provider
-from app.modules.chat.llm import LLMDelta, LLMFinish, LLMProvider
+from app.modules.chat.llm import LLMDelta, LLMFinish, LLMProvider, LLMProviderError
 from app.modules.chat.prompts import parse_cited
 from app.modules.retrieval.deps import get_embedding_provider, get_session_factory
 from app.modules.retrieval.embeddings import EmbeddingProvider, EmbeddingProviderError
 from app.modules.workspaces.deps import require_workspace_member
 from app.modules.workspaces.models import WorkspaceMember
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/workspaces/{workspace_id}/conversations",
@@ -130,8 +134,29 @@ async def send_message(
         return StreamingResponse(no_context(), media_type="text/event-stream", headers=SSE_HEADERS)
 
     assert exchange.plan is not None
-    stream = llm.stream(exchange.plan.messages, max_output_tokens=CHAT_MAX_OUTPUT_TOKENS)
-    first = await anext(stream)
+    stream: AsyncIterator[object] | None = None
+    try:
+        stream = llm.stream(exchange.plan.messages, max_output_tokens=CHAT_MAX_OUTPUT_TOKENS)
+        first = await anext(stream)
+    except LLMProviderError as exc:
+        if stream is not None:
+            await _close_quietly(stream)
+        rate_limited = exc.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+        raise HTTPException(
+            status_code=(
+                status.HTTP_429_TOO_MANY_REQUESTS
+                if rate_limited
+                else status.HTTP_503_SERVICE_UNAVAILABLE
+            ),
+            detail="Answer model is rate limited" if rate_limited else "Answer model unavailable",
+        ) from exc
+    except StopAsyncIteration as exc:
+        if stream is not None:
+            await _close_quietly(stream)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Answer model unavailable",
+        ) from exc
 
     if not isinstance(first, LLMDelta):
         await stream.aclose()
@@ -173,7 +198,44 @@ async def send_message(
                     "cited": parse_cited(text, len(exchange.sources)),
                 },
             )
+        except LLMProviderError:
+            text = "".join(chunks)
+            if text:
+                await service.persist_assistant(
+                    session_factory,
+                    exchange.assistant_message_id,
+                    exchange.conversation_id,
+                    content=text,
+                    sources=exchange.sources,
+                    finish_reason="error",
+                    model=settings.LLM_MODEL,
+                )
+            yield _event("error", {"detail": "Answer model failed"})
+        except asyncio.CancelledError:
+            text = "".join(chunks)
+            if text:
+                try:
+                    await asyncio.shield(
+                        service.persist_assistant(
+                            session_factory,
+                            exchange.assistant_message_id,
+                            exchange.conversation_id,
+                            content=text,
+                            sources=exchange.sources,
+                            finish_reason="cancelled",
+                            model=settings.LLM_MODEL,
+                        )
+                    )
+                except Exception:  # best effort on disconnect
+                    logger.warning("failed to save a cancelled answer", exc_info=True)
+            raise
         finally:
             await stream.aclose()
 
     return StreamingResponse(answer(), media_type="text/event-stream", headers=SSE_HEADERS)
+
+
+async def _close_quietly(stream: object | None) -> None:
+    close = getattr(stream, "aclose", None)
+    if close is not None:
+        await close()

@@ -87,6 +87,9 @@ class FakeLLMProvider:
 
 
 class FailingLLMProvider:
+    def __init__(self, status_code: int | None = None) -> None:
+        self.status_code = status_code
+
     def stream(
         self,
         messages: list[LLMMessage],
@@ -96,7 +99,7 @@ class FailingLLMProvider:
         return self._events()
 
     async def _events(self) -> AsyncIterator[LLMEvent]:
-        raise LLMProviderError("provider unavailable")
+        raise LLMProviderError("provider unavailable", status_code=self.status_code)
         yield LLMFinish("stop")  # pragma: no cover - makes this a generator
 
 

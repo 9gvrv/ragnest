@@ -268,3 +268,105 @@ async def test_title_comes_from_the_first_question(client, seed):
 
     detail = await client.get(f"{_url(workspace_id)}/{conversation['id']}", headers=headers)
     assert detail.json()["title"] == "How do I retry?"
+
+
+async def _messages(client, workspace_id, conversation_id, headers) -> list[dict]:
+    detail = await client.get(f"{_url(workspace_id)}/{conversation_id}", headers=headers)
+    assert detail.status_code == 200
+    return detail.json()["messages"]
+
+
+def _use_llm(app, provider) -> None:
+    from app.modules.chat.deps import get_llm_provider
+
+    app.dependency_overrides[get_llm_provider] = lambda: provider
+
+
+async def test_rate_limited_provider_returns_429_and_keeps_the_question(
+    client, seed, app, session_factory
+):
+    from tests.conftest import FailingLLMProvider
+
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    await _upload(client, workspace_id, headers, "alpha alpha", "alpha.txt")
+    conversation = await _create(client, workspace_id, headers)
+    _use_llm(app, FailingLLMProvider(status_code=429))
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 429
+    assert response.json() == {"detail": "Answer model is rate limited"}
+    messages = await _messages(client, workspace_id, conversation["id"], headers)
+    assert [message["role"] for message in messages] == ["user"]
+    assert messages[0]["content"] == "alpha"
+
+
+async def test_provider_outage_returns_503_and_keeps_the_question(client, seed, app):
+    from tests.conftest import FailingLLMProvider
+
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    await _upload(client, workspace_id, headers, "alpha alpha", "alpha.txt")
+    conversation = await _create(client, workspace_id, headers)
+    _use_llm(app, FailingLLMProvider(status_code=500))
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "Answer model unavailable"}
+    messages = await _messages(client, workspace_id, conversation["id"], headers)
+    assert [message["role"] for message in messages] == ["user"]
+
+
+async def test_failure_after_first_token_ends_with_error_and_partial_row(client, seed, fake_llm):
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    await _upload(client, workspace_id, headers, "alpha alpha", "alpha.txt")
+    conversation = await _create(client, workspace_id, headers)
+    fake_llm.fail_after = 1
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 200
+    events = _parse_sse(response.text)
+    assert [name for name, _ in events] == ["sources", "token", "error"]
+    assert "".join(data["delta"] for name, data in events if name == "token") == "Grounded "
+    assert events[-1][1] == {"detail": "Answer model failed"}
+
+    messages = await _messages(client, workspace_id, conversation["id"], headers)
+    assert [message["role"] for message in messages] == ["user", "assistant"]
+    assert messages[1]["content"] == "Grounded "
+    assert messages[1]["finish_reason"] == "error"
+    assert messages[1]["citations"][0]["filename"] == "alpha.txt"
+
+
+async def test_empty_completion_is_503_not_a_blank_assistant(client, seed, fake_llm):
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    await _upload(client, workspace_id, headers, "alpha alpha", "alpha.txt")
+    conversation = await _create(client, workspace_id, headers)
+    fake_llm.deltas = []
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "Answer model unavailable"}
+    messages = await _messages(client, workspace_id, conversation["id"], headers)
+    assert [message["role"] for message in messages] == ["user"]
+
+
+async def test_embedding_failure_persists_nothing(client, seed, app, failing_embeddings, fake_llm):
+    from app.modules.retrieval.deps import get_embedding_provider
+
+    headers = seed["headers"]["creator"]
+    workspace_id = seed["workspace_id"]
+    conversation = await _create(client, workspace_id, headers)
+    app.dependency_overrides[get_embedding_provider] = lambda: failing_embeddings
+
+    response = await _ask(client, workspace_id, conversation["id"], headers, "alpha")
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "Embedding provider unavailable"}
+    assert fake_llm.calls == []
+    assert await _messages(client, workspace_id, conversation["id"], headers) == []
