@@ -4,12 +4,14 @@ import hashlib
 import math
 import os
 import re
+from collections.abc import AsyncIterator
 
 os.environ.setdefault(
     "DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/ragnest"
 )
 os.environ.setdefault("SECRET_KEY", "test-secret-key-that-is-at-least-32-bytes-long")
 os.environ.setdefault("GEMINI_API", "test-gemini-key")
+os.environ.setdefault("LLM_API_KEY", "test-llm-key")
 
 import pytest
 import pytest_asyncio
@@ -22,6 +24,14 @@ import app.db.models
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import create_app
+from app.modules.chat.deps import get_llm_provider
+from app.modules.chat.llm import (
+    LLMDelta,
+    LLMEvent,
+    LLMFinish,
+    LLMMessage,
+    LLMProviderError,
+)
 from app.modules.retrieval.constants import EMBEDDING_DIM
 from app.modules.retrieval.deps import get_embedding_provider, get_session_factory
 from app.modules.retrieval.embeddings import EmbeddingProviderError
@@ -51,6 +61,45 @@ class FailingEmbeddingProvider:
         raise EmbeddingProviderError("provider unavailable")
 
 
+class FakeLLMProvider:
+    """Deterministic generator; records prompts and can fail mid-stream."""
+
+    def __init__(self) -> None:
+        self.calls: list[list[LLMMessage]] = []
+        self.deltas = ["Grounded ", "answer ", "[1]"]
+        self.fail_after: int | None = None
+
+    def stream(
+        self,
+        messages: list[LLMMessage],
+        *,
+        max_output_tokens: int = 1024,
+    ) -> AsyncIterator[LLMEvent]:
+        self.calls.append(list(messages))
+        return self._events()
+
+    async def _events(self) -> AsyncIterator[LLMEvent]:
+        for index, text in enumerate(self.deltas):
+            if self.fail_after is not None and index >= self.fail_after:
+                raise LLMProviderError("provider failed mid-stream")
+            yield LLMDelta(text)
+        yield LLMFinish("stop")
+
+
+class FailingLLMProvider:
+    def stream(
+        self,
+        messages: list[LLMMessage],
+        *,
+        max_output_tokens: int = 1024,
+    ) -> AsyncIterator[LLMEvent]:
+        return self._events()
+
+    async def _events(self) -> AsyncIterator[LLMEvent]:
+        raise LLMProviderError("provider unavailable")
+        yield LLMFinish("stop")  # pragma: no cover - makes this a generator
+
+
 def _embed(text: str) -> list[float]:
     vector = [0.0] * EMBEDDING_DIM
     for token in re.findall(r"[a-z0-9]+", text.lower()):
@@ -68,6 +117,16 @@ def fake_embeddings() -> FakeEmbeddingProvider:
 @pytest.fixture
 def failing_embeddings() -> FailingEmbeddingProvider:
     return FailingEmbeddingProvider()
+
+
+@pytest.fixture
+def fake_llm() -> FakeLLMProvider:
+    return FakeLLMProvider()
+
+
+@pytest.fixture
+def failing_llm() -> FailingLLMProvider:
+    return FailingLLMProvider()
 
 
 @pytest_asyncio.fixture
@@ -95,7 +154,7 @@ async def session_factory():
 
 
 @pytest_asyncio.fixture
-async def app(session_factory, fake_embeddings):
+async def app(session_factory, fake_embeddings, fake_llm):
     application = create_app()
 
     async def override_get_db():
@@ -105,6 +164,7 @@ async def app(session_factory, fake_embeddings):
     application.dependency_overrides[get_db] = override_get_db
     application.dependency_overrides[get_embedding_provider] = lambda: fake_embeddings
     application.dependency_overrides[get_session_factory] = lambda: session_factory
+    application.dependency_overrides[get_llm_provider] = lambda: fake_llm
     return application
 
 

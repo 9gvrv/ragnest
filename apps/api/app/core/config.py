@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     SECRET_KEY: str
     GEMINI_API: str
+    LLM_API_KEY: str
+    LLM_BASE_URL: str = "https://api.groq.com/openai/v1"
+    LLM_MODEL: str = "openai/gpt-oss-120b"
+    LLM_REASONING_EFFORT: str = "low"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     model_config = SettingsConfigDict(
