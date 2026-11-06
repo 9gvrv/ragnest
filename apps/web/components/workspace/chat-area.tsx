@@ -8,21 +8,12 @@ import {
   type RefObject,
 } from "react";
 import { ChatComposer } from "@/components/workspace/chat-composer";
+import {
+  ChatMessage,
+  type ChatUiMessage,
+} from "@/components/workspace/chat-message";
 import { readChatStream } from "@/lib/chat-stream";
-import type {
-  ApiCitation,
-  ApiConversation,
-  ApiMessage,
-} from "@/lib/api";
-
-type UiMessage = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  citations: ApiCitation[];
-  finishReason: string | null;
-  streaming: boolean;
-};
+import type { ApiConversation, ApiMessage } from "@/lib/api";
 
 type ChatAreaProps = {
   workspaceId: string;
@@ -36,7 +27,7 @@ type ChatAreaProps = {
   onConversationCreated: (conversation: ApiConversation) => void;
 };
 
-function toUiMessage(message: ApiMessage): UiMessage {
+function toUiMessage(message: ApiMessage): ChatUiMessage {
   return {
     id: message.id,
     role: message.role,
@@ -85,7 +76,7 @@ export function ChatArea({
   onConversationCreated,
 }: ChatAreaProps) {
   const router = useRouter();
-  const [messages, setMessages] = useState<UiMessage[]>(() =>
+  const [messages, setMessages] = useState<ChatUiMessage[]>(() =>
     initialMessages.map(toUiMessage),
   );
   const [streaming, setStreaming] = useState(false);
@@ -388,30 +379,7 @@ export function ChatArea({
       >
         <ol className="mx-auto flex w-full max-w-[780px] flex-col gap-6">
           {messages.map((message) => (
-            <li
-              key={message.id}
-              className={
-                message.role === "user"
-                  ? "ml-auto max-w-[85%] rounded-xl border border-border bg-surface px-4 py-3"
-                  : "max-w-[85%]"
-              }
-            >
-              <p className="text-xs text-muted">
-                {message.role === "user" ? "You" : "Ragnest"}
-              </p>
-              {message.role === "assistant" &&
-              message.streaming &&
-              message.content.length === 0 ? (
-                <ThinkingDots />
-              ) : (
-                <p className="mt-1 text-sm leading-6 whitespace-pre-wrap text-foreground">
-                  {message.content}
-                </p>
-              )}
-              {message.finishReason === "cancelled" ? (
-                <p className="mt-1 text-xs text-muted">Stopped.</p>
-              ) : null}
-            </li>
+            <ChatMessage key={message.id} message={message} />
           ))}
         </ol>
       </div>
@@ -431,22 +399,5 @@ export function ChatArea({
         </div>
       </div>
     </main>
-  );
-}
-
-function ThinkingDots() {
-  return (
-    <span
-      className="mt-2 flex items-center gap-1"
-      aria-label="Ragnest is answering"
-    >
-      {[0, 1, 2].map((index) => (
-        <span
-          key={index}
-          className="size-1.5 animate-pulse rounded-full bg-muted motion-reduce:animate-none"
-          style={{ animationDelay: `${index * 150}ms` }}
-        />
-      ))}
-    </span>
   );
 }
