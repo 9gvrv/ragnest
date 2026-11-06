@@ -5,13 +5,14 @@ import { ChatArea } from "@/components/workspace/chat-area";
 import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
 import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
 import type {
+  ApiConversation,
   ApiDocument,
   ApiMember,
+  ApiMessage,
   ApiRole,
   ApiUser,
   ApiWorkspace,
 } from "@/lib/api";
-import type { ChatMessage, WorkspaceChat } from "@/lib/chats";
 
 type WorkspaceShellProps = {
   workspace: ApiWorkspace;
@@ -21,8 +22,11 @@ type WorkspaceShellProps = {
   documents: ApiDocument[];
   mine: boolean;
   members: ApiMember[];
-  chats: WorkspaceChat[];
-  messages: ChatMessage[];
+  chats: ApiConversation[];
+  activeChatId: string | null;
+  activeChatTitle: string | null;
+  initialMessages: ApiMessage[];
+  hasReadyDocuments: boolean;
 };
 
 export function WorkspaceShell({
@@ -34,7 +38,10 @@ export function WorkspaceShell({
   mine,
   members,
   chats,
-  messages,
+  activeChatId,
+  activeChatTitle,
+  initialMessages,
+  hasReadyDocuments,
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -123,7 +130,7 @@ export function WorkspaceShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <WorkspaceTopbar
-          chatTitle="New chat"
+          chatTitle={activeChatTitle ?? "New chat"}
           documentCount={allDocuments.length}
           collapsed={collapsed}
           triggerRef={mobileTriggerRef}
@@ -132,9 +139,9 @@ export function WorkspaceShell({
         />
         <ChatArea
           workspaceName={workspace.name}
-          hasDocuments={allDocuments.length > 0}
+          hasDocuments={hasReadyDocuments}
           documentNames={allDocuments.map((document) => document.filename)}
-          messages={messages}
+          messages={initialMessages}
           composerRef={composerRef}
           onUploadRequest={requestUpload}
         />

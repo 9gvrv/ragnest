@@ -4,12 +4,13 @@ import { notFound, redirect } from "next/navigation";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
 import {
   ApiError,
+  getConversation,
   getMe,
   getWorkspace,
+  listConversations,
   listDocuments,
   listMembers,
 } from "@/lib/api";
-import type { ChatMessage, WorkspaceChat } from "@/lib/chats";
 import { getSessionToken } from "@/lib/session";
 
 // Reads the session cookie and calls the API, so it cannot be prerendered.
@@ -37,6 +38,7 @@ export default async function WorkspacePage({
   const { id } = await params;
   const query = await searchParams;
   const mine = query.mine === "true";
+  const chatId = typeof query.chat === "string" ? query.chat : null;
   const token = await getSessionToken();
   if (!token) {
     redirect(`/login?next=${encodeURIComponent(`/workspaces/${id}`)}`);
@@ -46,14 +48,16 @@ export default async function WorkspacePage({
   let members;
   let me;
   let allDocuments;
+  let conversations;
   try {
-    [workspace, members, me, allDocuments] = await Promise.all([
+    [workspace, members, me, allDocuments, conversations] = await Promise.all([
       getWorkspace(token, id),
       listMembers(token, id),
       getMe(token),
       // Fetch the whole set: the All/Mine filter is applied here, and the chat
-      // gate must know whether *any* document exists, not just the visible ones.
+      // gate must know whether *any* document is ready, not just the visible ones.
       listDocuments(token, id),
+      listConversations(token, id),
     ]);
   } catch (error) {
     if (error instanceof ApiError) {
@@ -77,9 +81,31 @@ export default async function WorkspacePage({
     ? allDocuments.filter((document) => document.uploaded_by === me.id)
     : allDocuments;
 
-  // No chat backend yet. Typed placeholders keep the list easy to wire up.
-  const chats: WorkspaceChat[] = [];
-  const messages: ChatMessage[] = [];
+  // A stale or deleted chat id should not strand the page: drop back to a new
+  // chat. An unknown workspace already handled above.
+  let activeChat = null;
+  if (chatId) {
+    try {
+      activeChat = await getConversation(token, id, chatId);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          redirect(`/login?next=${encodeURIComponent(`/workspaces/${id}`)}`);
+        }
+        if (error.status === 403) {
+          return <NoAccess />;
+        }
+        if (error.status === 404 || error.status === 422) {
+          redirect(`/workspaces/${id}`);
+        }
+      }
+      throw error;
+    }
+  }
+
+  const hasReadyDocuments = allDocuments.some(
+    (document) => document.embedding_status === "ready",
+  );
 
   return (
     <WorkspaceShell
@@ -90,8 +116,11 @@ export default async function WorkspacePage({
       documents={documents}
       mine={mine}
       members={members}
-      chats={chats}
-      messages={messages}
+      chats={conversations}
+      activeChatId={activeChat?.id ?? null}
+      activeChatTitle={activeChat?.title ?? null}
+      initialMessages={activeChat?.messages ?? []}
+      hasReadyDocuments={hasReadyDocuments}
     />
   );
 }
