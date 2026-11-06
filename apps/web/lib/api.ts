@@ -127,11 +127,48 @@ export type ApiDocument = {
   size_bytes: number;
   page_count: number | null;
   char_count: number;
+  embedding_status: "pending" | "indexing" | "ready" | "failed";
+  indexed_at: string | null;
   created_at: string;
 };
 
 export type ApiDocumentDetail = ApiDocument & {
   extracted_text: string;
+};
+
+export type ApiCitation = {
+  n: number;
+  document_id: string;
+  chunk_id: string;
+  filename: string;
+  chunk_index: number;
+  char_start: number;
+  char_end: number;
+  excerpt: string;
+  score: number;
+};
+
+export type ApiConversation = {
+  id: string;
+  workspace_id: string;
+  created_by: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ApiMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  citations: ApiCitation[];
+  model: string | null;
+  finish_reason: string | null;
+  created_at: string;
+};
+
+export type ApiConversationDetail = ApiConversation & {
+  messages: ApiMessage[];
 };
 
 export type ApiPendingInvitation = {
@@ -261,6 +298,90 @@ export function deleteDocument(
     `/api/v1/workspaces/${workspaceId}/documents/${documentId}`,
     { method: "DELETE", token },
   );
+}
+
+export function reindexDocument(
+  token: string,
+  workspaceId: string,
+  documentId: string,
+) {
+  return request<{ embedding_status: string }>(
+    `/api/v1/workspaces/${workspaceId}/documents/${documentId}/reindex`,
+    { method: "POST", token },
+  );
+}
+
+export function listConversations(token: string, workspaceId: string) {
+  return request<ApiConversation[]>(
+    `/api/v1/workspaces/${workspaceId}/conversations`,
+    { token },
+  );
+}
+
+export function createConversation(
+  token: string,
+  workspaceId: string,
+  title?: string,
+) {
+  return request<ApiConversation>(
+    `/api/v1/workspaces/${workspaceId}/conversations`,
+    {
+      method: "POST",
+      body: JSON.stringify(title ? { title } : {}),
+      token,
+    },
+  );
+}
+
+export function getConversation(
+  token: string,
+  workspaceId: string,
+  conversationId: string,
+) {
+  return request<ApiConversationDetail>(
+    `/api/v1/workspaces/${workspaceId}/conversations/${conversationId}`,
+    { token },
+  );
+}
+
+export function deleteConversation(
+  token: string,
+  workspaceId: string,
+  conversationId: string,
+) {
+  return request<void>(
+    `/api/v1/workspaces/${workspaceId}/conversations/${conversationId}`,
+    { method: "DELETE", token },
+  );
+}
+
+/**
+ * POST a question and hand back the raw streaming response. The body is never
+ * read here: the route handler forwards it straight to the browser.
+ */
+export async function streamConversationMessage(
+  token: string,
+  workspaceId: string,
+  conversationId: string,
+  content: string,
+): Promise<Response> {
+  try {
+    return await fetch(
+      `${API_BASE}/api/v1/workspaces/${workspaceId}/conversations/${conversationId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "text/event-stream",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content }),
+        cache: "no-store",
+      },
+    );
+  } catch {
+    throw new ApiError(0, "Can't reach the API. Is it running on port 8000?");
+  }
 }
 
 export function checkInvitationEmail(
