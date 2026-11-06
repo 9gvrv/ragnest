@@ -389,3 +389,91 @@ focus, contrast`
 Replace `apps/web/AGENTS.md` with a web-specific version. Milestone 4 adds
 workspace selection to `/`, at which point the account page becomes a settings
 screen.
+
+## 2026-11-06 — API: Milestone 6 chat (RAG)
+
+### Summary
+
+Workspace chat is live in the API: a member creates a conversation, asks a
+question, and receives a grounded, citation-bearing answer streamed as SSE.
+Retrieval, embeddings and pgvector are reused from Milestone 5; generation goes
+to Groq's OpenAI-compatible endpoint over `httpx` (no SDK, no new dependency).
+The web chat UI and document UI remain a separate milestone.
+
+### What shipped
+
+- `app/modules/chat/` follows the existing module shape: `constants.py`,
+  `llm.py` (provider protocol + Groq client), `deps.py`, `models.py`,
+  `types.py`, `prompts.py`, `schemas.py`, `service.py`, `router.py`.
+- Routes under `/api/v1/workspaces/{workspace_id}/conversations`:
+  `POST` create, `GET` list the author's conversations newest-first,
+  `GET /{id}` detail with messages, `DELETE /{id}`, and
+  `POST /{id}/messages` streaming SSE.
+- SSE contract: `sources` → `token`* → `done`. `error` is terminal and never
+  followed by `done`. `done.cited` holds the valid, de-duplicated `[n]` markers
+  found in the answer.
+- Conversations are private to their author: another member gets 404, a
+  non-member gets 403 at the workspace gate. Both the API check and the SQL
+  filter include `created_by`.
+- Grounded prompt: numbered source blocks, 12k-character context, last 6
+  history messages capped at 6k characters. The model must cite with `[n]` or
+  reply with the fixed refusal.
+- Zero retrieved chunks skip the model entirely and persist both the question
+  and the refusal with `finish_reason="no_context"`.
+- Failure modes: pre-token provider 429 → JSON 429, other/empty completion →
+  JSON 503 (the question row survives); post-token failure → terminal
+  `event: error` plus a partial assistant row with `finish_reason="error"`;
+  embedding failure → 503 with nothing persisted. Disconnect persists partial
+  text as `finish_reason="cancelled"`.
+- Migration `7c1e4a9b2d3f` adds `conversations` and `messages`, cascading from
+  workspaces/conversations. Citations are a `JSONB` snapshot (JSON on SQLite)
+  so they survive document deletion.
+- Config gained `LLM_API_KEY` (required), `LLM_BASE_URL`, `LLM_MODEL` and
+  `LLM_REASONING_EFFORT`; generation uses `openai/gpt-oss-120b` with
+  `reasoning_effort="low"` and never exposes reasoning deltas.
+
+### Discovered during the Neon smoke test
+
+- **Naive vs aware datetimes.** `TimestampMixin` columns are `TIMESTAMP WITHOUT
+  TIME ZONE`; asyncpg rejects an aware `datetime` bound to them. Conversations
+  now use `_utcnow_naive()` while `messages.created_at` (timestamptz) keeps
+  aware UTC. SQLite accepted both, so only the live run caught it.
+- **Blank `.env` values beat defaults.** A `LLM_BASE_URL=` line arrived as an
+  empty string and made the provider POST to a relative URL. A settings
+  validator now restores the base URL/model defaults and strips
+  `LLM_REASONING_EFFORT`.
+- **Groq emitted full-width citation brackets (`【1】`).** `parse_cited` now
+  accepts ASCII, full-width square, and CJK corner brackets while keeping only
+  markers in `1..len(sources)`.
+
+### Verification
+
+- `uv run pytest` — 193 passed (41 in `tests/modules/chat`).
+- `uv run ruff check app tests` and `uv run ruff format --check app tests` —
+  clean.
+- `uv run alembic upgrade head` against Neon; `uv run alembic current` →
+  `7c1e4a9b2d3f (head)`.
+- Manual curl against Neon + Gemini + Groq: uploaded `policy.md`, waited for
+  `embedding_status: ready`, created a conversation, and asked a grounded
+  question — the stream produced `sources` (filename/excerpt/score), token
+  deltas, and `done`. An unrelated question produced the refusal text and
+  `done`. Two or three generation calls total.
+
+### Commits
+
+`docs(chat): add milestone 6 chat/rag design` ·
+`docs(chat): add milestone 6 implementation plan` ·
+`feat(chat): add groq-compatible llm provider` ·
+`feat(chat): add conversation and message models` ·
+`feat(chat): add grounded prompt builder and citation parsing` ·
+`feat(chat): add conversation crud` ·
+`feat(chat): persist and stream grounded answers` ·
+`feat(chat): handle provider and stream failures` ·
+`fix(chat): write conversation timestamps as naive utc` ·
+`fix(chat): fall back to llm defaults when env values are blank` ·
+`fix(chat): accept full-width citation brackets`
+
+### Next
+
+Web documents + chat: upload/list documents, then a workspace chat page that
+consumes the SSE contract, renders `sources`, and makes `[n]` markers clickable.

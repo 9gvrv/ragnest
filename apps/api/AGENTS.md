@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-02 (Milestone 5 — retrieval — API complete)
+> **Last updated:** 2026-11-06 (Milestone 6 — chat — API complete)
 
 ---
 
@@ -91,6 +91,17 @@ apps/api/
 │   │   └── health.py        # GET /health
 │   └── modules/             # domain feature modules
 │       ├── __init__.py
+│       ├── chat/
+│       │   ├── __init__.py
+│       │   ├── constants.py   # budgets, refusal text, default title
+│       │   ├── deps.py        # get_llm_provider
+│       │   ├── llm.py         # LLMProvider protocol + Groq client
+│       │   ├── models.py      # Conversation, Message
+│       │   ├── prompts.py     # grounded prompt, trimming, citation parse
+│       │   ├── router.py      # conversation CRUD + SSE messages
+│       │   ├── schemas.py     # Citation, conversation/message models
+│       │   ├── service.py     # CRUD, prepare_exchange, persist_assistant
+│       │   └── types.py       # JSONB on PG, JSON on SQLite
 │       ├── documents/
 │       │   ├── __init__.py
 │       │   ├── models.py     # Document (text only; no bytes, no key)
@@ -147,6 +158,14 @@ apps/api/
         │   ├── __init__.py
         │   ├── test_login.py
         │   └── test_signup.py
+        ├── chat/
+        │   ├── __init__.py
+        │   ├── conftest.py       # seed fixture (creator/admin/member/outsider)
+        │   ├── test_llm.py
+        │   ├── test_model.py
+        │   ├── test_prompts.py
+        │   ├── test_router.py
+        │   └── test_service.py
         ├── documents/
         │   ├── __init__.py
         │   ├── conftest.py       # seed fixture: users, workspace, roles, tokens
@@ -176,7 +195,8 @@ apps/api/
 ```
 
 **`app/modules/` holds every domain feature** (`auth`, `users`, `workspaces`,
-`invitations`, `documents`). Modules were added over time; no existing file moved.
+`invitations`, `documents`, `retrieval`, `chat`). Modules were added over time;
+no existing file moved.
 
 ### Hard structural rules
 
@@ -213,6 +233,16 @@ apps/api/
    `session: AsyncSession = Depends(get_db)` (avoids ruff `B008`, and is current
    FastAPI idiom).
 7. **Logging** via the stdlib, configured once in `create_app()`.
+8. **Chat streams Server-Sent Events.** One endpoint,
+   `POST /api/v1/workspaces/{workspace_id}/conversations/{id}/messages`, emits
+   `sources` → `token`* → `done`. `error` is terminal (never followed by
+   `done`). The first provider event is awaited **before** returning
+   `StreamingResponse`, so pre-token failures are ordinary JSON errors
+   (429/503). Conversations are private to their author: other members get 404,
+   non-members get 403 at the workspace gate. Zero retrieved chunks skip the
+   model entirely and persist a fixed refusal with `finish_reason="no_context"`.
+   Generation never retries and never exposes `delta.reasoning` (no
+   chain-of-thought). See §6 for keys and §7 for the timestamp trap.
 
 ---
 
@@ -253,11 +283,19 @@ If you add another DB engine (e.g. in Alembic), pass
   print it, never paste it into logs.
 - `.env.example` is committed and documents the shape:
   `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`,
+  `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_REASONING_EFFORT`,
   `ACCESS_TOKEN_EXPIRE_MINUTES`.
 - Settings fields: `APP_NAME` (default `"Ragnest API"`), `LOG_LEVEL` (default
   `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**),
-  `GEMINI_API` (**required**, Gemini embeddings), `ACCESS_TOKEN_EXPIRE_MINUTES`
-  (default `30`).
+  `GEMINI_API` (**required**, Gemini embeddings), `LLM_API_KEY` (**required**,
+  Groq generation), `LLM_BASE_URL` (default
+  `https://api.groq.com/openai/v1`), `LLM_MODEL` (default
+  `openai/gpt-oss-120b`), `LLM_REASONING_EFFORT` (default `"low"`; blank omits
+  the field), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`).
+- **Blank LLM keys fall back to defaults.** A `key=` line in `.env` arrives as
+  `""`, not "unset"; a model validator restores the base URL and model and
+  strips `LLM_REASONING_EFFORT`, so an empty placeholder cannot silently break
+  generation. `LLM_API_KEY` has no default and must be real.
 - `SECRET_KEY` is used for HS256 JWTs; tokens expire after `ACCESS_TOKEN_EXPIRE_MINUTES`.
 - The project uses `pwdlib[argon2]` for password hashing and `PyJWT` for token signing; `EmailStr` validation is provided by `email-validator`.
 - A module-level `settings = Settings()` exists; `Settings()` is instantiated at
@@ -278,7 +316,8 @@ If you add another DB engine (e.g. in Alembic), pass
   adds **`workspaces`**, **`workspace_members`** and **`invitations`**;
   Milestone 4 adds **`documents`** (`25d91090dee5`); Milestone 5 adds
   **`document_chunks`** plus `documents.embedding_status`/`indexed_at`
-  (`299585b2a1a6`). The two empty baseline revisions
+  (`299585b2a1a6`); Milestone 6 adds **`conversations`** and **`messages`**
+  (`7c1e4a9b2d3f`). The two empty baseline revisions
   (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart; squashing is
   optional.
 - **Milestone 5 uses pgvector in the same database.** The migration runs
@@ -291,6 +330,22 @@ If you add another DB engine (e.g. in Alembic), pass
   file on disk: `extracted_text` is the durable artefact, `char_count` always
   equals its length, and `page_count` is `NULL` for txt/md. `document_chunks`
   cascades from the hard-deleted document (and from the workspace).
+- **Chat tables.** `conversations` (`id`, `workspace_id`, `created_by`, `title`,
+  `created_at`, `updated_at`) and `messages` (`id`, `conversation_id`, `role`,
+  `content`, `citations`, `model`, `finish_reason`, `created_at`) both cascade
+  from their parents; deleting a workspace removes its conversations and their
+  messages. `citations` is `JSONB` on Postgres with a JSON SQLite variant
+  (`chat/types.py`) and stores the citation snapshot, so citations survive
+  document deletion. Conversation listing is filtered by `workspace_id` **and**
+  `created_by` — the author is part of the query, not just the API check.
+- **Conversation timestamps are naive UTC; message timestamps are aware.** The
+  `TimestampMixin` columns are `TIMESTAMP WITHOUT TIME ZONE`; asyncpg rejects
+  an aware `datetime` bound to them (`can't subtract offset-naive and
+  offset-aware datetimes`). `chat/service.py` therefore uses
+  `_utcnow_naive()` for `conversations.created_at`/`updated_at`, while
+  `messages.created_at` is a `timestamptz` column and keeps
+  `datetime.now(UTC)`. SQLite accepts both, so only a Postgres smoke test
+  catches a regression here.
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
 
@@ -315,8 +370,8 @@ If you add another DB engine (e.g. in Alembic), pass
 - Fixtures live in the **root `tests/conftest.py`**: `client` (httpx
   `AsyncClient` bound via `ASGITransport`), `app` (the FastAPI app with
   dependency overrides), `session_factory` (async SQLite sessionmaker),
-  `fake_embeddings` and `failing_embeddings`. A subdir may add its own
-  `conftest.py` for local fixtures.
+  `fake_embeddings`, `failing_embeddings`, `fake_llm`, and `failing_llm`. A
+  subdir may add its own `conftest.py` for local fixtures.
 - **Embeddings never hit the network in tests.** `fake_embeddings` is a
   deterministic bag-of-tokens vector; `tests/conftest.py` overrides
   `get_embedding_provider` and `get_session_factory`, so upload background
@@ -328,12 +383,25 @@ If you add another DB engine (e.g. in Alembic), pass
   `ready`/`failed` by the time the test reads it back — but the 201 response
   body was serialized earlier and therefore says `pending`. Assert the settled
   status through `GET /documents/{id}`.
+- **Generation never hits the network in tests.** `fake_llm` records prompts and
+  streams `["Grounded ", "answer ", "[1]"]` then `LLMFinish("stop")`;
+  `fail_after=N` raises mid-stream, `deltas=[]` simulates an empty completion,
+  and `failing_llm` fails before the first token (pass `status_code=429` for the
+  rate-limit mapping). `tests/conftest.py` overrides `get_llm_provider`. The
+  real client is tested with `httpx.MockTransport` in
+  `tests/modules/chat/test_llm.py`.
+- **SSE tests parse the raw body.** `AsyncClient.post` buffers the whole
+  `text/event-stream`; `tests/modules/chat/test_router.py` splits on blank lines
+  and asserts event names, token order, `done.cited`, and the persisted row.
+  Because the endpoint pre-flights the first event, pre-token failures are
+  ordinary JSON responses (429/503) while post-token failures end with
+  `event: error` and no `done`.
 - **Test layout mirrors the app:** `tests/api/`, `tests/core/`, `tests/db/`, and
   `tests/modules/<feature>/` for domain code (`tests/modules/auth/`,
   `tests/modules/users/`, `tests/modules/documents/`,
-  `tests/modules/retrieval/`). **Every test subdirectory needs an
-  `__init__.py`** — otherwise pytest's default import mode breaks when two
-  files share a basename.
+  `tests/modules/retrieval/`, `tests/modules/chat/`). **Every test subdirectory
+  needs an `__init__.py`** — otherwise pytest's default import mode breaks when
+  two files share a basename.
 - Test names/fixtures use plain absolute imports (`from app.core.config import
 Settings`); moving test files does not change imports.
 
@@ -393,6 +461,10 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
   `settings.database_url` + `settings.database_connect_args`.
 - Do **not** add domain tables before the milestone that owns them.
 - Do **not** write bulk code without explaining it first.
+- Do **not** persist or stream `delta.reasoning` (chain-of-thought); only
+  `delta.content` is user-visible.
+- Do **not** bind aware datetimes to `TimestampMixin` columns — they are
+  `TIMESTAMP WITHOUT TIME ZONE` on Postgres (see §7).
 
 ---
 
@@ -426,9 +498,19 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    `POST /api/v1/workspaces/{workspace_id}/search`, and
    `python -m app.modules.retrieval.backfill` for pre-existing documents. No
    chat/answer generation and no web UI yet.
-6. **Chat (RAG)** — ask questions, stream grounded answers with citations.
+6. ✅ **Chat (RAG)** — `POST /api/v1/workspaces/{workspace_id}/conversations`
+   (create), `GET` (author's list, newest first), `GET/DELETE /{id}`, and
+   `POST /{id}/messages` streaming SSE (`sources` → `token`* → `done`). Groq's
+   OpenAI-compatible Chat Completions API over `httpx` (no SDK, no new
+   dependency), retrieval reused from Milestone 5, grounded system prompt with
+   `[n]` citations, fixed refusal when the workspace has no chunks, and
+   citation snapshots on the assistant row. Failures: 429/503 before the first
+   token, terminal `error` plus partial persistence afterwards. No web UI yet.
 
-**Next up: Milestone 6 (Chat/RAG).** Design precedes code.
+**Next up: web documents + chat.** Upload/list documents, then a workspace chat
+page that consumes this SSE contract, renders `sources`, and makes `[n]` markers
+clickable. That milestone owns the web streaming proxy and the chat route; the
+API side is complete.
 
 ---
 
@@ -450,5 +532,9 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
   `docs/superpowers/specs/2026-11-02-retrieval-design.md`
 - Milestone 5 retrieval plan:
   `docs/superpowers/plans/2026-11-02-retrieval.md`
+- Milestone 6 chat design:
+  `docs/superpowers/specs/2026-11-04-chat-rag-design.md`
+- Milestone 6 chat plan:
+  `docs/superpowers/plans/2026-11-04-chat-rag.md`
 - Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`

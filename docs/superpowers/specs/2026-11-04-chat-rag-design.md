@@ -1,7 +1,7 @@
 # Ragnest API — Milestone 6: Chat (RAG) — Design
 
 **Date:** 2026-11-04
-**Status:** proposed
+**Status:** built (API complete; web chat UI deferred)
 **Scope:** `apps/api/` only. The web chat UI is a separate milestone.
 
 ---

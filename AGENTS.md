@@ -37,12 +37,14 @@ commands from inside the app directory.
 
 | Directory | Stack | Status |
 | --- | --- | --- |
-| `apps/api/` | FastAPI + async SQLAlchemy (uv, ruff, pytest, Alembic) | Milestones 1–5 done |
+| `apps/api/` | FastAPI + async SQLAlchemy (uv, ruff, pytest, Alembic) | Milestones 1–6 done |
 | `apps/web/` | Next.js 16 App Router + pnpm + Tailwind 4 | Auth + workspaces/invitations UI done |
 | `docs/superpowers/` | Design specs & task plans per milestone | |
 | `docs/progress.md` | Chronological work log (entries before 2026-10-14 describe a superseded `src/` layout) | |
 
-**Next up: Milestone 6 (Chat/RAG).** Retrieval is complete:
+**Next up: web documents + chat UI.** The API is complete through Milestone 6
+(chat/RAG): `docs/superpowers/specs/2026-11-04-chat-rag-design.md`,
+`docs/superpowers/plans/2026-11-04-chat-rag.md`. Retrieval:
 `docs/superpowers/specs/2026-11-02-retrieval-design.md`,
 `docs/superpowers/plans/2026-11-02-retrieval.md`.
 Documents: `docs/superpowers/specs/2026-10-27-documents-design.md`,
