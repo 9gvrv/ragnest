@@ -25,6 +25,7 @@ type ChatAreaProps = {
   composerRef: RefObject<HTMLTextAreaElement | null>;
   onUploadRequest: () => void;
   onConversationCreated: (conversation: ApiConversation) => void;
+  onConversationTitled: (conversationId: string, title: string) => void;
 };
 
 function toUiMessage(message: ApiMessage): ChatUiMessage {
@@ -74,6 +75,7 @@ export function ChatArea({
   composerRef,
   onUploadRequest,
   onConversationCreated,
+  onConversationTitled,
 }: ChatAreaProps) {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatUiMessage[]>(() =>
@@ -250,6 +252,14 @@ export function ChatArea({
                   : message,
               ),
             );
+            if (createdHereRef.current && conversationIdRef.current) {
+              // Mirror the API's titling rule so the sidebar and topbar update
+              // without waiting for a server refresh.
+              onConversationTitled(
+                conversationIdRef.current,
+                content.replace(/\s+/g, " ").slice(0, 80),
+              );
+            }
             break;
           }
           case "error": {

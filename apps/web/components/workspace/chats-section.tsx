@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import { DeleteConversationButton } from "@/components/delete-conversation-button";
 import { MessageIcon, PlusIcon } from "@/components/workspace/icons";
 import { SectionCount } from "@/components/workspace/sidebar-section";
 import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
-import type { WorkspaceChat } from "@/lib/chats";
+import type { ApiConversation } from "@/lib/api";
 import { parseApiDate } from "@/lib/dates";
 
 const dateFormat = new Intl.DateTimeFormat("en-GB", {
@@ -12,15 +14,19 @@ const dateFormat = new Intl.DateTimeFormat("en-GB", {
 });
 
 type ChatsSectionProps = {
-  chats: WorkspaceChat[];
+  workspaceId: string;
+  chats: ApiConversation[];
+  selectedChatId: string | null;
   onNewChat: () => void;
-  onSelectChat?: (chat: WorkspaceChat) => void;
+  onDeleted: (conversationId: string) => void;
 };
 
 export function ChatsSection({
+  workspaceId,
   chats,
+  selectedChatId,
   onNewChat,
-  onSelectChat,
+  onDeleted,
 }: ChatsSectionProps) {
   return (
     <section
@@ -39,8 +45,8 @@ export function ChatsSection({
       </div>
 
       <div className="shrink-0 px-3 pt-2">
-        <button
-          type="button"
+        <Link
+          href={`/workspaces/${workspaceId}`}
           onClick={onNewChat}
           className="flex h-12 w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 text-left text-sm font-medium text-foreground transition-colors duration-150 hover:border-control hover:bg-surface"
         >
@@ -51,7 +57,7 @@ export function ChatsSection({
             <PlusIcon className="size-3.5" />
           </span>
           New chat
-        </button>
+        </Link>
       </div>
 
       <div className={`${sidebarScroll} flex-1 px-2 py-2`}>
@@ -61,23 +67,54 @@ export function ChatsSection({
           </p>
         ) : (
           <ul className="space-y-0.5">
-            {chats.map((chat) => (
-              <li key={chat.id}>
-                <button
-                  type="button"
-                  onClick={() => onSelectChat?.(chat)}
-                  className="group flex h-10 w-full items-center gap-2 rounded-md px-1 text-left transition-colors duration-150 hover:bg-surface"
+            {chats.map((chat) => {
+              const active = chat.id === selectedChatId;
+              return (
+                <li
+                  key={chat.id}
+                  className={[
+                    "group flex items-center gap-0.5 rounded-md pr-1 transition-colors duration-150",
+                    active ? "bg-surface" : "hover:bg-surface",
+                  ].join(" ")}
                 >
-                  <MessageIcon className="size-3.5 shrink-0 text-muted" />
-                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
-                    {chat.title}
+                  <Link
+                    href={`/workspaces/${workspaceId}?chat=${chat.id}`}
+                    aria-current={active ? "page" : undefined}
+                    className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-md px-1 text-left"
+                  >
+                    <MessageIcon
+                      className={
+                        active
+                          ? "size-3.5 shrink-0 text-foreground"
+                          : "size-3.5 shrink-0 text-muted"
+                      }
+                    />
+                    <span
+                      className={
+                        active
+                          ? "min-w-0 flex-1 truncate text-sm font-medium text-foreground"
+                          : "min-w-0 flex-1 truncate text-sm text-foreground"
+                      }
+                    >
+                      {chat.title}
+                    </span>
+                    <span className="shrink-0 text-xs text-muted tabular-nums">
+                      {dateFormat.format(parseApiDate(chat.updated_at))}
+                    </span>
+                  </Link>
+
+                  <span className="w-7 shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                    <DeleteConversationButton
+                      workspaceId={workspaceId}
+                      conversationId={chat.id}
+                      title={chat.title}
+                      active={active}
+                      onDeleted={onDeleted}
+                    />
                   </span>
-                  <span className="shrink-0 text-xs text-muted tabular-nums">
-                    {dateFormat.format(parseApiDate(chat.updated_at))}
-                  </span>
-                </button>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

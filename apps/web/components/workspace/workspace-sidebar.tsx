@@ -16,13 +16,13 @@ import { MembersSection } from "@/components/workspace/members-section";
 import { Menu } from "@/components/workspace/menu";
 import { UserMenu } from "@/components/workspace/user-menu";
 import type {
+  ApiConversation,
   ApiDocument,
   ApiMember,
   ApiRole,
   ApiUser,
   ApiWorkspace,
 } from "@/lib/api";
-import type { WorkspaceChat } from "@/lib/chats";
 
 type WorkspaceSidebarProps = {
   workspace: ApiWorkspace;
@@ -36,8 +36,10 @@ type WorkspaceSidebarProps = {
   members: ApiMember[];
   membersOpen: boolean;
   onToggleMembers: () => void;
-  chats: WorkspaceChat[];
+  chats: ApiConversation[];
+  selectedChatId: string | null;
   onNewChat: () => void;
+  onChatDeleted: (conversationId: string) => void;
   uploadButtonRef: RefObject<HTMLButtonElement | null>;
   closeButtonRef: RefObject<HTMLButtonElement | null>;
   open: boolean;
@@ -59,7 +61,9 @@ export function WorkspaceSidebar({
   membersOpen,
   onToggleMembers,
   chats,
+  selectedChatId,
   onNewChat,
+  onChatDeleted,
   uploadButtonRef,
   closeButtonRef,
   open,
@@ -160,7 +164,13 @@ export function WorkspaceSidebar({
           open={membersOpen}
           onToggle={onToggleMembers}
         />
-        <ChatsSection chats={chats} onNewChat={onNewChat} />
+        <ChatsSection
+          workspaceId={workspace.id}
+          chats={chats}
+          selectedChatId={selectedChatId}
+          onNewChat={onNewChat}
+          onDeleted={onChatDeleted}
+        />
       </div>
 
       <footer className="shrink-0 border-t border-border px-2 py-2">

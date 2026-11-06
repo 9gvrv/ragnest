@@ -54,6 +54,8 @@ export function WorkspaceShell({
     ...chats,
   ];
   const selectedChatId = activeChatId ?? optimisticChatId;
+  const selectedChat = chatList.find((chat) => chat.id === selectedChatId);
+  const chatTitle = activeChatTitle ?? selectedChat?.title ?? "New chat";
   // An empty workspace opens the secondary sections so the first upload is
   // obvious; once documents exist, Chats gets the room and they start closed.
   const [documentsOpen, setDocumentsOpen] = useState(
@@ -78,6 +80,23 @@ export function WorkspaceShell({
         : [conversation, ...current],
     );
     setOptimisticChatId(conversation.id);
+  }
+
+  function handleConversationTitled(conversationId: string, title: string) {
+    setOptimisticChats((current) =>
+      current.map((chat) =>
+        chat.id === conversationId ? { ...chat, title } : chat,
+      ),
+    );
+  }
+
+  function handleConversationDeleted(conversationId: string) {
+    setOptimisticChats((current) =>
+      current.filter((chat) => chat.id !== conversationId),
+    );
+    setOptimisticChatId((current) =>
+      current === conversationId ? null : current,
+    );
   }
 
   function handleNewChat() {
@@ -138,7 +157,9 @@ export function WorkspaceShell({
         membersOpen={membersOpen}
         onToggleMembers={() => setMembersOpen((value) => !value)}
         chats={chatList}
+        selectedChatId={selectedChatId}
         onNewChat={handleNewChat}
+        onChatDeleted={handleConversationDeleted}
         uploadButtonRef={uploadButtonRef}
         closeButtonRef={sidebarCloseRef}
         open={mobileOpen}
@@ -149,7 +170,7 @@ export function WorkspaceShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <WorkspaceTopbar
-          chatTitle={activeChatTitle ?? "New chat"}
+          chatTitle={chatTitle}
           documentCount={allDocuments.length}
           collapsed={collapsed}
           triggerRef={mobileTriggerRef}
@@ -167,6 +188,7 @@ export function WorkspaceShell({
           composerRef={composerRef}
           onUploadRequest={requestUpload}
           onConversationCreated={handleConversationCreated}
+          onConversationTitled={handleConversationTitled}
         />
       </div>
     </div>
