@@ -96,17 +96,19 @@ export function DocumentsSection({
                   </span>
                 </Link>
 
-                {canManageDocument(myRole, userId, document) ? (
-                  <div className="w-7 shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
-                    <DeleteDocumentButton
-                      workspaceId={workspaceId}
-                      documentId={document.id}
-                      filename={document.filename}
-                      variant="icon"
-                      refreshOnDelete
-                    />
-                  </div>
-                ) : null}
+                <div className="w-7 shrink-0">
+                  {canManageDocument(myRole, userId, document) ? (
+                    <div className="opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                      <DeleteDocumentButton
+                        workspaceId={workspaceId}
+                        documentId={document.id}
+                        filename={document.filename}
+                        variant="icon"
+                        refreshOnDelete
+                      />
+                    </div>
+                  ) : null}
+                </div>
               </li>
             ))}
           </ul>

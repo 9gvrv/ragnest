@@ -80,26 +80,28 @@ export function MembersSection({
                 </span>
 
                 <span className="flex shrink-0 items-center gap-1">
-                  <span className="rounded border border-border bg-foreground/5 px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
-                    {member.role}
-                  </span>
                   {isMe ? (
                     <span className="rounded-full border border-border px-1.5 py-0.5 text-[10px] leading-none text-muted">
                       you
                     </span>
                   ) : null}
+                  <span className="rounded border border-border bg-foreground/5 px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
+                    {member.role}
+                  </span>
                 </span>
 
-                {canRemoveMember(myRole, me.id, member) ? (
-                  <div className="w-7 shrink-0 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
-                    <RemoveMemberButton
-                      workspaceId={workspaceId}
-                      userId={member.user_id}
-                      email={member.email}
-                      variant="icon"
-                    />
-                  </div>
-                ) : null}
+                <div className="w-7 shrink-0">
+                  {canRemoveMember(myRole, me.id, member) ? (
+                    <div className="opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                      <RemoveMemberButton
+                        workspaceId={workspaceId}
+                        userId={member.user_id}
+                        email={member.email}
+                        variant="icon"
+                      />
+                    </div>
+                  ) : null}
+                </div>
               </li>
             );
           })}
