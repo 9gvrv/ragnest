@@ -1,4 +1,8 @@
+import os
+import subprocess
+import sys
 import uuid
+from pathlib import Path
 
 from sqlalchemy import select
 
@@ -90,3 +94,30 @@ async def test_backfill_continues_after_one_failure(session_factory):
         ids[1]: "ready",
     }
     assert provider.calls == 2
+
+
+def test_backfill_import_registers_every_model():
+    """The CLI must load the aggregator or mapper configuration cannot resolve
+    cross-module foreign keys (documents.uploaded_by -> users.id)."""
+    api_root = Path(__file__).resolve().parents[3]
+    code = (
+        "from app.modules.retrieval import backfill;"
+        "from sqlalchemy.orm import configure_mappers;"
+        "configure_mappers()"
+    )
+    env = {
+        **os.environ,
+        "DATABASE_URL": "postgresql+asyncpg://user:pass@localhost:5432/ragnest",
+        "SECRET_KEY": "test-secret",
+        "GEMINI_API": "test-key",
+        "LLM_API_KEY": "test-key",
+    }
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        cwd=api_root,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr

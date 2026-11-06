@@ -16,6 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.core.config import settings
+from app.db import models as _models  # noqa: F401 - register every mapper for the CLI
 from app.db.session import SessionLocal
 from app.modules.documents.models import Document
 from app.modules.retrieval.embeddings import EmbeddingProvider, GeminiEmbeddingProvider

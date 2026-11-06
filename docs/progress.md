@@ -477,3 +477,40 @@ The web chat UI and document UI remain a separate milestone.
 
 Web documents + chat: upload/list documents, then a workspace chat page that
 consumes the SSE contract, renders `sources`, and makes `[n]` markers clickable.
+
+## 2026-11-06 — Retrieval: repair stuck documents, fix backfill CLI
+
+### Problem
+
+Several workspaces held documents stuck at `embedding_status = "pending"` with
+zero chunks, so every chat question took the `no_context` path and returned the
+fixed refusal. The documents had been uploaded while the dev server was
+restarted before the in-process `BackgroundTasks` indexing job ran; the upload
+row survived, the task did not.
+
+The documented repair path was also broken: `python -m
+app.modules.retrieval.backfill` failed immediately with
+`NoReferencedTableError: documents.uploaded_by -> users.id`, because the CLI
+module imported only `Document` and `DocumentChunk`. SQLAlchemy's mapper
+configuration needs every model registered. Tests missed it because the test
+harness imports `app.db.models` first.
+
+### Fix and repair
+
+- `backfill.py` now imports `app.db.models` at module level, so the CLI
+  registers the full metadata before configuring mappers.
+- Added a subprocess regression test that imports the CLI in a fresh
+  interpreter and calls `configure_mappers()`; it fails without the import.
+- Ran the backfill against Neon: **33 documents ready, 0 failed** across
+  `Business`, `startup`, both `Sidebar QA` workspaces, both `Single Doc`
+  workspaces, and `Chat demo`. The two `Empty Workspace` entries have no
+  documents.
+- Verified real retrieval on existing documents (cosine scores 0.80–0.86) and
+  a full live upload → indexing → SSE chat run: `sources` populated, grounded
+  answer with `[1]`, `finish_reason: "stop"`.
+
+### Note
+
+`BackgroundTasks` are in-process: a reload or restart between the upload
+response and the task loses the job. The backfill remains the repair path; a
+startup sweep for non-`ready` documents would be a separate design decision.
