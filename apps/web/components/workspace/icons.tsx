@@ -85,6 +85,23 @@ export function ArrowUpIcon({ className }: IconProps) {
   );
 }
 
+export function StopIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="4.5" y="4.5" width="7" height="7" rx="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function RetryIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M13 8a5 5 0 1 1-1.5-3.55" />
+      <path d="M13 2.75V5.5H10.25" />
+    </svg>
+  );
+}
+
 export function MoreHorizontalIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>

@@ -45,6 +45,15 @@ export function WorkspaceShell({
 }: WorkspaceShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [optimisticChats, setOptimisticChats] = useState<ApiConversation[]>([]);
+  const [optimisticChatId, setOptimisticChatId] = useState<string | null>(null);
+  const chatList = [
+    ...optimisticChats.filter(
+      (chat) => !chats.some((serverChat) => serverChat.id === chat.id),
+    ),
+    ...chats,
+  ];
+  const selectedChatId = activeChatId ?? optimisticChatId;
   // An empty workspace opens the secondary sections so the first upload is
   // obvious; once documents exist, Chats gets the room and they start closed.
   const [documentsOpen, setDocumentsOpen] = useState(
@@ -62,7 +71,17 @@ export function WorkspaceShell({
     mobileTriggerRef.current?.focus();
   }
 
+  function handleConversationCreated(conversation: ApiConversation) {
+    setOptimisticChats((current) =>
+      current.some((chat) => chat.id === conversation.id)
+        ? current
+        : [conversation, ...current],
+    );
+    setOptimisticChatId(conversation.id);
+  }
+
   function handleNewChat() {
+    setOptimisticChatId(null);
     setMobileOpen(false);
     requestAnimationFrame(() => composerRef.current?.focus());
   }
@@ -118,7 +137,7 @@ export function WorkspaceShell({
         members={members}
         membersOpen={membersOpen}
         onToggleMembers={() => setMembersOpen((value) => !value)}
-        chats={chats}
+        chats={chatList}
         onNewChat={handleNewChat}
         uploadButtonRef={uploadButtonRef}
         closeButtonRef={sidebarCloseRef}
@@ -138,12 +157,16 @@ export function WorkspaceShell({
           onExpand={() => setCollapsed(false)}
         />
         <ChatArea
+          key={activeChatId ?? "new"}
+          workspaceId={workspace.id}
           workspaceName={workspace.name}
           hasDocuments={hasReadyDocuments}
           documentNames={allDocuments.map((document) => document.filename)}
-          messages={initialMessages}
+          initialConversationId={activeChatId}
+          initialMessages={initialMessages}
           composerRef={composerRef}
           onUploadRequest={requestUpload}
+          onConversationCreated={handleConversationCreated}
         />
       </div>
     </div>

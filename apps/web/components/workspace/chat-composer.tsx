@@ -8,28 +8,32 @@ import {
   type KeyboardEvent,
   type RefObject,
 } from "react";
-import { ArrowUpIcon } from "@/components/workspace/icons";
+import { ArrowUpIcon, StopIcon } from "@/components/workspace/icons";
 
 type ChatComposerProps = {
   workspaceName: string;
   hasDocuments: boolean;
+  streaming: boolean;
   inputRef: RefObject<HTMLTextAreaElement | null>;
   onSubmitQuestion: (question: string) => void;
+  onStop: () => void;
   onUploadRequest: () => void;
 };
 
 export function ChatComposer({
   workspaceName,
   hasDocuments,
+  streaming,
   inputRef,
   onSubmitQuestion,
+  onStop,
   onUploadRequest,
 }: ChatComposerProps) {
   const [value, setValue] = useState("");
   const id = useId();
   const hintId = `${id}-hint`;
   const disabled = !hasDocuments;
-  const canSend = !disabled && value.trim().length > 0;
+  const canSend = !disabled && !streaming && value.trim().length > 0;
 
   useEffect(() => {
     const element = inputRef.current;
@@ -42,12 +46,16 @@ export function ChatComposer({
     event.preventDefault();
     if (!canSend) return;
     onSubmitQuestion(value.trim());
+    setValue("");
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      if (canSend) onSubmitQuestion(value.trim());
+      if (canSend) {
+        onSubmitQuestion(value.trim());
+        setValue("");
+      }
     }
   }
 
@@ -72,11 +80,13 @@ export function ChatComposer({
           value={value}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
-          disabled={disabled}
+          disabled={disabled || streaming}
           placeholder={
             disabled
               ? "Upload a document to start asking questions"
-              : "Ask a question about your documents"
+              : streaming
+                ? "Waiting for the answer…"
+                : "Ask a question about your documents"
           }
           aria-describedby={hintId}
           className="block max-h-[200px] min-h-16 w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-base leading-6 text-foreground placeholder:text-muted/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
@@ -85,17 +95,30 @@ export function ChatComposer({
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
           <p id={hintId} className="text-xs leading-5 text-muted">
             {disabled
-              ? "Chat is locked until a document is added."
-              : "Answers cite the documents in this workspace."}
+              ? "Chat is locked until a document is ready."
+              : streaming
+                ? "Answering from this workspace's documents."
+                : "Answers cite the documents in this workspace."}
           </p>
-          <button
-            type="submit"
-            disabled={!canSend}
-            aria-label="Send question"
-            className="grid size-9 shrink-0 place-items-center rounded-lg bg-foreground text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:bg-foreground/10 disabled:text-muted"
-          >
-            <ArrowUpIcon className="size-4" />
-          </button>
+          {streaming ? (
+            <button
+              type="button"
+              onClick={onStop}
+              aria-label="Stop answer"
+              className="grid size-9 shrink-0 place-items-center rounded-lg border border-border bg-elevated text-foreground transition-colors duration-150 hover:border-control"
+            >
+              <StopIcon className="size-4" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!canSend}
+              aria-label="Send question"
+              className="grid size-9 shrink-0 place-items-center rounded-lg bg-foreground text-background transition-colors duration-150 hover:bg-foreground/90 disabled:cursor-not-allowed disabled:bg-foreground/10 disabled:text-muted"
+            >
+              <ArrowUpIcon className="size-4" />
+            </button>
+          )}
         </div>
       </form>
 
