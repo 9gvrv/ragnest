@@ -284,10 +284,11 @@ If you add another DB engine (e.g. in Alembic), pass
 - `.env.example` is committed and documents the shape:
   `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`,
   `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_REASONING_EFFORT`,
-  `ACCESS_TOKEN_EXPIRE_MINUTES`. It also carries an empty
-  `DATABASE_URL_PROD` placeholder, which is a **local convenience only** — the
-  app never reads it. Point `DATABASE_URL` at the production branch to run
-  migrations there (use the **direct**, non-pooler URL for DDL).
+  `ACCESS_TOKEN_EXPIRE_MINUTES`. It also carries empty
+  `DATABASE_URL_PROD` (pooled) and `DATABASE_URL_PROD_DIRECT` placeholders,
+  which are **local conveniences only** — the app never reads them. Point
+  `DATABASE_URL` at the production branch to run migrations there (use the
+  **direct**, non-pooler URL for DDL).
 - Settings fields: `APP_NAME` (default `"Ragnest API"`), `LOG_LEVEL` (default
   `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**),
   `GEMINI_API` (**required**, Gemini embeddings), `LLM_API_KEY` (**required**,
