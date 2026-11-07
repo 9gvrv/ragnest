@@ -84,11 +84,19 @@ free tier and are willing to add a billing account and configure a container.
 | `LLM_MODEL` | `openai/gpt-oss-120b` (optional, default) |
 | `LLM_REASONING_EFFORT` | `low` (optional, default) |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` (optional, default) |
+| `CORS_ORIGINS` | `https://ragnest.vercel.app` (see below) |
 
 Use the **pooled** URL at runtime: Neon recommends pooled connections for
 non-JS platforms and web apps. `app/core/config.py` already converts the scheme
 to `postgresql+asyncpg://`, strips libpq-only parameters, and disables asyncpg's
 statement cache, which is what makes the pooler safe.
+
+`CORS_ORIGINS` is a comma-separated browser-origin allowlist; empty (the
+default) disables CORS middleware entirely. It only governs **browser** calls:
+the web app proxies server-side, so changing it does not affect the app's own
+traffic, and it does not stop `curl` or scripts. The API is protected by JWTs
+and workspace membership, not by CORS. Set it to the Vercel origin anyway so a
+future direct-from-browser call cannot be read by another site.
 
 ### Web (Vercel)
 

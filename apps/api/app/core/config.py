@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "openai/gpt-oss-120b"
     LLM_REASONING_EFFORT: str = "low"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    CORS_ORIGINS: str = ""
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",
@@ -67,6 +68,13 @@ class Settings(BaseSettings):
             connect_args["ssl"] = True
 
         return connect_args
+
+    # Comma-separated browser origins. An empty value disables CORS entirely.
+    @property
+    def cors_origins(self) -> list[str]:
+        return [
+            origin.strip().rstrip("/") for origin in self.CORS_ORIGINS.split(",") if origin.strip()
+        ]
 
 
 settings = Settings()

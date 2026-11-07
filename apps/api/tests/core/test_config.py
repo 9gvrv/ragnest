@@ -49,3 +49,18 @@ def test_blank_llm_settings_fall_back_to_defaults():
 
 def test_secret_key_is_loaded():
     assert settings.SECRET_KEY
+
+
+def test_cors_origins_are_split_trimmed_and_normalized():
+    s = Settings(
+        DATABASE_URL=NEON,
+        CORS_ORIGINS=" https://ragnest.vercel.app , http://localhost:3000/ ",
+    )
+
+    assert s.cors_origins == ["https://ragnest.vercel.app", "http://localhost:3000"]
+
+
+def test_cors_origins_are_empty_by_default():
+    s = Settings(DATABASE_URL=NEON, CORS_ORIGINS="")
+
+    assert s.cors_origins == []

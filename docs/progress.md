@@ -623,3 +623,34 @@ branch was audited read-only and prepared for the first deploy.
 
 Execute the deploy in the Render and Vercel dashboards, then run the smoke test
 in `docs/deployment.md` §7.
+
+## 2026-11-07 — API: opt-in CORS allowlist
+
+### Summary
+
+The API had no CORS configuration at all. Added an explicit, environment-driven
+allowlist so cross-origin browser calls can only come from the deployed web
+origin.
+
+### Decisions
+
+- `CORS_ORIGINS` is a comma-separated string, empty by default. The
+  `cors_origins` property trims entries and strips trailing slashes.
+- `create_app()` adds `CORSMiddleware` only when the allowlist is non-empty.
+- Allowed methods: `GET`, `POST`, `DELETE`, `OPTIONS`; allowed headers:
+  `Authorization`, `Content-Type`; credentials disabled (the API uses bearer
+  tokens, not cross-origin cookies).
+- This is a browser boundary, not API access control. The web app fetches the
+  API server-side, so CORS never applies to that path, and `curl` ignores it.
+  JWT + workspace membership remain the authority.
+- Production sets `CORS_ORIGINS=https://ragnest.vercel.app` on Render.
+
+### Verification
+
+- New preflight tests: the configured origin gets `200` with matching
+  `access-control-allow-origin`; another origin gets `400` and no allow header;
+  an empty allowlist adds no CORS headers.
+- Config tests cover comma splitting, trimming, trailing-slash normalization,
+  and the empty default.
+- `uv run pytest` — 199 passed; `uv run ruff check app tests` and
+  `uv run ruff format --check app tests` — clean.

@@ -243,6 +243,14 @@ no existing file moved.
    model entirely and persist a fixed refusal with `finish_reason="no_context"`.
    Generation never retries and never exposes `delta.reasoning` (no
    chain-of-thought). See §6 for keys and §7 for the timestamp trap.
+9. **CORS is an explicit, opt-in allowlist.** `CORS_ORIGINS` is a
+   comma-separated string (empty by default), parsed by the `cors_origins`
+   property and applied in `create_app()` only when non-empty. An empty value
+   means no CORS middleware at all. The allowlist is `GET`/`POST`/`DELETE`/
+   `OPTIONS` with `Authorization` and `Content-Type`, no credentials. This is a
+   browser boundary only: the web app proxies server-side, so CORS does not
+   govern that traffic, and it does not stop scripts or `curl`. Access control
+   remains JWT + workspace membership.
 
 ---
 
@@ -284,7 +292,7 @@ If you add another DB engine (e.g. in Alembic), pass
 - `.env.example` is committed and documents the shape:
   `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`,
   `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_REASONING_EFFORT`,
-  `ACCESS_TOKEN_EXPIRE_MINUTES`. It also carries empty
+  `ACCESS_TOKEN_EXPIRE_MINUTES`, `CORS_ORIGINS`. It also carries empty
   `DATABASE_URL_PROD` (pooled) and `DATABASE_URL_PROD_DIRECT` placeholders,
   which are **local conveniences only** — the app never reads them. Point
   `DATABASE_URL` at the production branch to run migrations there (use the
@@ -295,7 +303,8 @@ If you add another DB engine (e.g. in Alembic), pass
   Groq generation), `LLM_BASE_URL` (default
   `https://api.groq.com/openai/v1`), `LLM_MODEL` (default
   `openai/gpt-oss-120b`), `LLM_REASONING_EFFORT` (default `"low"`; blank omits
-  the field), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`).
+  the field), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`), `CORS_ORIGINS`
+  (default `""`; comma-separated browser origins, empty disables CORS).
 - **Blank LLM keys fall back to defaults.** A `key=` line in `.env` arrives as
   `""`, not "unset"; a model validator restores the base URL and model and
   strips `LLM_REASONING_EFFORT`, so an empty placeholder cannot silently break
