@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-06 (Milestone 6 — chat — API complete)
+> **Last updated:** 2026-11-07 (deployment runbook; Neon production branch verified and stamped)
 
 ---
 
@@ -284,7 +284,10 @@ If you add another DB engine (e.g. in Alembic), pass
 - `.env.example` is committed and documents the shape:
   `APP_NAME`, `LOG_LEVEL`, `DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`,
   `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`, `LLM_REASONING_EFFORT`,
-  `ACCESS_TOKEN_EXPIRE_MINUTES`.
+  `ACCESS_TOKEN_EXPIRE_MINUTES`. It also carries an empty
+  `DATABASE_URL_PROD` placeholder, which is a **local convenience only** — the
+  app never reads it. Point `DATABASE_URL` at the production branch to run
+  migrations there (use the **direct**, non-pooler URL for DDL).
 - Settings fields: `APP_NAME` (default `"Ragnest API"`), `LOG_LEVEL` (default
   `"INFO"`), `DATABASE_URL` (**required**), `SECRET_KEY` (**required**),
   `GEMINI_API` (**required**, Gemini embeddings), `LLM_API_KEY` (**required**,
@@ -348,6 +351,14 @@ If you add another DB engine (e.g. in Alembic), pass
   catches a regression here.
 - Apply migrations with `uv run alembic upgrade head`; inspect with
   `uv run alembic current` / `uv run alembic history`.
+- **A schema-only Neon branch copy loses the `alembic_version` row.** Tables,
+  the `vector` extension, and the HNSW index copy across; the version row does
+  not. The production branch therefore showed an empty `alembic_version` even
+  though its schema already matched head. Verify with `compare_metadata` (or a
+  careful manual diff), then `alembic stamp head`; never run `upgrade head`
+  against a schema that is already current. Use the **direct** (non-pooler) URL
+  for migrations and the **pooled** URL for the running API. Full runbook:
+  `docs/deployment.md`.
 
 ---
 
@@ -538,3 +549,5 @@ API side is complete.
   `docs/superpowers/plans/2026-11-04-chat-rag.md`
 - Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`
+- Deployment runbook (Render + Vercel + Neon production branch):
+  `docs/deployment.md`

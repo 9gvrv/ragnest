@@ -42,10 +42,16 @@ commands from inside the app directory.
 | `docs/superpowers/` | Design specs & task plans per milestone | |
 | `docs/progress.md` | Chronological work log (entries before 2026-10-14 describe a superseded `src/` layout) | |
 
-**Next up: not scheduled.** The API is complete through Milestone 6 (chat/RAG)
-and the web app covers auth, workspaces/invitations, documents, and chat.
-Propose the next milestone with a design doc and plan before implementation.
-Web documents + chat design:
+**Next up: deploy the MVP** — Vercel for `apps/web`, Render's free web service
+for `apps/api`, and the Neon production branch for data. The runbook (env
+matrix, build/start commands, manual migration command, smoke test) is
+`docs/deployment.md`. The production branch is at Alembic head and holds no
+data.
+
+After that, no milestone is scheduled. The API is complete through Milestone 6
+(chat/RAG) and the web app covers auth, workspaces/invitations, documents, and
+chat. Propose the next milestone with a design doc and plan before
+implementation. Web documents + chat design:
 `docs/superpowers/specs/2026-11-06-web-documents-chat-design.md`; plan:
 `docs/superpowers/plans/2026-11-06-web-documents-chat.md`.
 

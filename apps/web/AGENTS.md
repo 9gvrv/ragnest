@@ -239,6 +239,11 @@ There is **no web test framework** in this repo. Verification is
 browser/curl check. `API_URL` (default `http://127.0.0.1:8000`) points at the
 API.
 
+Deployment: Vercel with **Root Directory** `apps/web` and the server-only
+`API_URL` set to the API's HTTPS origin. `NODE_ENV=production` makes
+`ragnest_session` a `Secure` cookie, so the app must be served over HTTPS (Vercel
+always is). Full runbook: `docs/deployment.md`.
+
 ---
 
 ## 9. Do not

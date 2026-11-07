@@ -571,3 +571,55 @@ least one document is `ready`.
 ### Next
 
 No milestone scheduled. Propose one with a design doc and task plan first.
+
+## 2026-11-07 — MVP merge and production deploy prep
+
+### Summary
+
+Merged the finished web documents + chat branch into `main`, deleted every
+branch that was already reachable from `main`, and pushed. The Neon production
+branch was audited read-only and prepared for the first deploy.
+
+### Production database
+
+- The branch was created from the dev branch with **schema only**: 9 tables, the
+  `vector 0.8.6` extension, and the HNSW index all copied; every domain table has
+  zero rows.
+- `alembic_version` copied over **empty**, so `alembic current` said nothing
+  even though the schema already matched head. Alembic's `compare_metadata`
+  reported no differences against `Base.metadata`.
+- Stamped the branch to `7c1e4a9b2d3f (head)`. No schema migration was run.
+- The pooled URL is the runtime value for the host; the direct URL is for DDL.
+
+### Repository
+
+- `feat/web-documents-chat` fast-forwarded into `main` at `ebf2f57` and pushed
+  to `origin/main`.
+- Deleted the merged local branches `feat/web-documents-chat`, `feat/m5-retrieval`,
+  `feat/web-auth`, and `refactor/workspace_UI`. The remote only ever had `main`.
+- `DATABASE_URL_PROD` stays in `.env.example` as an empty, clearly commented
+  local convenience; the app reads only `DATABASE_URL`.
+
+### Deployment decision
+
+- Frontend: Vercel, root `apps/web`, server-only `API_URL`.
+- API: Render free web service, root `apps/api`, `uv sync --frozen --no-dev`,
+  `uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health
+  check `/health`.
+- Known free-tier costs: 15-minute idle spin-down with ~1 minute cold start;
+  no pre-deploy command, so migrations are run manually from the laptop; an
+  indexing background task can be lost if the service sleeps mid-job (the
+  reindex button repairs it).
+- Runbook: `docs/deployment.md`.
+
+### Verification
+
+- `uv run pytest` — 194 passed; `uv run ruff check app tests` — clean.
+- `pnpm lint && pnpm exec tsc --noEmit && pnpm build` — clean on the merged tree.
+- Production branch: metadata comparison reported no differences; version row
+  is `7c1e4a9b2d3f`.
+
+### Next
+
+Execute the deploy in the Render and Vercel dashboards, then run the smoke test
+in `docs/deployment.md` §7.
