@@ -220,7 +220,7 @@ changes. One soft radial glow at the top is the only decoration; there is no
 second typeface, no grid, and no gradient text. Marketing pages align to the
 shared `Container` (`max-w-7xl`, `px-6 lg:px-8`), use tight `-0.04em` tracking
 on large headings, and a white pill for the primary CTA. The preview image path
-and the footer's placeholder name/social links live in `lib/site.ts`.
+and the footer's GitHub link live in `lib/site.ts`.
 
 ---
 

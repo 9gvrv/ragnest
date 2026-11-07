@@ -4,14 +4,9 @@
  */
 export const site = {
   name: "Ragnest",
-  author: "Gaurav",
   /** Static pages prerender, so the year is set here rather than read from a clock. */
   year: 2026,
   /** Replace public/app-preview.png with a real screenshot at the same path. */
   previewImage: "/app-preview.png",
-  social: [
-    { label: "GitHub", href: "https://github.com/9gvrv" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/gaurav111/" },
-    { label: "X", href: "https://x.com/slopsoap" },
-  ],
+  social: [{ label: "GitHub", href: "https://github.com/9gvrv/ragnest" }],
 } as const;

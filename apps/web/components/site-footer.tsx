@@ -9,7 +9,6 @@ export function SiteFooter() {
           © {site.year} {site.name}
         </p>
         <p className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span>Built by {site.author}</span>
           {site.social.map((link) => (
             <a
               key={link.label}
