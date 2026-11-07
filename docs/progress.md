@@ -654,3 +654,26 @@ origin.
   and the empty default.
 - `uv run pytest` — 199 passed; `uv run ruff check app tests` and
   `uv run ruff format --check app tests` — clean.
+
+## 2026-11-07 — Web: normalize API_URL to prevent double-slash 404s
+
+### Problem
+
+Signup on the deployed site returned "Not found". Render logged
+`POST //api/v1/auth/signup` → 404: the Vercel deployment had an `API_URL` that
+ended in `/`, and `lib/api.ts` concatenated it directly with paths that already
+start with `/`.
+
+Vercel applies environment-variable changes only to **new** deployments, so
+editing the value in the dashboard does not fix the running deployment.
+
+### Fix
+
+- `API_BASE` now trims whitespace and strips trailing slashes before use, so the
+  concatenation is correct even if the env value ends in `/`.
+- Both call sites (`request()` and the streaming fetch) use the same normalized
+  base.
+
+### Verification
+
+- `pnpm lint && pnpm exec tsc --noEmit && pnpm build` — clean.

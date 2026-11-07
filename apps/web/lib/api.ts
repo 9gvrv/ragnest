@@ -1,4 +1,6 @@
-const API_BASE = process.env.API_URL ?? "http://127.0.0.1:8000";
+const API_BASE = (process.env.API_URL ?? "http://127.0.0.1:8000")
+  .trim()
+  .replace(/\/+$/, "");
 
 export type ApiUser = {
   id: string;

@@ -242,7 +242,11 @@ API.
 Deployment: Vercel with **Root Directory** `apps/web` and the server-only
 `API_URL` set to the API's HTTPS origin. `NODE_ENV=production` makes
 `ragnest_session` a `Secure` cookie, so the app must be served over HTTPS (Vercel
-always is). Full runbook: `docs/deployment.md`.
+always is). `lib/api.ts` trims `API_URL` and strips trailing slashes — without
+that, a base ending in `/` yields `//api/v1/...`, which the API answers with 404.
+Vercel applies environment-variable changes **only to new deployments**, so edit
+the value and redeploy; the running deployment keeps its old value. Full runbook:
+`docs/deployment.md`.
 
 ---
 
