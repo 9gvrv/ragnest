@@ -514,3 +514,60 @@ harness imports `app.db.models` first.
 `BackgroundTasks` are in-process: a reload or restart between the upload
 response and the task loses the job. The backfill remains the repair path; a
 startup sweep for non-`ready` documents would be a separate design decision.
+
+## 2026-11-07 — Web: documents + chat wired to Milestone 6
+
+### Summary
+
+The workspace shell's chat column is real. `/workspaces/[id]` now loads the
+signed-in author's conversations (newest first), opens one with `?chat=<id>`,
+and asks questions that stream from the Milestone 6 SSE endpoint. The sidebar
+lists conversations with active state, new-chat and delete; answers render
+clickable `[n]` / `【n】` markers that scroll to source cards; document rows show
+`Queued` / `Indexing…` / `Failed` with a retry action, and chat unlocks once at
+least one document is `ready`.
+
+### Decisions
+
+- Conversation selection is a query parameter on the existing page, not a new
+  nested route.
+- The messages proxy returns the upstream `ReadableStream` unchanged
+  (`text/event-stream`, no buffering); non-OK upstream responses stay ordinary
+  JSON with their status.
+- A new conversation is created on first send. The URL changes with
+  `router.replace(...?chat=<id>)` only after the stream settles, so an
+  in-flight answer is never torn down.
+- `ChatArea` is keyed by `activeChatId`; optimistically created chats survive
+  while server navigation remounts the component.
+- Chat gate is `documents.some(d => d.embedding_status === "ready")`.
+- No new dependencies; the browser still never calls the API directly.
+
+### Verification
+
+- `pnpm lint && pnpm exec tsc --noEmit && pnpm build` clean.
+- Scripted run through the web route handlers with a cookie jar: signup,
+  create workspace, upload `falcon.txt`, wait for `ready` (Gemini), create
+  conversation, stream a grounded answer (`text/event-stream`; `sources`,
+  `token`, `done`; answer contained `BLUE-ORCHID-42`), verify history shows two
+  messages with citations and the question as title, reindex returns `202` and
+  settles back to `ready`, delete returns `204`, and the conversation list is
+  empty afterwards.
+- Server-rendered workspace page returned 200 with the workspace, `New chat`,
+  and the document name.
+
+### Commits
+
+`style(workspace): refine sidebar row alignment and scrollbars` ·
+`docs(web): add documents and chat design and plan` ·
+`feat(web): add chat api client and document status` ·
+`feat(web): proxy chat and reindex mutations` ·
+`feat(web): load conversations in the workspace page` ·
+`feat(web): stream chat answers` ·
+`feat(web): render citations in chat answers` ·
+`feat(web): add conversation list and title` ·
+`feat(web): show document indexing state` ·
+`docs(web): document documents and chat milestone`
+
+### Next
+
+No milestone scheduled. Propose one with a design doc and task plan first.

@@ -4,7 +4,7 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-10-31 (wide marketing container; Slack-style workspace picker)
+> **Last updated:** 2026-11-07 (documents + chat wired to Milestone 6 API)
 
 ---
 
@@ -57,7 +57,8 @@ apps/web/
 │   │   ├── workspaces/page.tsx    # workspaces home (/workspaces)
 │   │   ├── account/page.tsx       # /account
 │   │   ├── invitations/page.tsx   # /invitations
-│   │   └── workspaces/[id]/page.tsx
+│   │   ├── workspaces/[id]/(shell)/page.tsx          # documents + chat
+│   │   └── workspaces/[id]/documents/[documentId]/page.tsx
 │   └── api/                       # route handlers (mutation proxies)
 │       ├── auth/{login,signup,logout,me}/route.ts
 │       ├── workspaces/route.ts
@@ -65,9 +66,15 @@ apps/web/
 │       ├── workspaces/[id]/members/[userId]/route.ts
 │       ├── workspaces/[id]/invitations/route.ts
 │       ├── workspaces/[id]/invitations/check/route.ts
+│       ├── workspaces/[id]/documents/route.ts
+│       ├── workspaces/[id]/documents/[documentId]/route.ts
+│       ├── workspaces/[id]/documents/[documentId]/reindex/route.ts
+│       ├── workspaces/[id]/conversations/route.ts
+│       ├── workspaces/[id]/conversations/[conversationId]/route.ts
+│       ├── workspaces/[id]/conversations/[conversationId]/messages/route.ts
 │       └── invitations/[token]/{accept,decline}/route.ts
-├── components/                    # Button, Field, Container, SiteShell, forms, actions
-└── lib/                           # api.ts, session.ts, dates.ts, token.ts, site.ts
+├── components/                    # shared UI + workspace shell and chat components
+└── lib/                           # api.ts, session.ts, dates.ts, chat-stream.ts, ...
 ```
 
 - Pages under `app/(protected)/` are wrapped by `app/(protected)/layout.tsx`,
@@ -111,6 +118,31 @@ apps/web/
    consult `node_modules/next/dist/docs/` first. Dynamic pages use
    `PageProps<'/path/[seg]'>` + `await params`; route handlers use
    `RouteContext<'/api/.../[seg]'>` + `await context.params`.
+9. **Chat reads live in the server page.** `/workspaces/[id]` fetches the
+   author's conversations plus the `?chat=<id>` detail (messages in order).
+   `?chat` is a query parameter, not a nested route; a stale/deleted id
+   redirects to the bare workspace page. Conversations are private to their
+   author, so another member's id is a 404 there.
+10. **The messages proxy streams.** `app/api/.../messages/route.ts` calls
+    `streamConversationMessage()` and returns `new Response(upstream.body, ...)`
+    with `text/event-stream`, `no-cache, no-transform`, and
+    `X-Accel-Buffering: no`. It never reads the body. Non-OK upstream responses
+    are ordinary JSON and keep the API's status (`429`/`503` map to alerts).
+11. **Chat state is client-owned.** `ChatArea` (keyed by
+    `activeChatId ?? "new"`) seeds from server messages, adds optimistic
+    messages, creates the conversation on first send, and streams through
+    `lib/chat-stream.ts`. The URL changes with `router.replace(...?chat=<id>)`
+    only after the stream settles. Stop aborts the fetch; the API persists the
+    partial answer as `finish_reason: "cancelled"`.
+12. **Citations are rendered from the answer text.** Split on
+    `/(\[\d+\]|【\d+】)/`; a marker becomes a button only when its `n` matches
+    a citation, and clicking scrolls and highlights that source card. `sources`
+    snapshots come from the API; `done.cited` is informational.
+13. **Indexing feedback.** Non-`ready` documents show `Queued`/`Indexing…`/
+    `Failed` and (for uploader/creator/admin) a retry that POSTs the reindex
+    proxy. `IndexingWatcher` polls `router.refresh()` every 2.5s while any
+    document is non-ready, paused when the tab is hidden, capped at 40 ticks.
+    The chat gate is **at least one `ready` document**, not document count.
 
 ---
 
@@ -121,7 +153,7 @@ apps/web/
 | `/` | public | Landing page: hero, product preview. Static; does not read the cookie |
 | `/workspaces` | signed in | Workspaces home: pending-invite banner, workspace list, create form |
 | `/account` | signed in | Email, account id, member since, token expiry |
-| `/workspaces/[id]` | member | Members table; invite form for admin/creator; remove for the matrix below; delete for creator |
+| `/workspaces/[id]` | member | Documents, members, and the author's chats; `?chat=<id>` opens one conversation, `?mine=true` filters documents |
 | `/invitations` | signed in | Pending invitations with accept/decline |
 | `/invite/[token]` | public | Preview + accept; sign-in resume via `?next=` |
 | `/login`, `/signup` | public | Auth, honour `?next=` |
@@ -228,10 +260,15 @@ API.
 1. ✅ Auth pages — login, signup, account.
 2. ✅ Workspaces, members & invitations — home, detail, invite links, pending
    list, public accept, `?next=` resume.
-3. Next: documents UI (upload, list) when the API milestone lands.
+3. ✅ Documents & chat — upload/list/delete/reindex, indexing status, streaming
+   answers, clickable citations, conversation list.
 
 ## 11. Pointers
 
+- Web documents + chat design:
+  `docs/superpowers/specs/2026-11-06-web-documents-chat-design.md`
+- Web documents + chat plan:
+  `docs/superpowers/plans/2026-11-06-web-documents-chat.md`
 - Web design of record: `docs/superpowers/specs/2026-10-27-workspaces-invitations-web-design.md`
 - Web task plan: `docs/superpowers/plans/2026-10-27-workspaces-invitations-web.md`
 - API design of record: `docs/superpowers/specs/2026-10-19-workspaces-roles-invitations-design.md`

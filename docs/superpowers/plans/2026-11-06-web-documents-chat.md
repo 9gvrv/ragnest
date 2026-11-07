@@ -48,16 +48,16 @@ pnpm. No new dependencies.
 **Files:**
 - Modify: `apps/web/lib/api.ts`
 
-- [ ] **Step 1:** Add chat types: `ApiCitation`, `ApiConversation`,
+- [x] **Step 1:** Add chat types: `ApiCitation`, `ApiConversation`,
   `ApiMessage`, `ApiConversationDetail`.
-- [ ] **Step 2:** Add `embedding_status` and `indexed_at` to `ApiDocument`.
-- [ ] **Step 3:** Add calls: `listConversations`, `createConversation`,
+- [x] **Step 2:** Add `embedding_status` and `indexed_at` to `ApiDocument`.
+- [x] **Step 3:** Add calls: `listConversations`, `createConversation`,
   `getConversation`, `deleteConversation`, `reindexDocument`.
-- [ ] **Step 4:** Add `streamConversationMessage(token, workspaceId,
+- [x] **Step 4:** Add `streamConversationMessage(token, workspaceId,
   conversationId, content)` that POSTs with `Accept: text/event-stream` and
   returns the raw `Response` (no body read). On network failure it throws
   `ApiError(0, ...)`.
-- [ ] **Step 5:** `pnpm exec tsc --noEmit`. Commit
+- [x] **Step 5:** `pnpm exec tsc --noEmit`. Commit
   `feat(web): add chat api client and document status`.
 
 ---
@@ -70,17 +70,17 @@ pnpm. No new dependencies.
 - Create: `apps/web/app/api/workspaces/[id]/conversations/[conversationId]/messages/route.ts` (POST)
 - Create: `apps/web/app/api/workspaces/[id]/documents/[documentId]/reindex/route.ts` (POST)
 
-- [ ] **Step 1:** Each handler reads the cookie and returns 401
+- [x] **Step 1:** Each handler reads the cookie and returns 401
   `{detail: "Not authenticated"}` when absent.
-- [ ] **Step 2:** Conversation create forwards `{title}` (or `{}`); delete
+- [x] **Step 2:** Conversation create forwards `{title}` (or `{}`); delete
   returns 204; reindex returns the API's 202 body.
-- [ ] **Step 3:** The messages handler validates `{content: string}`, calls
+- [x] **Step 3:** The messages handler validates `{content: string}`, calls
   `streamConversationMessage`, and:
   - on a non-OK upstream response, forwards its JSON body and status;
   - on OK, returns `new Response(response.body, { headers: { "Content-Type":
     "text/event-stream; charset=utf-8", "Cache-Control": "no-cache,
     no-transform", "X-Accel-Buffering": "no" } })`.
-- [ ] **Step 4:** `pnpm exec next typegen` to register the new routes, then
+- [x] **Step 4:** `pnpm exec next typegen` to register the new routes, then
   `tsc --noEmit`. Commit `feat(web): proxy chat and reindex mutations`.
 
 ---
@@ -91,15 +91,15 @@ pnpm. No new dependencies.
 - Modify: `apps/web/app/(protected)/workspaces/[id]/(shell)/page.tsx`
 - Modify: `apps/web/components/workspace/workspace-shell.tsx` (props only)
 
-- [ ] **Step 1:** Read `chat` from `searchParams`; fetch `listConversations`
+- [x] **Step 1:** Read `chat` from `searchParams`; fetch `listConversations`
   alongside the existing parallel fetches.
-- [ ] **Step 2:** When `chat` is present, fetch `getConversation`. Map API
+- [x] **Step 2:** When `chat` is present, fetch `getConversation`. Map API
   errors: 401 → login redirect, 404/422 → `redirect` to the bare workspace
   page, 403 → existing `NoAccess`.
-- [ ] **Step 3:** Compute `hasReadyDocuments` from `embedding_status === "ready"`.
-- [ ] **Step 4:** Pass `conversations`, `activeChatId`, `activeChatTitle`,
+- [x] **Step 3:** Compute `hasReadyDocuments` from `embedding_status === "ready"`.
+- [x] **Step 4:** Pass `conversations`, `activeChatId`, `activeChatTitle`,
   `initialMessages`, and `hasReadyDocuments` into `WorkspaceShell`.
-- [ ] **Step 5:** Remove the "no chat backend yet" placeholder comment and empty
+- [x] **Step 5:** Remove the "no chat backend yet" placeholder comment and empty
   arrays. `tsc --noEmit`; commit `feat(web): load conversations in the workspace page`.
 
 ---
@@ -113,23 +113,24 @@ pnpm. No new dependencies.
 - Modify: `apps/web/components/workspace/chat-composer.tsx`
 - Modify: `apps/web/components/workspace/icons.tsx` (add a stop icon)
 
-- [ ] **Step 1:** Implement `readChatStream(response, onEvent)` — incremental
+- [x] **Step 1:** Implement `readChatStream(response, onEvent)` — incremental
   `TextDecoder`, blank-line framing, JSON parse, typed events:
   `sources`, `token`, `done`, `error`; ignore unknown event names; flush the
   trailing frame.
-- [ ] **Step 2:** In `WorkspaceShell`, hold `chats`, `selectedChatId`,
+- [x] **Step 2:** In `WorkspaceShell`, hold `chats`, `selectedChatId`,
   `messages`, `streaming`, `failure`, and refs for the conversation id and
   `AbortController`.
-- [ ] **Step 3:** On send: append the user message and a streaming assistant
-  placeholder; create the conversation if there is none; update the URL with
-  `history.replaceState`; POST the stream; feed events into the message list.
-- [ ] **Step 4:** On `sources` adopt the real assistant id and citations; on
+- [x] **Step 3:** On send: append the user message and a streaming assistant
+  placeholder; create the conversation if there is none; keep the URL unchanged
+  while streaming; POST the stream; feed events into the message list; call
+  `router.replace(...?chat=<id>)` only after the stream settles.
+- [x] **Step 4:** On `sources` adopt the real assistant id and citations; on
   `token` append; on `done` set `finishReason`, update the sidebar title to
   `question.split(/\s+/).join(" ").slice(0, 80)` while it is the default, and
   unlock; on `error` keep partial text, show the alert, unlock.
-- [ ] **Step 5:** Stop button aborts the fetch, marks the message `cancelled`,
+- [x] **Step 5:** Stop button aborts the fetch, marks the message `cancelled`,
   and unlocks. 401 → login with `?next=`; 429/503 JSON → the mapped alert.
-- [ ] **Step 6:** Reset messages from server props when `activeChatId` changes
+- [x] **Step 6:** Reset messages from server props when `activeChatId` changes
   (not while streaming). `tsc --noEmit`; commit
   `feat(web): stream chat answers`.
 
@@ -141,17 +142,17 @@ pnpm. No new dependencies.
 - Create: `apps/web/components/workspace/chat-message.tsx`
 - Modify: `apps/web/components/workspace/chat-area.tsx`
 
-- [ ] **Step 1:** Render user messages as right-aligned surface cards;
+- [x] **Step 1:** Render user messages as right-aligned surface cards;
   assistant messages plain, preserving newlines.
-- [ ] **Step 2:** Split assistant content on `/(\[\d+\]|【\d+】)/`; render a
+- [x] **Step 2:** Split assistant content on `/(\[\d+\]|【\d+】)/`; render a
   marker as a button when `1 <= n <= citations.length`, otherwise literal text.
-- [ ] **Step 3:** Clicking a marker scrolls its source card into view and
+- [x] **Step 3:** Clicking a marker scrolls its source card into view and
   highlights it (`ring-1 ring-accent`), toggling off on a second click.
-- [ ] **Step 4:** Render source cards with `[n]`, filename, clamped excerpt,
+- [x] **Step 4:** Render source cards with `[n]`, filename, clamped excerpt,
   and score; show "No sources found" when `finish_reason === "no_context"`.
-- [ ] **Step 5:** Streaming placeholder: three pulsing dots behind
+- [x] **Step 5:** Streaming placeholder: three pulsing dots behind
   `motion-reduce:animate-none`; stopped answers show a muted "Stopped."
-- [ ] **Step 6:** Auto-scroll to the bottom only while the reader is already
+- [x] **Step 6:** Auto-scroll to the bottom only while the reader is already
   near it. `tsc --noEmit`; commit `feat(web): render citations in chat answers`.
 
 ---
@@ -164,15 +165,15 @@ pnpm. No new dependencies.
 - Modify: `apps/web/components/workspace/workspace-topbar.tsx`
 - Create: `apps/web/components/delete-conversation-button.tsx`
 
-- [ ] **Step 1:** Chat rows become `Link`s to `?chat=<id>` with
+- [x] **Step 1:** Chat rows become `Link`s to `?chat=<id>` with
   `aria-current="page"` and an active background.
-- [ ] **Step 2:** New chat becomes a `Link` to the bare workspace path that
+- [x] **Step 2:** New chat becomes a `Link` to the bare workspace path that
   also focuses the composer.
-- [ ] **Step 3:** Add a hover/focus delete control per row (confirm, then
+- [x] **Step 3:** Add a hover/focus delete control per row (confirm, then
   DELETE the route handler). Deleting the active chat navigates to the bare
   workspace path; others `router.refresh()`.
-- [ ] **Step 4:** Topbar shows the active conversation title, or "New chat".
-- [ ] **Step 5:** `tsc --noEmit`; commit `feat(web): add conversation list and title`.
+- [x] **Step 4:** Topbar shows the active conversation title, or "New chat".
+- [x] **Step 5:** `tsc --noEmit`; commit `feat(web): add conversation list and title`.
 
 ---
 
@@ -186,16 +187,16 @@ pnpm. No new dependencies.
 - Create: `apps/web/components/reindex-document-button.tsx`
 - Modify: `apps/web/components/workspace/icons.tsx` (retry icon)
 
-- [ ] **Step 1:** Show `queued` / `indexing…` / `failed` beside a non-ready
+- [x] **Step 1:** Show `queued` / `indexing…` / `failed` beside a non-ready
   document; keep `ready` rows as they are.
-- [ ] **Step 2:** Add the retry action for every non-ready row; it POSTs the
+- [x] **Step 2:** Add the retry action for every non-ready row; it POSTs the
   reindex handler, shows a failure inline on error, and refreshes on 202.
-- [ ] **Step 3:** Add `IndexingWatcher` (2.5s interval, max 40 ticks, paused when
+- [x] **Step 3:** Add `IndexingWatcher` (2.5s interval, max 40 ticks, paused when
   `document.visibilityState !== "visible"`); mount it while any document is
   non-ready.
-- [ ] **Step 4:** Gate the chat on `hasReadyDocuments`; the locked copy
+- [x] **Step 4:** Gate the chat on `hasReadyDocuments`; the locked copy
   distinguishes "no documents" from "documents still indexing".
-- [ ] **Step 5:** `tsc --noEmit`; commit `feat(web): show document indexing state`.
+- [x] **Step 5:** `tsc --noEmit`; commit `feat(web): show document indexing state`.
 
 ---
 
@@ -207,13 +208,13 @@ pnpm. No new dependencies.
 - Modify: `docs/progress.md`
 - Modify: the spec status to `built`
 
-- [ ] **Step 1:** `cd apps/web && pnpm lint && pnpm exec tsc --noEmit && pnpm build`.
-- [ ] **Step 2:** Scripted API check: log in through the web route handler with
+- [x] **Step 1:** `cd apps/web && pnpm lint && pnpm exec tsc --noEmit && pnpm build`.
+- [x] **Step 2:** Scripted API check: log in through the web route handler with
   a cookie jar, then POST the messages proxy and assert `text/event-stream`
   plus `sources`/`token`/`done`.
-- [ ] **Step 3:** Browser checks from spec §7 (new chat, reload, switch, delete,
+- [x] **Step 3:** Browser checks from spec §7 (new chat, reload, switch, delete,
   stop, no-context, empty workspace, indexing).
-- [ ] **Step 4:** Update `apps/web/AGENTS.md` (chat patterns, streaming proxy,
+- [x] **Step 4:** Update `apps/web/AGENTS.md` (chat patterns, streaming proxy,
   citation rules), the root roadmap, `docs/progress.md`, and mark the spec
   `built`.
-- [ ] **Step 5:** Commit `docs(web): document documents and chat milestone`.
+- [x] **Step 5:** Commit `docs(web): document documents and chat milestone`.

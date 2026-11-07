@@ -1,7 +1,7 @@
 # Ragnest Web — Documents & Chat — Design
 
 **Date:** 2026-11-06
-**Status:** proposed
+**Status:** built
 **Scope:** `apps/web/` only. The API is complete through Milestone 6.
 
 ---
@@ -95,10 +95,11 @@ status and `{detail, fields}` body unchanged.
 ### D3 — A conversation is created on the first question
 
 A new chat is a transient UI state. On the first send, the client posts to the
-conversations collection, receives the conversation, updates the URL with
-`window.history.replaceState` (no navigation, so the stream is not torn down),
-and then streams the message. The sidebar gains the conversation optimistically.
-No server refresh is needed to read the answer back.
+conversations collection, receives the conversation, and then streams the
+message. The URL is updated only after the stream settles (`router.replace` to
+`?chat=<id>`), so the answer is never torn down mid-flight; the sidebar gains
+the conversation optimistically. No server refresh is needed to read the answer
+back.
 
 ### D4 — The client owns the SSE parser
 
