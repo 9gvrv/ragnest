@@ -39,6 +39,22 @@ export function formatCount(value: number) {
   return numberFormat.format(value);
 }
 
+/** Short label for a document whose chunks are not usable yet. */
+export function embeddingStatusLabel(
+  status: ApiDocument["embedding_status"],
+) {
+  switch (status) {
+    case "pending":
+      return "Queued";
+    case "indexing":
+      return "Indexing…";
+    case "failed":
+      return "Failed";
+    default:
+      return "Ready";
+  }
+}
+
 /** Turn the API's status into a sentence a person can act on. */
 export function documentFailure(status: number, detail?: string | null) {
   switch (status) {

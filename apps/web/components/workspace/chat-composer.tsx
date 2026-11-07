@@ -13,6 +13,8 @@ import { ArrowUpIcon, StopIcon } from "@/components/workspace/icons";
 type ChatComposerProps = {
   workspaceName: string;
   hasDocuments: boolean;
+  hasAnyDocuments: boolean;
+  documentsIndexing: boolean;
   streaming: boolean;
   inputRef: RefObject<HTMLTextAreaElement | null>;
   onSubmitQuestion: (question: string) => void;
@@ -23,6 +25,8 @@ type ChatComposerProps = {
 export function ChatComposer({
   workspaceName,
   hasDocuments,
+  hasAnyDocuments,
+  documentsIndexing,
   streaming,
   inputRef,
   onSubmitQuestion,
@@ -34,6 +38,16 @@ export function ChatComposer({
   const hintId = `${id}-hint`;
   const disabled = !hasDocuments;
   const canSend = !disabled && !streaming && value.trim().length > 0;
+  const lockedHint = !hasAnyDocuments
+    ? "Chat is locked until a document is added."
+    : documentsIndexing
+      ? "Chat unlocks when a document finishes indexing."
+      : "A document failed to index. Retry it in the sidebar.";
+  const placeholder = !hasAnyDocuments
+    ? "Upload a document to start asking questions"
+    : documentsIndexing
+      ? "Waiting for your documents to finish indexing"
+      : "Retry a failed document in the sidebar";
 
   useEffect(() => {
     const element = inputRef.current;
@@ -83,7 +97,7 @@ export function ChatComposer({
           disabled={disabled || streaming}
           placeholder={
             disabled
-              ? "Upload a document to start asking questions"
+              ? placeholder
               : streaming
                 ? "Waiting for the answer…"
                 : "Ask a question about your documents"
@@ -95,7 +109,7 @@ export function ChatComposer({
         <div className="flex items-center justify-between gap-3 px-3 pb-3">
           <p id={hintId} className="text-xs leading-5 text-muted">
             {disabled
-              ? "Chat is locked until a document is ready."
+              ? lockedHint
               : streaming
                 ? "Answering from this workspace's documents."
                 : "Answers cite the documents in this workspace."}
@@ -124,14 +138,24 @@ export function ChatComposer({
 
       {disabled ? (
         <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-xs leading-5 text-muted">
-          <span>Upload a document to unlock the chat.</span>
-          <button
-            type="button"
-            onClick={onUploadRequest}
-            className="font-medium text-accent underline-offset-4 transition-colors duration-150 hover:underline"
-          >
-            Upload a document
-          </button>
+          {hasAnyDocuments ? (
+            <span>
+              {documentsIndexing
+                ? "Documents are still indexing. Chat unlocks automatically."
+                : "A document failed to index. Retry it in the sidebar."}
+            </span>
+          ) : (
+            <>
+              <span>Upload a document to unlock the chat.</span>
+              <button
+                type="button"
+                onClick={onUploadRequest}
+                className="font-medium text-accent underline-offset-4 transition-colors duration-150 hover:underline"
+              >
+                Upload a document
+              </button>
+            </>
+          )}
         </div>
       ) : null}
     </div>

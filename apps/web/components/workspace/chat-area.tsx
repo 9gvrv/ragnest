@@ -19,6 +19,8 @@ type ChatAreaProps = {
   workspaceId: string;
   workspaceName: string;
   hasDocuments: boolean;
+  hasAnyDocuments: boolean;
+  documentsIndexing: boolean;
   documentNames: string[];
   initialConversationId: string | null;
   initialMessages: ApiMessage[];
@@ -69,6 +71,8 @@ export function ChatArea({
   workspaceId,
   workspaceName,
   hasDocuments,
+  hasAnyDocuments,
+  documentsIndexing,
   documentNames,
   initialConversationId,
   initialMessages,
@@ -337,7 +341,11 @@ export function ChatArea({
               <p className="mt-3 text-sm leading-6 text-muted">
                 {hasDocuments
                   ? "Ragnest answers only from the documents in this workspace."
-                  : "Add a document in the sidebar to unlock the chat."}
+                  : !hasAnyDocuments
+                    ? "Add a document in the sidebar to unlock the chat."
+                    : documentsIndexing
+                      ? "Your documents are still indexing. Chat unlocks when the first one is ready."
+                      : "A document needs to finish indexing. Retry it in the sidebar to unlock the chat."}
               </p>
             </div>
 
@@ -346,6 +354,8 @@ export function ChatArea({
               <ChatComposer
                 workspaceName={workspaceName}
                 hasDocuments={hasDocuments}
+                hasAnyDocuments={hasAnyDocuments}
+                documentsIndexing={documentsIndexing}
                 streaming={streaming}
                 inputRef={composerRef}
                 onSubmitQuestion={(question) => void send(question)}
@@ -400,6 +410,8 @@ export function ChatArea({
           <ChatComposer
             workspaceName={workspaceName}
             hasDocuments={hasDocuments}
+            hasAnyDocuments={hasAnyDocuments}
+            documentsIndexing={documentsIndexing}
             streaming={streaming}
             inputRef={composerRef}
             onSubmitQuestion={(question) => void send(question)}

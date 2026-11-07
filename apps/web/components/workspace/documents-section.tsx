@@ -3,11 +3,16 @@
 import Link from "next/link";
 import type { RefObject } from "react";
 import { DeleteDocumentButton } from "@/components/delete-document-button";
+import { ReindexDocumentButton } from "@/components/reindex-document-button";
 import { SidebarSection } from "@/components/workspace/sidebar-section";
 import { sidebarScroll } from "@/components/workspace/sidebar-scroll";
 import { UploadDocumentForm } from "@/components/upload-document-form";
 import type { ApiDocument, ApiRole } from "@/lib/api";
-import { canManageDocument, formatBytes } from "@/lib/documents";
+import {
+  canManageDocument,
+  embeddingStatusLabel,
+  formatBytes,
+} from "@/lib/documents";
 import { documentKind } from "@/lib/workspace";
 
 type DocumentsSectionProps = {
@@ -91,14 +96,38 @@ export function DocumentsSection({
                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">
                     {document.filename}
                   </span>
-                  <span className="shrink-0 text-xs text-muted tabular-nums">
-                    {formatBytes(document.size_bytes)}
-                  </span>
+                  {document.embedding_status === "ready" ? (
+                    <span className="shrink-0 text-xs text-muted tabular-nums">
+                      {formatBytes(document.size_bytes)}
+                    </span>
+                  ) : (
+                    <span
+                      className={[
+                        "shrink-0 text-xs",
+                        document.embedding_status === "failed"
+                          ? "text-danger"
+                          : "text-muted",
+                      ].join(" ")}
+                    >
+                      {embeddingStatusLabel(document.embedding_status)}
+                    </span>
+                  )}
                 </Link>
 
-                <div className="w-7 shrink-0">
+                <div className="flex shrink-0 items-center">
+                  {document.embedding_status !== "ready" &&
+                  canManageDocument(myRole, userId, document) ? (
+                    <div className="w-7 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                      <ReindexDocumentButton
+                        workspaceId={workspaceId}
+                        documentId={document.id}
+                        filename={document.filename}
+                      />
+                    </div>
+                  ) : null}
+
                   {canManageDocument(myRole, userId, document) ? (
-                    <div className="opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
+                    <div className="w-7 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 max-lg:opacity-100">
                       <DeleteDocumentButton
                         workspaceId={workspaceId}
                         documentId={document.id}

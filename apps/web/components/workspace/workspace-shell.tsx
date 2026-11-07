@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChatArea } from "@/components/workspace/chat-area";
+import { IndexingWatcher } from "@/components/workspace/indexing-watcher";
 import { WorkspaceSidebar } from "@/components/workspace/workspace-sidebar";
 import { WorkspaceTopbar } from "@/components/workspace/workspace-topbar";
 import type {
@@ -56,6 +57,12 @@ export function WorkspaceShell({
   const selectedChatId = activeChatId ?? optimisticChatId;
   const selectedChat = chatList.find((chat) => chat.id === selectedChatId);
   const chatTitle = activeChatTitle ?? selectedChat?.title ?? "New chat";
+  const hasAnyDocuments = allDocuments.length > 0;
+  const documentsIndexing = allDocuments.some(
+    (document) =>
+      document.embedding_status === "pending" ||
+      document.embedding_status === "indexing",
+  );
   // An empty workspace opens the secondary sections so the first upload is
   // obvious; once documents exist, Chats gets the room and they start closed.
   const [documentsOpen, setDocumentsOpen] = useState(
@@ -134,6 +141,11 @@ export function WorkspaceShell({
 
   return (
     <div className="flex h-full min-h-0">
+      <IndexingWatcher
+        active={allDocuments.some(
+          (document) => document.embedding_status !== "ready",
+        )}
+      />
       {mobileOpen ? (
         <button
           type="button"
@@ -182,6 +194,8 @@ export function WorkspaceShell({
           workspaceId={workspace.id}
           workspaceName={workspace.name}
           hasDocuments={hasReadyDocuments}
+          hasAnyDocuments={hasAnyDocuments}
+          documentsIndexing={documentsIndexing}
           documentNames={allDocuments.map((document) => document.filename)}
           initialConversationId={activeChatId}
           initialMessages={initialMessages}
