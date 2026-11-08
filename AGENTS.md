@@ -19,16 +19,26 @@ outright in any other harness.
 
 ## How we work (applies to both apps)
 
-- **The human writes the code.** The agent explains, reviews, and answers
-  questions — a mentor, not a code generator. The agent writes a file only
-  for pure boilerplate, saying so first, then explaining it line by line.
+- **The agent writes the code; the human makes the decisions.** The human owns
+  scope, trade-offs, and approvals. This is a learning project for AI-assisted
+  development: the agent implements, the human learns by reviewing real code
+  instead of typing it.
+- **Explain while writing, not after.** Each non-obvious choice gets a sentence
+  or two of "why" as it is made. No silent bulk edits, no unexplained
+  abstractions. If the human cannot explain a line, the work is not finished.
+- **Propose before deciding; proceed when it is mechanical.** New dependencies,
+  structural moves, schema changes, and anything irreversible get a short
+  options-plus-recommendation first. Clear work is simply executed.
 - **One small task at a time**; verify together, then move on. Small, frequent
-  commits so history tells the story.
+  commits so history tells the story. The agent may make commits; the human
+  decides what merges.
 - **Design before code for every milestone**: a design doc and task-by-task
   plan in `docs/superpowers/specs/` and `docs/superpowers/plans/` before any
   implementation. **No unrequested refactors** — propose, agree, then move.
-- If you are an agent: default to explaining and asking, not editing. When in
-  doubt, stop and ask.
+- **Verify before claiming done.** Run the real command and report its output —
+  tests, lint, types, build. "Should pass" is not a result.
+- If you are an agent: ask when a decision is genuinely ambiguous, then act and
+  report what changed and why.
 
 ## Monorepo layout
 
@@ -42,13 +52,15 @@ commands from inside the app directory.
 | `docs/superpowers/` | Design specs & task plans per milestone | |
 | `docs/progress.md` | Chronological work log (entries before 2026-10-14 describe a superseded `src/` layout) | |
 
-**Next up: deploy the MVP** — Vercel for `apps/web`, Render's free web service
-for `apps/api`, and the Neon production branch for data. The runbook (env
-matrix, build/start commands, manual migration command, smoke test) is
-`docs/deployment.md`. The production branch is at Alembic head and holds no
-data.
+**Deployed.** The web app runs on Vercel, the API on Render's free web service,
+and data lives on the Neon production branch (schema verified and stamped). The
+runbook — env matrix, build/start commands, manual migration command, smoke
+test, and the CI gate — is `docs/deployment.md`. `main` is gated: a branch
+ruleset requires the `api` and `web` checks from `.github/workflows/ci.yml`
+before a merge, and both hosts auto-deploy `main`, so a deploy only ever
+carries tested code.
 
-After that, no milestone is scheduled. The API is complete through Milestone 6
+No milestone is scheduled. The API is complete through Milestone 6
 (chat/RAG) and the web app covers auth, workspaces/invitations, documents, and
 chat. Propose the next milestone with a design doc and plan before
 implementation. Web documents + chat design:
@@ -62,16 +74,20 @@ API (from `apps/api/`):
 ```bash
 uv run pytest                     # tests — in-memory SQLite, never Neon
 uv run ruff check app tests       # lint (also: ruff format / format --check)
+uv run ty check app               # type check — app/ only
 uv run alembic upgrade head       # migrations — runs against REAL Neon
 uv run fastapi dev app/main.py    # dev server on :8000
 ```
 
-Web (from `apps/web/` — no test framework exists; this is the verification):
+Web (from `apps/web/` — no test framework exists; this is the verification, and
+it must be clean at every commit):
 
 ```bash
-pnpm lint && pnpm exec tsc --noEmit && pnpm build   # must be clean at every commit
-pnpm exec next typegen        # after adding routes (regenerates PageProps etc.)
+pnpm lint && pnpm exec next typegen && pnpm exec tsc --noEmit && pnpm build
 ```
+
+`next typegen` must run before `tsc` in a clean checkout: it writes
+`PageProps`/`RouteContext`/`LayoutProps` into `.next/types`.
 
 - Web expects the API on `http://127.0.0.1:8000` (`API_URL`, default `:8000`).
   The browser never calls the API directly — reads go through server

@@ -677,3 +677,53 @@ editing the value in the dashboard does not fix the running deployment.
 ### Verification
 
 - `pnpm lint && pnpm exec tsc --noEmit && pnpm build` — clean.
+
+## 2026-11-08 — CI: gate `main` on api and web checks
+
+### Summary
+
+The MVP is live (API on Render, web on Vercel, Neon production branch), so this
+adds the thing that keeps it honest: `.github/workflows/ci.yml` runs on every
+pull request and every push to `main`, and a branch ruleset requires the `api`
+and `web` checks before a merge. Render and Vercel still auto-deploy `main`, so
+the gate is the merge, not the workflow ordering.
+
+- `api`: `uv sync --locked`, `ruff check app tests`, `ruff format --check app
+  tests`, `ty check app`, `pytest -q` (~20 s).
+- `web`: `pnpm install --frozen-lockfile`, `pnpm lint`, `next typegen`,
+  `tsc --noEmit`, `pnpm build` (~30 s).
+- No repository secrets: the test fixtures inject dummy keys and swap in-memory
+  SQLite for `get_db`.
+
+### Type checking
+
+`ty` 0.0.99 joined the dev dependency group (dev-only; Render installs with
+`--no-dev`). Its first pass found three real issues, fixed without behaviour
+change:
+
+- `Message.role` is now `Mapped[Literal["user", "assistant"]]`; the column stays
+  `String(16)` and no migration is involved.
+- The two `await stream.aclose()` sites now call the existing `_close_quietly()`
+  helper, which guards for providers whose `AsyncIterator` has no `aclose`.
+
+### First CI run failures (both real)
+
+- `astral-sh/setup-uv@v10` does not resolve: setup-uv publishes no moving major
+  tag above `v7`. Pinned `v10.3.3`.
+- `tsc --noEmit` failed with 23 × `TS2304` for `PageProps` / `RouteContext` /
+  `LayoutProps`: those live in `.next/types`, which a clean checkout lacks.
+  Added `next typegen` before the type check.
+
+### Verification
+
+- CI on `ci/api-and-web`: `api` pass in 18 s, `web` pass in 29 s, Vercel preview
+  pass.
+- Locally: `ty` clean, `ruff` clean, 108 files already formatted, 199 tests
+  passed, `uv lock --check` in sync, `pnpm build` clean.
+
+### Docs
+
+- `docs/deployment.md`: new §9 (the gate, the ruleset settings, local
+  equivalents, the traps above) and the status line now reads "deployed".
+- Working agreement in the root and app `AGENTS.md` files rewritten: the agent
+  writes the code, the human makes the decisions.

@@ -4,7 +4,8 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-07 (documents + chat wired to Milestone 6 API)
+> **Last updated:** 2026-11-08 (CI gate on `main`; working agreement updated —
+> the agent writes, the human decides)
 
 ---
 
@@ -24,20 +25,26 @@ session cookie to the API and renders what comes back.
 
 ## 2. How we work (working agreement — do not violate)
 
-- **The human writes the code.** The agent explains, reviews, and answers
-  questions. It acts as a mentor, not a code generator.
+- **The agent writes the code; the human decides.** The human owns scope, the
+  trade-offs, and approvals; the agent implements and explains each non-obvious
+  decision as it goes. This is a learning project — code the human cannot
+  explain is not finished.
 - **One small task at a time.** Finish, verify together, then move on.
-- **The agent writes a file only when** it is pure boilerplate with nothing to
-  learn, or debugging it would cost more than it teaches — and must **say so
-  first**, then explain the code line by line.
+- **Propose before deciding.** New dependencies, route/structure changes, and
+  anything irreversible get a short options-plus-recommendation first.
+  Mechanical work proceeds without a round trip.
 - **No unrequested refactors.** Structural changes are proposed and agreed
   _before_ anything moves.
-- **Small, frequent commits**, so history tells the story.
+- **Small, frequent commits**, so history tells the story. The agent may make
+  them; the human decides what merges.
 - **Design before code for every new milestone.** New features get a short design
   doc and a task-by-task plan before implementation.
+- **Verify before claiming done.** `pnpm lint && pnpm exec next typegen &&
+  pnpm exec tsc --noEmit && pnpm build` clean, plus a scripted browser/curl
+  check when behaviour is involved. "Should pass" is not a result.
 
-If you are an agent: default to explaining and asking, not editing. When in
-doubt, stop and ask.
+If you are an agent: ask when a decision is genuinely ambiguous, then act and
+report what changed and why.
 
 ---
 
@@ -227,17 +234,18 @@ and the footer's GitHub link live in `lib/site.ts`.
 ## 8. Commands (run from `apps/web`)
 
 ```bash
-pnpm dev                 # dev server on :3000 (API expected on :8000)
+pnpm dev                  # dev server on :3000 (API expected on :8000)
 pnpm lint
-pnpm exec tsc --noEmit
-pnpm build               # must be clean at every commit
-pnpm exec next typegen    # refresh PageProps/RouteContext after adding routes
+pnpm exec next typegen    # writes PageProps/RouteContext/LayoutProps to .next/types
+pnpm exec tsc --noEmit    # requires typegen first in a clean checkout
+pnpm build                # must be clean at every commit
 ```
 
 There is **no web test framework** in this repo. Verification is
-`pnpm lint && pnpm exec tsc --noEmit && pnpm build` plus a scripted manual
-browser/curl check. `API_URL` (default `http://127.0.0.1:8000`) points at the
-API.
+`pnpm lint && pnpm exec next typegen && pnpm exec tsc --noEmit && pnpm build`
+plus a scripted manual browser/curl check. `API_URL` (default
+`http://127.0.0.1:8000`) points at the API. CI runs the same sequence (see
+`docs/deployment.md` §9).
 
 Deployment: Vercel with **Root Directory** `apps/web` and the server-only
 `API_URL` set to the API's HTTPS origin. `NODE_ENV=production` makes
