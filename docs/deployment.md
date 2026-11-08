@@ -1,8 +1,9 @@
 # Deploying Ragnest
 
-**Status:** prepared, not yet executed. The repository is merged and pushed; the
-production database is verified and stamped. Everything below is the part that
-happens in the Vercel, Render, and Neon dashboards.
+**Status:** deployed. The API runs on Render's free web service, the web app on
+Vercel, and data lives on the Neon production branch (schema verified and
+stamped). What follows is the runbook: how it was set up, how to redeploy, how
+to migrate, and what the CI gate on `main` now enforces (§9).
 
 Topology:
 
@@ -222,7 +223,8 @@ Rules:
 ## 8. Operations
 
 - **Deploys:** Render and Vercel auto-deploy `main`. Use their dashboards for
-  manual redeploys.
+  manual redeploys. Because `main` is gated by CI (§9), a deploy can only be of
+  a commit whose pull request passed the `api` and `web` checks.
 - **Rollback:** Render → Deploys → previous deploy → roll back. Vercel →
   Deployments → previous deployment → promote. Neon → restore/PITR within the
   plan window.
@@ -231,3 +233,69 @@ Rules:
   Rate limits/quotas are the next milestone, not part of this deploy.
 - **Free-tier gotchas:** cold starts; a mid-index sleep leaves a document
   non-ready (use Retry); Neon also autosuspends when idle.
+
+---
+
+## 9. Continuous integration (the merge gate)
+
+`.github/workflows/ci.yml` runs on every pull request and every push to `main`.
+That is what makes "tests before deploy" true: both hosts auto-deploy `main`,
+so the guarantee comes from `main` only ever receiving merged, green commits —
+not from the workflow running "before" Render or Vercel.
+
+| Job | Steps | Typical time |
+| --- | --- | --- |
+| `api` | `uv sync --locked`, `ruff check app tests`, `ruff format --check app tests`, `ty check app`, `pytest -q` | ~20 s |
+| `web` | `pnpm install --frozen-lockfile`, `pnpm lint`, `next typegen`, `tsc --noEmit`, `pnpm build` | ~30 s |
+
+**No repository secrets are used.** `tests/conftest.py` sets dummy
+`DATABASE_URL`, `SECRET_KEY`, `GEMINI_API`, and `LLM_API_KEY` before importing
+any `app.*` module, and overrides `get_db` with in-memory SQLite. CI therefore
+never reaches Neon, Gemini, or Groq.
+
+### The branch ruleset (configure once)
+
+GitHub → **Settings → Rules → Rulesets → New branch ruleset**:
+
+- Target branch: `main`
+- ✅ Require a pull request before merging — without this, a direct push skips
+  the checks entirely
+- ✅ Require status checks to pass → `api` and `web`
+- ✅ Block force pushes
+- Enforcement: **Active**
+
+The check names come from each job's `name:` in the workflow. Renaming a job
+silently blocks every merge until the ruleset is updated. The checks only appear
+in the picker after the workflow has run at least once.
+
+### Same checks locally
+
+```bash
+cd apps/api
+uv run ruff check app tests
+uv run ruff format --check app tests
+uv run ty check app
+uv run pytest -q
+
+cd apps/web
+pnpm lint && pnpm exec next typegen && pnpm exec tsc --noEmit && pnpm build
+```
+
+### Traps already paid for
+
+- **`setup-uv` has no moving major tag above `v7`.** `astral-sh/setup-uv@v10`
+  resolves to nothing and fails at "Set up job"; pin a full version
+  (`@v10.3.3`).
+- **The web type check needs `next typegen` first.** `PageProps`,
+  `LayoutProps`, and `RouteContext` are generated into `.next/types`, which a
+  clean checkout does not have — `tsc` alone reports 20+ `TS2304`. The workflow
+  runs typegen before `tsc`; `pnpm build` regenerates them anyway.
+- **`ty` is a dev dependency pinned by `uv.lock`.** Move it deliberately with
+  `uv lock --upgrade-package ty`. Render installs with `--no-dev`, so it never
+  ships to production.
+- **CI does not run migrations.** The suite is SQLite-only and production is
+  migrated manually (§6). Adding `alembic upgrade head` to CI would need a
+  Postgres service container using the `pgvector/pgvector` image.
+- **No `paths:` filters.** A workflow skipped by a path filter leaves its
+  required check stuck at "pending", which blocks the merge. Both jobs always
+  run; the whole gate costs under a minute.

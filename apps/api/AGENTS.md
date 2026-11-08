@@ -4,7 +4,8 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-07 (deployment runbook; Neon production branch verified and stamped)
+> **Last updated:** 2026-11-08 (CI gate on `main`; working agreement updated —
+> the agent writes, the human decides)
 
 ---
 
@@ -32,20 +33,26 @@ line.
 
 ## 2. How we work (working agreement — do not violate)
 
-- **The human writes the code.** The agent explains, reviews, and answers
-  questions. It acts as a mentor, not a code generator.
+- **The agent writes the code; the human decides.** The human owns scope, the
+  trade-offs, and approvals; the agent implements and explains each non-obvious
+  decision as it goes. This is a learning project — code the human cannot
+  explain is not finished.
 - **One small task at a time.** Finish, verify together, then move on.
-- **The agent writes a file only when** it is pure boilerplate with nothing to
-  learn, or debugging it would cost more than it teaches — and must **say so
-  first**, then explain the code line by line.
+- **Propose before deciding.** New dependencies, schema/migration changes,
+  structural moves, and anything irreversible get a short
+  options-plus-recommendation first. Mechanical work proceeds without a round
+  trip.
 - **No unrequested refactors.** Structural changes are proposed and agreed
   _before_ anything moves.
-- **Small, frequent commits**, so history tells the story.
+- **Small, frequent commits**, so history tells the story. The agent may make
+  them; the human decides what merges.
 - **Design before code for every new milestone.** New features get a short design
   doc and a task-by-task plan before implementation.
+- **Verify before claiming done.** Run the command, show the output; "should
+  pass" is not a result.
 
-If you are an agent: default to explaining and asking, not editing. When in
-doubt, stop and ask.
+If you are an agent: ask when a decision is genuinely ambiguous, then act and
+report what changed and why.
 
 ---
 
@@ -436,6 +443,7 @@ uv run pytest                            # run tests
 uv run ruff check app tests              # lint
 uv run ruff format app tests             # format
 uv run ruff format --check app tests     # format check
+uv run ty check app                      # type check
 uv run fastapi dev app/main.py           # dev server (auto-detects `app` in main.py)
 uv run alembic upgrade head              # apply migrations
 ```
@@ -449,8 +457,11 @@ from the given file path.
   `exclude = ["alembic/versions"]`. Run `ruff check .` (whole project) — it
   passes; the exclude keeps generated migrations out of lint.
 - **Dependencies:** runtime in `[project].dependencies`; dev tools
-  (pytest, pytest-asyncio, httpx, aiosqlite, ruff) in
+  (pytest, pytest-asyncio, httpx, aiosqlite, ruff, ty) in
   `[dependency-groups].dev`. Add via `uv add` / `uv add --dev`.
+- **ty** has no config file: `uv run ty check app` is the whole setup. It is
+  version-pinned by `uv.lock`; move it with `uv lock --upgrade-package ty`.
+  `tests/` is intentionally unchecked for now.
 
 ---
 
