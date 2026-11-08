@@ -159,7 +159,7 @@ async def send_message(
         ) from exc
 
     if not isinstance(first, LLMDelta):
-        await stream.aclose()
+        await _close_quietly(stream)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Answer model unavailable",
@@ -230,7 +230,7 @@ async def send_message(
                     logger.warning("failed to save a cancelled answer", exc_info=True)
             raise
         finally:
-            await stream.aclose()
+            await _close_quietly(stream)
 
     return StreamingResponse(answer(), media_type="text/event-stream", headers=SSE_HEADERS)
 

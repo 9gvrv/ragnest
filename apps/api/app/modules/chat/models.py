@@ -1,6 +1,7 @@
 import enum
 import uuid
 from datetime import UTC, datetime
+from typing import Literal
 
 from sqlalchemy import DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -42,7 +43,7 @@ class Message(Base):
     conversation_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("conversations.id", ondelete="CASCADE")
     )
-    role: Mapped[str] = mapped_column(String(16))
+    role: Mapped[Literal["user", "assistant"]] = mapped_column(String(16))
     content: Mapped[str] = mapped_column(Text)
     citations: Mapped[list[dict]] = mapped_column(CitationsJSON, default=list)
     model: Mapped[str | None] = mapped_column(String(64))
