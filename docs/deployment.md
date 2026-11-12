@@ -86,6 +86,9 @@ free tier and are willing to add a billing account and configure a container.
 | `LLM_REASONING_EFFORT` | `low` (optional, default) |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `30` (optional, default) |
 | `CORS_ORIGINS` | `https://ragnest.vercel.app` (see below) |
+| `GOOGLE_CLIENT_ID` | The OAuth client ID (`...apps.googleusercontent.com`) |
+| `GOOGLE_CLIENT_SECRET` | The OAuth client secret (`GOCSPX-...`) |
+| `GOOGLE_REDIRECT_URI` | `https://ragnest.vercel.app/api/auth/google/callback` — the **web** callback, not this API |
 
 Use the **pooled** URL at runtime: Neon recommends pooled connections for
 non-JS platforms and web apps. `app/core/config.py` already converts the scheme
@@ -104,9 +107,35 @@ future direct-from-browser call cannot be read by another site.
 | Variable | Value | Scope |
 | --- | --- | --- |
 | `API_URL` | `https://<render-service>.onrender.com` | Production (add to Preview if used) |
+| `GOOGLE_CLIENT_ID` | The same OAuth client ID | Production |
+| `GOOGLE_REDIRECT_URI` | `https://ragnest.vercel.app/api/auth/google/callback` | Production |
 
 No database URL and no secret belongs in Vercel. The web app is not a data
-owner.
+owner. The Google **client secret** is only ever in Render's env; the web reads
+the client ID and the redirect URI, both of which are public in the OAuth
+authorization request.
+
+`GOOGLE_REDIRECT_URI` must be byte-identical on both hosts and registered in the
+Google Cloud console, or Google refuses with `redirect_uri_mismatch` and the API
+refuses the exchange with `400`. Leave all three API values (and both web
+values) empty and Google sign-in stays off: the button is hidden and
+`POST /api/v1/auth/google` answers `503`.
+
+### Google Cloud console
+
+1. **APIs & Services → OAuth consent screen**: External, app name `Ragnest`,
+   support email, scopes `openid` and `email`. While the status is *Testing*,
+   only the accounts under *Test users* can sign in; publish when you want
+   anyone to.
+2. **Credentials → Create credentials → OAuth client ID → Web application.**
+3. **Authorized JavaScript origins**: not used by this flow (it is only for
+   Google's browser SDK). Leaving it empty is fine.
+4. **Authorized redirect URIs** — both, exactly, no trailing slash:
+   `http://localhost:3000/api/auth/google/callback` and
+   `https://ragnest.vercel.app/api/auth/google/callback`.
+   The API's own origin is **never** a redirect URI.
+5. Copy the client ID and secret into the env tables above, then redeploy both
+   hosts. Vercel applies env changes only to new deployments.
 
 ---
 
@@ -179,7 +208,7 @@ uses.
 Then, from `apps/api`:
 
 ```bash
-# current revision (must print 7c1e4a9b2d3f (head) today)
+# current revision (must print abba767e7170 (head) today)
 DATABASE_URL="$(uv run python -c "from dotenv import dotenv_values;print(dotenv_values('.env')['DATABASE_URL_PROD_DIRECT'])")" \
   uv run alembic current
 
@@ -217,6 +246,10 @@ Rules:
 7. Delete the document and confirm the conversation still renders its citation
    snapshot (by design, citations survive deletion).
 8. Check DevTools → Cookies: `ragnest_session` is `HttpOnly` and `Secure`.
+9. Sign out, then sign in with **Continue with Google** → `/workspaces` loads.
+   The same address signing in again reaches the same account, and the password
+   still works for an account that was linked from email + password. Cancel on
+   Google's consent screen → `/login?error=google_denied`.
 
 ---
 

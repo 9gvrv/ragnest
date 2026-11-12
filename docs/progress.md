@@ -727,3 +727,56 @@ change:
   equivalents, the traps above) and the status line now reads "deployed".
 - Working agreement in the root and app `AGENTS.md` files rewritten: the agent
   writes the code, the human makes the decisions.
+## 2026-11-12 — Google sign-in (Milestone 7)
+
+### Summary
+
+Added "Continue with Google" next to email + password, on both `/login` and
+`/signup`. The flow is a server-side authorization-code exchange with PKCE, not
+Google's browser SDK, so the client secret never leaves the API and no token
+ever appears in a URL.
+
+### Flow
+
+1. `/api/auth/google/start` (web) mints `state` and a PKCE verifier, stores them
+   plus the requested `next` path in the ten-minute httpOnly `ragnest_google`
+   cookie, and redirects to `accounts.google.com`.
+2. Google returns to `/api/auth/google/callback` (web) with a code.
+3. The callback compares `state`, clears the cookie, and calls
+   `POST /api/v1/auth/google` with the code, verifier, and redirect URI.
+4. The API exchanges the code at Google's token endpoint, verifies the returned
+   ID token against Google's JWKS (RS256, `httpx` + PyJWT, no `google-auth`),
+   upserts the user, and returns the usual access token.
+5. The callback sets `ragnest_session` and redirects to the stored `next`.
+
+### Decisions
+
+- **Linking order:** by `google_sub`, then by verified email when that row has no
+  `sub`, else create a passwordless user. A *different* `sub` on an
+  already-linked email is `409`. Known residual risk: signup does not verify
+  email, so auto-linking by email could let an attacker pre-register an address;
+  recorded, not hidden.
+- `users.password_hash` is now nullable; `users.google_sub` (unique) is the
+  stable identity key. Password login returns `401` for passwordless accounts.
+- Opt-in: three API settings (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+  `GOOGLE_REDIRECT_URI`) and two web values (client ID + redirect URI). With
+  them empty the button is hidden and the endpoint answers `503`.
+- The cookie uses `path=/` because `cookies().delete()` cannot target a narrower
+  path. `sameSite=lax` is required for Google's cross-site return.
+- Every failure lands on `/login?error=<code>`, rendered by `AuthAlert`; the
+  redirect target always comes from the validated stored `next`.
+- The two route handlers carry no `export const dynamic`: `cacheComponents: true`
+  rejects it, and reading `cookies()` already makes them dynamic.
+
+### Verification
+
+- API: 234 tests pass; `ruff check` and `ruff format --check` clean. New tests
+  cover the JWKS/ID-token client with `MockTransport` (13), profile resolution
+  and linking (6), and the endpoint's 400/403/409/503 mapping (10).
+- Web: `pnpm lint`, `next typegen`, `tsc --noEmit`, `pnpm build` clean.
+- Curl: start returns `307` to `accounts.google.com` with the right params and an
+  httpOnly cookie; a callback with no/wrong state redirects to
+  `/login?error=google_state`; `error=access_denied` maps to `google_denied`;
+  both pages render the button and the alert.
+- Live end-to-end consent still needs a human (real Google account); the
+  migration must be applied to the production branch per `docs/deployment.md`.
