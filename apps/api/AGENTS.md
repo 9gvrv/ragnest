@@ -4,8 +4,8 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-08 (CI gate on `main`; working agreement updated —
-> the agent writes, the human decides)
+> **Last updated:** 2026-11-12 (Milestone 7 Google sign-in; nullable password,
+> `google_sub`). The CI gate and the agent-writes agreement landed 2026-11-08.
 
 ---
 
@@ -311,7 +311,20 @@ If you add another DB engine (e.g. in Alembic), pass
   `https://api.groq.com/openai/v1`), `LLM_MODEL` (default
   `openai/gpt-oss-120b`), `LLM_REASONING_EFFORT` (default `"low"`; blank omits
   the field), `ACCESS_TOKEN_EXPIRE_MINUTES` (default `30`), `CORS_ORIGINS`
-  (default `""`; comma-separated browser origins, empty disables CORS).
+  (default `""`; comma-separated browser origins, empty disables CORS),
+  `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI`
+  (default `""`; Google sign-in is enabled only when all three are set —
+  `settings.google_oauth_enabled`).
+- **Google sign-in is a second door into the same account.** The web runs the
+  browser dance (state + PKCE in a 10-minute httpOnly cookie) and the API does
+  the secret half: `POST /api/v1/auth/google` exchanges the code, verifies the
+  ID token against Google's JWKS, upserts the user, and returns the usual
+  access token. The client secret never leaves the API and no token ever
+  appears in a URL. `users.password_hash` is nullable; `users.google_sub` is
+  the stable identity key. Linking: by `sub`, then by verified email when that
+  row has no `sub`, else create; a *different* `sub` on an already-linked email
+  is `409`. Signup still does not verify email, so auto-linking carries the
+  known account-pre-hijacking risk — recorded, not hidden.
 - **Blank LLM keys fall back to defaults.** A `key=` line in `.env` arrives as
   `""`, not "unset"; a model validator restores the base URL and model and
   strips `LLM_REASONING_EFFORT`, so an empty placeholder cannot silently break
@@ -337,7 +350,8 @@ If you add another DB engine (e.g. in Alembic), pass
   Milestone 4 adds **`documents`** (`25d91090dee5`); Milestone 5 adds
   **`document_chunks`** plus `documents.embedding_status`/`indexed_at`
   (`299585b2a1a6`); Milestone 6 adds **`conversations`** and **`messages`**
-  (`7c1e4a9b2d3f`). The two empty baseline revisions
+  (`7c1e4a9b2d3f`); Milestone 7 makes `users.password_hash` nullable and adds
+  `users.google_sub` (unique) (`abba767e7170`). The two empty baseline revisions
   (`736e318369b1 -> a058018dc98a`) remain a cosmetic wart; squashing is
   optional.
 - **Milestone 5 uses pgvector in the same database.** The migration runs
@@ -538,6 +552,11 @@ Then register it in `app/api/router.py` and add tests under `tests/modules/<feat
    `[n]` citations, fixed refusal when the workspace has no chunks, and
    citation snapshots on the assistant row. Failures: 429/503 before the first
    token, terminal `error` plus partial persistence afterwards. No web UI yet.
+7. ✅ **Google sign-in** — `POST /api/v1/auth/google` exchanges the web's
+   authorization code, verifies the ID token against Google's JWKS, and returns
+   the same access token as password login. `users.password_hash` became
+   nullable and `users.google_sub` (unique) was added; existing accounts link
+   automatically on a verified email. Opt-in via three settings.
 
 **Next up: web documents + chat.** Upload/list documents, then a workspace chat
 page that consumes this SSE contract, renders `sources`, and makes `[n]` markers
@@ -568,6 +587,10 @@ API side is complete.
   `docs/superpowers/specs/2026-11-04-chat-rag-design.md`
 - Milestone 6 chat plan:
   `docs/superpowers/plans/2026-11-04-chat-rag.md`
+- Milestone 7 Google sign-in design:
+  `docs/superpowers/specs/2026-11-12-google-oauth-design.md`
+- Milestone 7 Google sign-in plan:
+  `docs/superpowers/plans/2026-11-12-google-oauth.md`
 - Web project notes: `apps/web/AGENTS.md`
 - Human-facing setup/run notes: `apps/api/README.md`
 - Deployment runbook (Render + Vercel + Neon production branch):

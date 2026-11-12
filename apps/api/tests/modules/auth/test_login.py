@@ -1,3 +1,6 @@
+from app.modules.users.models import User
+
+
 async def _signup(client, email="user@example.com", password="supersecret"):
     return await client.post("/api/v1/auth/signup", json={"email": email, "password": password})
 
@@ -51,3 +54,16 @@ async def test_login_failures_do_not_reveal_whether_email_exists(client):
         json={"email": "nobody@example.com", "password": "supersecret"},
     )
     assert wrong_password.json() == unknown_email.json()
+
+
+async def test_passwordless_account_cannot_log_in_with_a_password(client, session_factory):
+    async with session_factory() as session:
+        session.add(User(email="google@example.com", google_sub="google-sub-1"))
+        await session.commit()
+
+    resp = await client.post(
+        "/api/v1/auth/login",
+        json={"email": "google@example.com", "password": "supersecret"},
+    )
+
+    assert resp.status_code == 401

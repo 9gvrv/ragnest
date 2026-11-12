@@ -12,6 +12,9 @@ os.environ.setdefault(
 os.environ.setdefault("SECRET_KEY", "test-secret-key-that-is-at-least-32-bytes-long")
 os.environ.setdefault("GEMINI_API", "test-gemini-key")
 os.environ.setdefault("LLM_API_KEY", "test-llm-key")
+os.environ.setdefault("GOOGLE_CLIENT_ID", "test-client-id.apps.googleusercontent.com")
+os.environ.setdefault("GOOGLE_CLIENT_SECRET", "test-client-secret")
+os.environ.setdefault("GOOGLE_REDIRECT_URI", "http://localhost:3000/api/auth/google/callback")
 
 import pytest
 import pytest_asyncio

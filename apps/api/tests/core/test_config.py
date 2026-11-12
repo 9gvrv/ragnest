@@ -64,3 +64,48 @@ def test_cors_origins_are_empty_by_default():
     s = Settings(DATABASE_URL=NEON, CORS_ORIGINS="")
 
     assert s.cors_origins == []
+
+
+def test_google_oauth_is_disabled_without_configuration():
+    s = Settings(
+        _env_file=None,
+        DATABASE_URL=NEON,
+        GOOGLE_CLIENT_ID="",
+        GOOGLE_CLIENT_SECRET="",
+        GOOGLE_REDIRECT_URI="",
+    )
+
+    assert s.GOOGLE_CLIENT_ID == ""
+    assert s.google_oauth_enabled is False
+
+
+def test_google_oauth_is_enabled_only_when_all_three_are_set():
+    s = Settings(
+        _env_file=None,
+        DATABASE_URL=NEON,
+        GOOGLE_CLIENT_ID="id.apps.googleusercontent.com",
+        GOOGLE_CLIENT_SECRET="secret",
+        GOOGLE_REDIRECT_URI="https://ragnest.vercel.app/api/auth/google/callback",
+    )
+    assert s.google_oauth_enabled is True
+
+    partial = Settings(
+        _env_file=None,
+        DATABASE_URL=NEON,
+        GOOGLE_CLIENT_ID="id.apps.googleusercontent.com",
+        GOOGLE_CLIENT_SECRET="",
+        GOOGLE_REDIRECT_URI="",
+    )
+    assert partial.google_oauth_enabled is False
+
+
+def test_google_oauth_ignores_whitespace_only_values():
+    s = Settings(
+        _env_file=None,
+        DATABASE_URL=NEON,
+        GOOGLE_CLIENT_ID="  ",
+        GOOGLE_CLIENT_SECRET="  ",
+        GOOGLE_REDIRECT_URI="  ",
+    )
+
+    assert s.google_oauth_enabled is False

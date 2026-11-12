@@ -104,6 +104,28 @@ export function getMe(token: string) {
   return request<ApiUser>("/api/v1/users/me", { token });
 }
 
+/**
+ * The API owns the Google client secret, so the web hands it the code it just
+ * received and gets back an ordinary session token.
+ */
+export function exchangeGoogleCode(
+  code: string,
+  codeVerifier: string,
+  redirectUri: string,
+) {
+  return request<{ access_token: string; token_type: string }>(
+    "/api/v1/auth/google",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        code,
+        code_verifier: codeVerifier,
+        redirect_uri: redirectUri,
+      }),
+    },
+  );
+}
+
 export type ApiRole = "creator" | "admin" | "member";
 
 export type ApiWorkspace = {

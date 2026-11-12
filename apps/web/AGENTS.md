@@ -4,8 +4,8 @@
 > traps we cannot afford to rediscover. It is not a tutorial and not a duplicate
 > of `README.md`.
 >
-> **Last updated:** 2026-11-08 (CI gate on `main`; working agreement updated —
-> the agent writes, the human decides)
+> **Last updated:** 2026-11-12 (Google sign-in on login and signup). The CI
+> gate and the agent-writes agreement landed 2026-11-08.
 
 ---
 
@@ -68,6 +68,7 @@ apps/web/
 │   │   └── workspaces/[id]/documents/[documentId]/page.tsx
 │   └── api/                       # route handlers (mutation proxies)
 │       ├── auth/{login,signup,logout,me}/route.ts
+│       ├── auth/google/{start,callback}/route.ts
 │       ├── workspaces/route.ts
 │       ├── workspaces/[id]/route.ts
 │       ├── workspaces/[id]/members/[userId]/route.ts
@@ -150,6 +151,20 @@ apps/web/
     proxy. `IndexingWatcher` polls `router.refresh()` every 2.5s while any
     document is non-ready, paused when the tab is hidden, capped at 40 ticks.
     The chat gate is **at least one `ready` document**, not document count.
+14. **Google sign-in is a server-side code flow, not Google's JS SDK.**
+    `/api/auth/google/start` mints `state` and a PKCE verifier, stores them in
+    the ten-minute httpOnly `ragnest_google` cookie (`path=/`, because
+    `cookies().delete()` cannot target a narrower path), and redirects to
+    `accounts.google.com`. `/api/auth/google/callback` compares `state`, clears
+    the cookie, calls the API's `POST /api/v1/auth/google`, sets
+    `ragnest_session`, and redirects to the stored `next` (re-validated with
+    `safeNextPath`). Failures always land on `/login?error=<code>`, rendered by
+    `AuthAlert`; no query value ever chooses a redirect target. The web holds
+    only `GOOGLE_CLIENT_ID` and `GOOGLE_REDIRECT_URI` — never the secret, and
+    no token ever appears in a URL. The button is a plain `<a>`, so it is a
+    full navigation. Do not add `export const dynamic` to these routes:
+    `cacheComponents: true` rejects it, and reading `cookies()` already makes
+    them dynamic.
 
 ---
 
@@ -279,9 +294,15 @@ the value and redeploy; the running deployment keeps its old value. Full runbook
    list, public accept, `?next=` resume.
 3. ✅ Documents & chat — upload/list/delete/reindex, indexing status, streaming
    answers, clickable citations, conversation list.
+4. ✅ Google sign-in — "Continue with Google" on `/login` and `/signup`, the
+   start/callback route handlers, and `/login?error=<code>` alerts.
 
 ## 11. Pointers
 
+- Google sign-in design:
+  `docs/superpowers/specs/2026-11-12-google-oauth-design.md`
+- Google sign-in plan:
+  `docs/superpowers/plans/2026-11-12-google-oauth.md`
 - Web documents + chat design:
   `docs/superpowers/specs/2026-11-06-web-documents-chat-design.md`
 - Web documents + chat plan:
