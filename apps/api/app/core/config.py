@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     LLM_REASONING_EFFORT: str = "low"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     CORS_ORIGINS: str = ""
+    # Google sign-in is opt-in: an unconfigured deployment must keep working.
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = ""
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",
@@ -75,6 +79,15 @@ class Settings(BaseSettings):
         return [
             origin.strip().rstrip("/") for origin in self.CORS_ORIGINS.split(",") if origin.strip()
         ]
+
+    # Google sign-in needs all three: the button and endpoint stay dormant otherwise.
+    @property
+    def google_oauth_enabled(self) -> bool:
+        return bool(
+            self.GOOGLE_CLIENT_ID.strip()
+            and self.GOOGLE_CLIENT_SECRET.strip()
+            and self.GOOGLE_REDIRECT_URI.strip()
+        )
 
 
 settings = Settings()
