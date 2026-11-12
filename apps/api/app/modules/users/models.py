@@ -11,4 +11,7 @@ class User(Base, TimestampMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True)
-    password_hash: Mapped[str] = mapped_column(String(255))
+    # NULL for accounts that only ever sign in with Google.
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Google's stable subject id; NULL until that person uses Google sign-in.
+    google_sub: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
