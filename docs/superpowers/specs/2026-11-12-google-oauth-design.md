@@ -334,3 +334,21 @@ The full round trip needs real credentials; §13 covers the manual pass.
   one for tests; match `embeddings.py`/`llm.py`.
 - Cookie encoding (plain JSON is fine; it is httpOnly and small).
 - Whether the error alert lives in the page or in a tiny shared component.
+
+---
+
+## 15. As built (deviations from this document)
+
+- **The cookie path is `/`, not `/api/auth/google`.** `cookies().delete()`
+  cannot target a narrower path, so a `path=/api/auth/google` cookie would
+  survive the callback and fail the next `state` check. The cookie is httpOnly,
+  `sameSite=lax`, and lives for ten minutes.
+- **The route handlers carry no `export const dynamic = "force-dynamic"`.** The
+  web app sets `cacheComponents: true`, which rejects that segment config;
+  reading `cookies()` already makes both handlers dynamic.
+- **Redirects are `307`, not `302`.** `NextResponse.redirect()` defaults to
+  `307`, which is correct here (the callback is a GET either way).
+- **`ty check` is not in the AGENTS.md dev commands, but CI runs it.**
+  `.github/workflows/ci.yml` calls `uv run ty check app`, and it passes; the
+  local gate is `ruff check`, `ruff format --check`, `ty check`, and `pytest`,
+  plus `tsc --noEmit` on the web side.
