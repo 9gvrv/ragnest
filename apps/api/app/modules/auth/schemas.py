@@ -13,6 +13,13 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class GoogleExchangeRequest(BaseModel):
+    code: str = Field(min_length=1)
+    # RFC 7636: the verifier is 43-128 characters.
+    code_verifier: str = Field(min_length=43, max_length=128)
+    redirect_uri: str = Field(min_length=1)
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
