@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AuthAlert } from "@/components/auth-alert";
 import { AuthForm } from "@/components/auth-form";
 import { AuthShell } from "@/components/auth-shell";
+import { GoogleSignIn } from "@/components/google-sign-in";
 import { getMe } from "@/lib/api";
 import { safeNextPath } from "@/lib/next-path";
 import { getSessionToken } from "@/lib/session";
@@ -18,6 +20,7 @@ export default async function SignupPage({
   const next = safeNextPath(
     typeof params.next === "string" ? params.next : null,
   );
+  const error = typeof params.error === "string" ? params.error : undefined;
 
   const token = await getSessionToken();
   if (token) {
@@ -42,6 +45,8 @@ export default async function SignupPage({
         </p>
       }
     >
+      <AuthAlert code={error} />
+      <GoogleSignIn nextPath={next ?? "/workspaces"} />
       <AuthForm mode="signup" nextPath={next ?? undefined} />
     </AuthShell>
   );
