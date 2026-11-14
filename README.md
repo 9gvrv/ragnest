@@ -34,6 +34,20 @@ Live: <https://ragnest.vercel.app>
   private history.
 - Deployment — Vercel for the web app, Render for the API, Neon for the database.
 
+## Benchmark
+
+`apps/api/bench/` is a rerunnable RAG evaluation over a hand-written
+17-document corpus for a fictional company: 20 planted facts, 33 labelled
+questions, and 8 questions that must be refused because the corpus cannot
+answer them.
+
+Baseline at 800-character chunks, 25 answerable questions: **recall@5 0.96**
+when recall is counted per document, but **0.68 supporting-chunk recall@5** —
+the chunk the model actually receives often contains a document's banner
+heading rather than its answer. Document recall is reported as a ceiling, not
+the headline number. Method, measurements and limits:
+`apps/api/bench/README.md`.
+
 ## Tech
 
 | Area | Main tools |
