@@ -1,0 +1,170 @@
+[
+  {
+    "file": "doc_01_annual_report_letter.md",
+    "title": "Annual report: letter to shareholders",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f04"
+    ],
+    "words": 725,
+    "approx_pages": 1.4
+  },
+  {
+    "file": "doc_02_q4_earnings_release.md",
+    "title": "Q4 and full-year earnings release",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f01",
+      "f02",
+      "f09"
+    ],
+    "words": 686,
+    "approx_pages": 1.3
+  },
+  {
+    "file": "doc_03_income_statement_notes.md",
+    "title": "Notes to the income statement",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f11",
+      "f12"
+    ],
+    "words": 550,
+    "approx_pages": 1.1
+  },
+  {
+    "file": "doc_04_debt_and_liquidity_note.md",
+    "title": "Borrowings and liquidity note",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f08",
+      "f13",
+      "f19"
+    ],
+    "words": 637,
+    "approx_pages": 1.2
+  },
+  {
+    "file": "doc_05_segment_reporting.md",
+    "title": "Segment reporting",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f17"
+    ],
+    "words": 505,
+    "approx_pages": 1.0
+  },
+  {
+    "file": "doc_06_board_minutes_oct2025.md",
+    "title": "Board minutes, 28 Oct 2025",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f16"
+    ],
+    "words": 618,
+    "approx_pages": 1.2
+  },
+  {
+    "file": "doc_07_corvane_acquisition_announcement.md",
+    "title": "Corvane acquisition announcement",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f10"
+    ],
+    "words": 479,
+    "approx_pages": 0.9
+  },
+  {
+    "file": "doc_08_audit_committee_report.md",
+    "title": "Audit Committee report",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f05",
+      "f18"
+    ],
+    "words": 644,
+    "approx_pages": 1.2
+  },
+  {
+    "file": "doc_09_executive_compensation_summary.md",
+    "title": "Executive compensation summary",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f14"
+    ],
+    "words": 600,
+    "approx_pages": 1.2
+  },
+  {
+    "file": "doc_10_capex_plan_fy2026.md",
+    "title": "FY2026 capex plan memo",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f07",
+      "f20"
+    ],
+    "words": 507,
+    "approx_pages": 1.0
+  },
+  {
+    "file": "doc_11_risk_factors_and_legal.md",
+    "title": "Risk factors and legal proceedings",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f15"
+    ],
+    "words": 721,
+    "approx_pages": 1.4
+  },
+  {
+    "file": "doc_12_investor_day_faq.md",
+    "title": "Investor Q&A",
+    "role": "fact_doc",
+    "fact_ids": [
+      "f03",
+      "f06"
+    ],
+    "words": 550,
+    "approx_pages": 1.1
+  },
+  {
+    "file": "sustainability_overview_fy2025.md",
+    "title": "Sustainability overview",
+    "role": "distractor",
+    "fact_ids": [],
+    "words": 497,
+    "approx_pages": 1.0
+  },
+  {
+    "file": "supplier_code_of_conduct.md",
+    "title": "Supplier code of conduct",
+    "role": "distractor",
+    "fact_ids": [],
+    "words": 474,
+    "approx_pages": 0.9
+  },
+  {
+    "file": "investor_relations_calendar_and_contacts.md",
+    "title": "IR calendar and contacts",
+    "role": "distractor",
+    "fact_ids": [],
+    "words": 325,
+    "approx_pages": 0.6
+  },
+  {
+    "file": "information_security_policy_summary.md",
+    "title": "Information security policy summary",
+    "role": "distractor",
+    "fact_ids": [],
+    "words": 431,
+    "approx_pages": 0.8
+  },
+  {
+    "file": "fy2024_results_highlights.md",
+    "title": "FY2024 results highlights (prior-year near-miss: similar topics, different values)",
+    "role": "near_miss_distractor",
+    "fact_ids": [],
+    "words": 352,
+    "approx_pages": 0.7
+  }
+]
