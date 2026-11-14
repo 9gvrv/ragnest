@@ -1,0 +1,156 @@
+{
+  "mode": "in_process",
+  "git_sha": "a04cbe1",
+  "date": "2026-11-14T07:17:41+00:00",
+  "corpus_hash": "858541b6f407",
+  "workspace_id": "f8009d01-ebf1-45f0-8067-0ffdc7bdefaf",
+  "workspace_name": "bench-2026-11-14-800",
+  "embedding_model": "gemini-embedding-001",
+  "chunk_target": 800,
+  "chunk_overlap": 120,
+  "documents": [
+    {
+      "filename": "doc_01_annual_report_letter.md",
+      "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+      "chars": 4536,
+      "chunks": 10,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_02_q4_earnings_release.md",
+      "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+      "chars": 4622,
+      "chunks": 9,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_03_income_statement_notes.md",
+      "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+      "chars": 3650,
+      "chunks": 8,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_04_debt_and_liquidity_note.md",
+      "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+      "chars": 3950,
+      "chunks": 8,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_05_segment_reporting.md",
+      "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+      "chars": 3313,
+      "chunks": 7,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_06_board_minutes_oct2025.md",
+      "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+      "chars": 4101,
+      "chunks": 9,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_07_corvane_acquisition_announcement.md",
+      "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+      "chars": 3340,
+      "chunks": 7,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_08_audit_committee_report.md",
+      "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+      "chars": 4354,
+      "chunks": 8,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_09_executive_compensation_summary.md",
+      "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+      "chars": 3878,
+      "chunks": 8,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_10_capex_plan_fy2026.md",
+      "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+      "chars": 3209,
+      "chunks": 7,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_11_risk_factors_and_legal.md",
+      "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+      "chars": 4775,
+      "chunks": 9,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "doc_12_investor_day_faq.md",
+      "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+      "chars": 3489,
+      "chunks": 6,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "fy2024_results_highlights.md",
+      "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+      "chars": 2274,
+      "chunks": 4,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "information_security_policy_summary.md",
+      "document_id": "e117d732-cb64-4a52-8488-e7cc60610769",
+      "chars": 2814,
+      "chunks": 6,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "investor_relations_calendar_and_contacts.md",
+      "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+      "chars": 2262,
+      "chunks": 5,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "supplier_code_of_conduct.md",
+      "document_id": "ba70371f-10c7-4db3-aaa0-594d1e342f2e",
+      "chars": 3132,
+      "chunks": 7,
+      "status": "ready",
+      "reused": true
+    },
+    {
+      "filename": "sustainability_overview_fy2025.md",
+      "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+      "chars": 3240,
+      "chunks": 7,
+      "status": "ready",
+      "reused": true
+    }
+  ],
+  "totals": {
+    "documents": 17,
+    "chunks": 125,
+    "failed": [],
+    "seconds": 200.07,
+    "seconds_note": "first indexing run (125 chunks, 8 embedding batches); a reuse rerun took 19.33s and did not re-embed"
+  }
+}

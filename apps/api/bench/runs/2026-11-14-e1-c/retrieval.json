@@ -1,0 +1,3783 @@
+{
+  "mode": "in_process",
+  "git_sha": "a04cbe1",
+  "corpus_hash": "858541b6f407",
+  "workspace_id": "f8009d01-ebf1-45f0-8067-0ffdc7bdefaf",
+  "workspace_name": "bench-2026-11-14-800",
+  "embedding_model": "gemini-embedding-001",
+  "chunk_target": 800,
+  "chunk_overlap": 120,
+  "top_k": 10,
+  "seconds": 79.3,
+  "metrics": {
+    "overall": {
+      "recall@1_any": 0.92,
+      "recall@1_all": 0.76,
+      "recall@5_any": 0.96,
+      "recall@5_all": 0.92,
+      "mrr@10": 0.9457142857142857,
+      "n": 25.0
+    },
+    "by_type": {
+      "multi_fact": {
+        "recall@1_any": 1.0,
+        "recall@1_all": 0.2,
+        "recall@5_any": 1.0,
+        "recall@5_all": 0.8,
+        "mrr@10": 1.0,
+        "n": 5.0
+      },
+      "single_fact": {
+        "recall@1_any": 0.9,
+        "recall@1_all": 0.9,
+        "recall@5_any": 0.95,
+        "recall@5_all": 0.95,
+        "mrr@10": 0.9321428571428572,
+        "n": 20.0
+      }
+    }
+  },
+  "support": {
+    "overall": {
+      "support@1_any": 0.4,
+      "support@1_all": 0.32,
+      "support@5_any": 0.68,
+      "support@5_all": 0.64,
+      "n": 25.0
+    },
+    "by_type": {
+      "multi_fact": {
+        "support@1_any": 0.4,
+        "support@1_all": 0.0,
+        "support@5_any": 0.6,
+        "support@5_all": 0.4,
+        "n": 5.0
+      },
+      "single_fact": {
+        "support@1_any": 0.4,
+        "support@1_all": 0.4,
+        "support@5_any": 0.7,
+        "support@5_all": 0.7,
+        "n": 20.0
+      }
+    }
+  },
+  "latency_ms": {
+    "embed_ms": {
+      "p50": 531.5,
+      "p95": 615.6
+    },
+    "search_ms": {
+      "p50": 1407.6,
+      "p95": 1500.9
+    },
+    "total_ms": {
+      "p50": 1963.0,
+      "p95": 1975.6
+    }
+  },
+  "questions": [
+    {
+      "question_id": "q01",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "What was Tarnwick Industrial Group's total revenue for fiscal year 2025?",
+      "fact_ids": [
+        "f01"
+      ],
+      "gold_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "gold_documents": [
+        "doc_02_q4_earnings_release.md"
+      ],
+      "ranked_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.797287,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.773037,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.772861,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.767019,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.762876,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.75203,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.751462,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "f11fc4f6-9535-4416-87de-c3a89f655168",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 537,
+          "score": 0.743003,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.741092,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.731406,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.797287,
+      "embed_ms": 615.6,
+      "search_ms": 7985.7,
+      "total_ms": 8601.3
+    },
+    {
+      "question_id": "q02",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "How much net income attributable to shareholders did Tarnwick report for fiscal 2025?",
+      "fact_ids": [
+        "f02"
+      ],
+      "gold_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "gold_documents": [
+        "doc_02_q4_earnings_release.md"
+      ],
+      "ranked_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.779516,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.771518,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.748337,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.746293,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.743709,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.742899,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.73636,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.720638,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.718602,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.716897,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.779516,
+      "embed_ms": 536.7,
+      "search_ms": 1438.4,
+      "total_ms": 1975.1
+    },
+    {
+      "question_id": "q03",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "What final dividend per share did Tarnwick declare for fiscal 2025, and when is it payable?",
+      "fact_ids": [
+        "f03"
+      ],
+      "gold_doc_ids": [
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e"
+      ],
+      "gold_documents": [
+        "doc_12_investor_day_faq.md"
+      ],
+      "ranked_doc_ids": [
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "621c777e-ebb7-4076-8f40-82746b00b3da"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.735197,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.718431,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.714126,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "852bfacd-0313-416a-a24d-df5d9084fb98",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 1,
+          "char_start": 503,
+          "char_end": 1201,
+          "score": 0.712707,
+          "supports": [
+            "f03"
+          ]
+        },
+        {
+          "rank": 5,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.701548,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.701016,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.672351,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.666233,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.661541,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.659128,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.735197,
+      "embed_ms": 529.4,
+      "search_ms": 1434.5,
+      "total_ms": 1963.9
+    },
+    {
+      "question_id": "q04",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "How many full-time employees did Tarnwick have at the end of fiscal 2025?",
+      "fact_ids": [
+        "f04"
+      ],
+      "gold_doc_ids": [
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04"
+      ],
+      "gold_documents": [
+        "doc_01_annual_report_letter.md"
+      ],
+      "ranked_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a"
+      ],
+      "first_gold_rank": 2,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.768168,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.761391,
+          "supports": [
+            "f04"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.735798,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.729069,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.722163,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.719022,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.717548,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.717477,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.715304,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "f11fc4f6-9535-4416-87de-c3a89f655168",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 537,
+          "score": 0.71168,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.768168,
+      "embed_ms": 446.7,
+      "search_ms": 1327.6,
+      "total_ms": 1774.2
+    },
+    {
+      "question_id": "q05",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "Which firm was Tarnwick's external auditor for fiscal 2025?",
+      "fact_ids": [
+        "f05"
+      ],
+      "gold_doc_ids": [
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "gold_documents": [
+        "doc_08_audit_committee_report.md"
+      ],
+      "ranked_doc_ids": [
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.776354,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.749305,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.72848,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "f11fc4f6-9535-4416-87de-c3a89f655168",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 537,
+          "score": 0.724683,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "fb02f1b3-80be-40bc-bf62-fa550742fc3f",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 4,
+          "char_start": 1906,
+          "char_end": 2646,
+          "score": 0.722485,
+          "supports": [
+            "f05"
+          ]
+        },
+        {
+          "rank": 6,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.721948,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.715343,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.710807,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.706693,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.701357,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.776354,
+      "embed_ms": 524.9,
+      "search_ms": 1438.1,
+      "total_ms": 1963.0
+    },
+    {
+      "question_id": "q06",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "How large is Tarnwick's current share repurchase authorization, and when does it expire?",
+      "fact_ids": [
+        "f06"
+      ],
+      "gold_doc_ids": [
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e"
+      ],
+      "gold_documents": [
+        "doc_12_investor_day_faq.md"
+      ],
+      "ranked_doc_ids": [
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "ba70371f-10c7-4db3-aaa0-594d1e342f2e",
+        "a46edb45-e306-4de3-9821-17dc2e75ce04",
+        "a46edb45-e306-4de3-9821-17dc2e75ce04",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "a46edb45-e306-4de3-9821-17dc2e75ce04",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.742185,
+          "supports": [
+            "f06"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.676158,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.665078,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.661448,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "343a552d-2234-4f21-9985-0c6c3981dc81",
+          "document_id": "ba70371f-10c7-4db3-aaa0-594d1e342f2e",
+          "filename": "supplier_code_of_conduct.md",
+          "chunk_index": 1,
+          "char_start": 388,
+          "char_end": 949,
+          "score": 0.654781,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "7cba11e8-5e3d-41ed-a95b-292e97b1db83",
+          "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+          "filename": "investor_relations_calendar_and_contacts.md",
+          "chunk_index": 4,
+          "char_start": 2024,
+          "char_end": 2262,
+          "score": 0.650783,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "c60d39ec-cdb8-4c4f-a5a9-392588d6eb72",
+          "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+          "filename": "investor_relations_calendar_and_contacts.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 530,
+          "score": 0.645874,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.644421,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "d6688a47-61f4-4943-bd69-0ec331a20895",
+          "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+          "filename": "investor_relations_calendar_and_contacts.md",
+          "chunk_index": 3,
+          "char_start": 1454,
+          "char_end": 2144,
+          "score": 0.640161,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "852bfacd-0313-416a-a24d-df5d9084fb98",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 1,
+          "char_start": 503,
+          "char_end": 1201,
+          "score": 0.638184,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.742185,
+      "embed_ms": 532.3,
+      "search_ms": 1436.7,
+      "total_ms": 1969.0
+    },
+    {
+      "question_id": "q07",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "What is Tarnwick's approved capital expenditure budget for fiscal 2026?",
+      "fact_ids": [
+        "f07"
+      ],
+      "gold_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949"
+      ],
+      "gold_documents": [
+        "doc_10_capex_plan_fy2026.md"
+      ],
+      "ranked_doc_ids": [
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80"
+      ],
+      "first_gold_rank": 7,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.719588,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.713329,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.711354,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.710286,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.709977,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.707623,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "1e497f79-4ff3-43c8-b017-863ab08ad156",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 431,
+          "score": 0.706064,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.70383,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.702656,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.698873,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.719588,
+      "embed_ms": 531.5,
+      "search_ms": 1433.6,
+      "total_ms": 1965.1
+    },
+    {
+      "question_id": "q08",
+      "type": "single_fact",
+      "level": "atomic",
+      "question": "What fixed coupon do Tarnwick's senior notes due 2031 carry?",
+      "fact_ids": [
+        "f08"
+      ],
+      "gold_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c"
+      ],
+      "gold_documents": [
+        "doc_04_debt_and_liquidity_note.md"
+      ],
+      "ranked_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.709385,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.705422,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.699469,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.69363,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.689595,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.681773,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.680987,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "c9399ffd-bc4d-4983-969d-aba3b7ad1eec",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 639,
+          "score": 0.676707,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.676642,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.673778,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.709385,
+      "embed_ms": 534.2,
+      "search_ms": 1439.7,
+      "total_ms": 1973.9
+    },
+    {
+      "question_id": "q09",
+      "type": "single_fact",
+      "level": "description",
+      "question": "Why did Tarnwick's gross margin fall in the fourth quarter of fiscal 2025, and to what level?",
+      "fact_ids": [
+        "f09"
+      ],
+      "gold_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "gold_documents": [
+        "doc_02_q4_earnings_release.md"
+      ],
+      "ranked_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "621c777e-ebb7-4076-8f40-82746b00b3da"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.753878,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.722215,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.716001,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.714258,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.705338,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "083614d9-f5ef-4793-b2e2-6357c1eb3863",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 1,
+          "char_start": 492,
+          "char_end": 1130,
+          "score": 0.700539,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.696996,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.694087,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.690745,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.685086,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.753878,
+      "embed_ms": 530.0,
+      "search_ms": 1433.5,
+      "total_ms": 1963.5
+    },
+    {
+      "question_id": "q10",
+      "type": "single_fact",
+      "level": "description",
+      "question": "What are the terms of Tarnwick's agreement to acquire Corvane Dynamics?",
+      "fact_ids": [
+        "f10"
+      ],
+      "gold_doc_ids": [
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e"
+      ],
+      "gold_documents": [
+        "doc_07_corvane_acquisition_announcement.md"
+      ],
+      "ranked_doc_ids": [
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "0e6d7e10-efef-45b8-aa44-e87ef464cf65",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 1,
+          "char_start": 224,
+          "char_end": 850,
+          "score": 0.801389,
+          "supports": [
+            "f10"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "8c293e20-2660-4992-aca7-ae0e585b6980",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 5,
+          "char_start": 2294,
+          "char_end": 2956,
+          "score": 0.784496,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "c9636a7b-e30e-49e7-9b06-c4553519db54",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 344,
+          "score": 0.782635,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.781424,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "5be88fe1-bb59-4413-9911-a86f9d43bf02",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 4,
+          "char_start": 1625,
+          "char_end": 2414,
+          "score": 0.775337,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "31903271-b55a-4116-8c5f-5b70227455cb",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 3,
+          "char_start": 1157,
+          "char_end": 1745,
+          "score": 0.767846,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "81a15dfc-f1c7-4ab0-8c17-b936640457b3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 4,
+          "char_start": 1942,
+          "char_end": 2425,
+          "score": 0.722351,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "81008fc3-3357-432b-a8f2-a8049616812a",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 2,
+          "char_start": 730,
+          "char_end": 1277,
+          "score": 0.72046,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.716973,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "ca9624ec-c845-44b6-adab-891c46142bf3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 3,
+          "char_start": 1392,
+          "char_end": 2062,
+          "score": 0.670483,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.801389,
+      "embed_ms": 535.6,
+      "search_ms": 1440.0,
+      "total_ms": 1975.6
+    },
+    {
+      "question_id": "q11",
+      "type": "single_fact",
+      "level": "description",
+      "question": "What restructuring charge did Tarnwick record for the Halbrook foundry closure, and how many roles were affected?",
+      "fact_ids": [
+        "f11"
+      ],
+      "gold_doc_ids": [
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed"
+      ],
+      "gold_documents": [
+        "doc_03_income_statement_notes.md"
+      ],
+      "ranked_doc_ids": [
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "bec13de4-5374-4ede-94a2-bd4de264ffdc",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 1,
+          "char_start": 520,
+          "char_end": 1144,
+          "score": 0.712952,
+          "supports": [
+            "f11"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.690432,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.66162,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.660781,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.657009,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "083614d9-f5ef-4793-b2e2-6357c1eb3863",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 1,
+          "char_start": 492,
+          "char_end": 1130,
+          "score": 0.646131,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.644788,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.642502,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "bdbb544b-7716-4524-87f2-833e72e6b736",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 5,
+          "char_start": 2637,
+          "char_end": 3388,
+          "score": 0.640561,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.634748,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.712952,
+      "embed_ms": 453.0,
+      "search_ms": 1407.6,
+      "total_ms": 1860.7
+    },
+    {
+      "question_id": "q12",
+      "type": "single_fact",
+      "level": "description",
+      "question": "Which reporting unit suffered a goodwill impairment in fiscal 2025, how large was it, and what was the stated reason?",
+      "fact_ids": [
+        "f12"
+      ],
+      "gold_doc_ids": [
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed"
+      ],
+      "gold_documents": [
+        "doc_03_income_statement_notes.md"
+      ],
+      "ranked_doc_ids": [
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "654999f3-078b-4d2b-bb9e-d78526af6043",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 4,
+          "char_start": 1810,
+          "char_end": 2426,
+          "score": 0.733025,
+          "supports": [
+            "f12"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "e7821e71-3869-41b9-ad09-15d7b804cf72",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 3,
+          "char_start": 1419,
+          "char_end": 1930,
+          "score": 0.725209,
+          "supports": [
+            "f12"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "c5837102-1778-424f-82c2-5fe9594070a6",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 2,
+          "char_start": 1024,
+          "char_end": 1539,
+          "score": 0.722171,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "d2566f7f-a0f3-4e1e-bdb4-649bf47c2867",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 5,
+          "char_start": 2306,
+          "char_end": 2897,
+          "score": 0.72157,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "9d845159-0739-4f3a-aa30-49eecfcf5068",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 5,
+          "char_start": 2511,
+          "char_end": 2996,
+          "score": 0.697368,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "77448a86-6228-422a-931c-8780d97a1e06",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 6,
+          "char_start": 2876,
+          "char_end": 3313,
+          "score": 0.690282,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "cffef2ac-3f34-446b-9e1e-f14b589eadd7",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 5,
+          "char_start": 2416,
+          "char_end": 3211,
+          "score": 0.687369,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.683575,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.674846,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "5b5ed823-da13-4765-a983-925409b62a6c",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 6,
+          "char_start": 3091,
+          "char_end": 3799,
+          "score": 0.668597,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.733025,
+      "embed_ms": 536.7,
+      "search_ms": 1331.2,
+      "total_ms": 1867.9
+    },
+    {
+      "question_id": "q13",
+      "type": "single_fact",
+      "level": "description",
+      "question": "What are the key terms of Tarnwick's revolving credit facility?",
+      "fact_ids": [
+        "f13"
+      ],
+      "gold_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c"
+      ],
+      "gold_documents": [
+        "doc_04_debt_and_liquidity_note.md"
+      ],
+      "ranked_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "a46edb45-e306-4de3-9821-17dc2e75ce04",
+        "621c777e-ebb7-4076-8f40-82746b00b3da"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.716355,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "ddf1ddc9-a66b-41f7-a13e-5357f57d2584",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 4,
+          "char_start": 2155,
+          "char_end": 2707,
+          "score": 0.704444,
+          "supports": [
+            "f13"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "f62d1ff7-f5cd-4db7-8f78-d79e636f6394",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 5,
+          "char_start": 2587,
+          "char_end": 3216,
+          "score": 0.687411,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.68543,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.677137,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.667411,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.667406,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.664507,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "7cba11e8-5e3d-41ed-a95b-292e97b1db83",
+          "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+          "filename": "investor_relations_calendar_and_contacts.md",
+          "chunk_index": 4,
+          "char_start": 2024,
+          "char_end": 2262,
+          "score": 0.662905,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.660332,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.716355,
+      "embed_ms": 467.6,
+      "search_ms": 1295.5,
+      "total_ms": 1763.1
+    },
+    {
+      "question_id": "q14",
+      "type": "single_fact",
+      "level": "description",
+      "question": "At what percentage of target was the CEO's fiscal 2025 annual bonus paid, and which metric carried the largest weighting?",
+      "fact_ids": [
+        "f14"
+      ],
+      "gold_doc_ids": [
+        "248adc72-c527-4e84-848e-04adf9ebfd68"
+      ],
+      "gold_documents": [
+        "doc_09_executive_compensation_summary.md"
+      ],
+      "ranked_doc_ids": [
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "248adc72-c527-4e84-848e-04adf9ebfd68",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "db3db196-4354-4c15-be40-e7fdbca75249",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 2,
+          "char_start": 983,
+          "char_end": 1590,
+          "score": 0.760389,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "ecea1cd0-f6f8-4f4d-b7de-ffdd2af06df4",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 7,
+          "char_start": 3353,
+          "char_end": 3878,
+          "score": 0.731122,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "e01511b7-89c8-4fb6-a772-66d567d8e1bd",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 4,
+          "char_start": 1870,
+          "char_end": 2606,
+          "score": 0.726077,
+          "supports": [
+            "f14"
+          ]
+        },
+        {
+          "rank": 4,
+          "chunk_id": "f6caec81-2081-4cc6-8af7-656b33d1d3be",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 5,
+          "char_start": 2486,
+          "char_end": 3131,
+          "score": 0.723396,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "2b82dc76-b930-46e3-98d2-835600321f45",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 6,
+          "char_start": 3011,
+          "char_end": 3473,
+          "score": 0.693546,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "20767e6a-02cf-4ef4-8f76-e142fce2f477",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 1,
+          "char_start": 519,
+          "char_end": 1103,
+          "score": 0.689373,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "c9399ffd-bc4d-4983-969d-aba3b7ad1eec",
+          "document_id": "248adc72-c527-4e84-848e-04adf9ebfd68",
+          "filename": "doc_09_executive_compensation_summary.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 639,
+          "score": 0.685697,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "db9a08f2-8cb4-4150-a986-149b141f2794",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 2,
+          "char_start": 1041,
+          "char_end": 1839,
+          "score": 0.674253,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.656777,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "fb02f1b3-80be-40bc-bf62-fa550742fc3f",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 4,
+          "char_start": 1906,
+          "char_end": 2646,
+          "score": 0.655891,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.760389,
+      "embed_ms": 523.5,
+      "search_ms": 1260.3,
+      "total_ms": 1783.8
+    },
+    {
+      "question_id": "q15",
+      "type": "single_fact",
+      "level": "description",
+      "question": "What is the Hallwick v. Tarnwick case about, and how much has Tarnwick reserved for it?",
+      "fact_ids": [
+        "f15"
+      ],
+      "gold_doc_ids": [
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a"
+      ],
+      "gold_documents": [
+        "doc_11_risk_factors_and_legal.md"
+      ],
+      "ranked_doc_ids": [
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "bdbb544b-7716-4524-87f2-833e72e6b736",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 5,
+          "char_start": 2637,
+          "char_end": 3388,
+          "score": 0.745095,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "f11fc4f6-9535-4416-87de-c3a89f655168",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 537,
+          "score": 0.69104,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.690564,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.68883,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.684841,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.683031,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "c9636a7b-e30e-49e7-9b06-c4553519db54",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 344,
+          "score": 0.676174,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "f77320fc-601e-458a-87eb-31a7a0d4d55a",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 6,
+          "char_start": 3268,
+          "char_end": 3969,
+          "score": 0.675838,
+          "supports": [
+            "f15"
+          ]
+        },
+        {
+          "rank": 9,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.670068,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.668985,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.745095,
+      "embed_ms": 517.0,
+      "search_ms": 1330.8,
+      "total_ms": 1847.8
+    },
+    {
+      "question_id": "q16",
+      "type": "single_fact",
+      "level": "relational",
+      "question": "Why did CFO Odalys Brennmark recuse herself from a board vote?",
+      "fact_ids": [
+        "f16"
+      ],
+      "gold_doc_ids": [
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97"
+      ],
+      "gold_documents": [
+        "doc_06_board_minutes_oct2025.md"
+      ],
+      "ranked_doc_ids": [
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "81a15dfc-f1c7-4ab0-8c17-b936640457b3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 4,
+          "char_start": 1942,
+          "char_end": 2425,
+          "score": 0.736214,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "2c2ed4b7-da2f-426f-92bd-1ebbd8282871",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 7,
+          "char_start": 3176,
+          "char_end": 3888,
+          "score": 0.710089,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "0e5d5d81-628d-4761-99e8-74400947999d",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 5,
+          "char_start": 2305,
+          "char_end": 2899,
+          "score": 0.691309,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "40cd25c9-2fd7-4e8a-88e7-6f8ec0ab4792",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 6,
+          "char_start": 2779,
+          "char_end": 3296,
+          "score": 0.690699,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 5,
+          "chunk_id": "ca9624ec-c845-44b6-adab-891c46142bf3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 3,
+          "char_start": 1392,
+          "char_end": 2062,
+          "score": 0.657903,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "80043460-3923-4409-9728-989d27f1a0a5",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 1,
+          "char_start": 517,
+          "char_end": 1098,
+          "score": 0.650279,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 7,
+          "chunk_id": "afb18da2-60b0-4d3b-a2dc-2931e319eec3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 637,
+          "score": 0.641693,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 8,
+          "chunk_id": "2520768b-8e4c-4ea2-a67a-3f9d8a5814b9",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 2,
+          "char_start": 978,
+          "char_end": 1512,
+          "score": 0.632615,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "eb427dc5-121c-4d88-9d25-de1862bb0359",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 8,
+          "char_start": 3768,
+          "char_end": 4101,
+          "score": 0.620715,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "cb244d85-b954-4ca0-b92e-883633a6ae35",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 3,
+          "char_start": 1236,
+          "char_end": 2026,
+          "score": 0.619644,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.736214,
+      "embed_ms": 535.4,
+      "search_ms": 1434.4,
+      "total_ms": 1969.8
+    },
+    {
+      "question_id": "q17",
+      "type": "single_fact",
+      "level": "relational",
+      "question": "Which of Tarnwick's three segments reported a revenue decline in fiscal 2025?",
+      "fact_ids": [
+        "f17"
+      ],
+      "gold_doc_ids": [
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80"
+      ],
+      "gold_documents": [
+        "doc_05_segment_reporting.md"
+      ],
+      "ranked_doc_ids": [
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.802576,
+          "supports": [
+            "f17"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.760509,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.757719,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.746224,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "32c58c46-e770-44c8-abc6-f2281436bcc8",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 7,
+          "char_start": 3679,
+          "char_end": 4372,
+          "score": 0.737868,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.734396,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.732492,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "083614d9-f5ef-4793-b2e2-6357c1eb3863",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 1,
+          "char_start": 492,
+          "char_end": 1130,
+          "score": 0.729983,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "1696cf0a-5ffd-4318-9ac5-445376752c62",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 2,
+          "char_start": 942,
+          "char_end": 1705,
+          "score": 0.727057,
+          "supports": [
+            "f17"
+          ]
+        },
+        {
+          "rank": 10,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.724915,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.802576,
+      "embed_ms": 635.9,
+      "search_ms": 1337.0,
+      "total_ms": 1972.9
+    },
+    {
+      "question_id": "q18",
+      "type": "single_fact",
+      "level": "relational",
+      "question": "What connection does the Audit Committee chair have to Tarnwick's external auditor, and how did the committee address independence?",
+      "fact_ids": [
+        "f18"
+      ],
+      "gold_doc_ids": [
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f"
+      ],
+      "gold_documents": [
+        "doc_08_audit_committee_report.md"
+      ],
+      "ranked_doc_ids": [
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+        "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "a46edb45-e306-4de3-9821-17dc2e75ce04"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "4bdfce83-95e4-4e42-a00f-4f5ed56a9089",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 5,
+          "char_start": 2526,
+          "char_end": 3324,
+          "score": 0.763131,
+          "supports": [
+            "f18"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "607e2d31-6e91-475d-add0-c21df6fbb788",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 553,
+          "score": 0.747956,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "fb02f1b3-80be-40bc-bf62-fa550742fc3f",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 4,
+          "char_start": 1906,
+          "char_end": 2646,
+          "score": 0.731581,
+          "supports": [
+            "f18"
+          ]
+        },
+        {
+          "rank": 4,
+          "chunk_id": "a37936bf-d414-4256-8792-5a8f37144c1c",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 6,
+          "char_start": 3204,
+          "char_end": 3825,
+          "score": 0.688109,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "81a15dfc-f1c7-4ab0-8c17-b936640457b3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 4,
+          "char_start": 1942,
+          "char_end": 2425,
+          "score": 0.680935,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "8eb2d0bb-dc32-4610-a816-63c72e743b04",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 1,
+          "char_start": 433,
+          "char_end": 970,
+          "score": 0.680065,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "2ad318b0-6366-4e82-aa91-68bf890b42fd",
+          "document_id": "21f1b3e3-cf19-42ef-824b-bfc9396df22f",
+          "filename": "doc_08_audit_committee_report.md",
+          "chunk_index": 7,
+          "char_start": 3705,
+          "char_end": 4354,
+          "score": 0.669348,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "f11fc4f6-9535-4416-87de-c3a89f655168",
+          "document_id": "5bdbc860-9c6a-4155-ad4c-6d99bac2a71a",
+          "filename": "doc_11_risk_factors_and_legal.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 537,
+          "score": 0.662208,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "2c2ed4b7-da2f-426f-92bd-1ebbd8282871",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 7,
+          "char_start": 3176,
+          "char_end": 3888,
+          "score": 0.661295,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "d6688a47-61f4-4943-bd69-0ec331a20895",
+          "document_id": "a46edb45-e306-4de3-9821-17dc2e75ce04",
+          "filename": "investor_relations_calendar_and_contacts.md",
+          "chunk_index": 3,
+          "char_start": 1454,
+          "char_end": 2144,
+          "score": 0.657416,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.763131,
+      "embed_ms": 463.1,
+      "search_ms": 1500.9,
+      "total_ms": 1964.1
+    },
+    {
+      "question_id": "q19",
+      "type": "single_fact",
+      "level": "relational",
+      "question": "What were the proceeds of the senior notes due 2031 used for?",
+      "fact_ids": [
+        "f19"
+      ],
+      "gold_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c"
+      ],
+      "gold_documents": [
+        "doc_04_debt_and_liquidity_note.md"
+      ],
+      "ranked_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "ee055978-111d-4a1b-a066-7886c35bc949"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "36ca4bf0-8d1b-4b87-80c5-7c9353f7f702",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 3,
+          "char_start": 1578,
+          "char_end": 2275,
+          "score": 0.730956,
+          "supports": [
+            "f19"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "7586f28f-4ce1-48e9-bb16-986afdc09333",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 1,
+          "char_start": 462,
+          "char_end": 1020,
+          "score": 0.721522,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "19ff63e8-226c-4ea2-86f9-c5a11da3e306",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 2,
+          "char_start": 900,
+          "char_end": 1698,
+          "score": 0.699481,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "98bea451-a895-434a-85e5-d217ec84bd61",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 6,
+          "char_start": 3096,
+          "char_end": 3579,
+          "score": 0.668384,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.659851,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.643388,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "ddf1ddc9-a66b-41f7-a13e-5357f57d2584",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 4,
+          "char_start": 2155,
+          "char_end": 2707,
+          "score": 0.629415,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "bdbb6c6c-01c8-4e9e-94a1-46717e28dd40",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 3,
+          "char_start": 1719,
+          "char_end": 2449,
+          "score": 0.626226,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "5b5ed823-da13-4765-a983-925409b62a6c",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 6,
+          "char_start": 3091,
+          "char_end": 3799,
+          "score": 0.625203,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "d119be08-c8fe-4ed7-9a5d-59928ebb3650",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 3,
+          "char_start": 1239,
+          "char_end": 1717,
+          "score": 0.622803,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.730956,
+      "embed_ms": 533.9,
+      "search_ms": 1331.9,
+      "total_ms": 1865.8
+    },
+    {
+      "question_id": "q20",
+      "type": "single_fact",
+      "level": "relational",
+      "question": "What is the largest single allocation in the fiscal 2026 capital plan, and what is it for?",
+      "fact_ids": [
+        "f20"
+      ],
+      "gold_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949"
+      ],
+      "gold_documents": [
+        "doc_10_capex_plan_fy2026.md"
+      ],
+      "ranked_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b2574cf0-c078-4533-83a0-6c3de38b8e4b",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 4,
+          "char_start": 1597,
+          "char_end": 2254,
+          "score": 0.704441,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "d119be08-c8fe-4ed7-9a5d-59928ebb3650",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 3,
+          "char_start": 1239,
+          "char_end": 1717,
+          "score": 0.69891,
+          "supports": [
+            "f20"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "1e497f79-4ff3-43c8-b017-863ab08ad156",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 431,
+          "score": 0.693963,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "3c245ea0-8239-4333-bb81-c7f25ce40173",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 6,
+          "char_start": 2490,
+          "char_end": 3209,
+          "score": 0.685,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "d40123e1-34c0-46fb-b0e4-597947723d82",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 1,
+          "char_start": 311,
+          "char_end": 822,
+          "score": 0.67735,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "5f655066-9512-418a-bead-43b589f5dd5f",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 2,
+          "char_start": 702,
+          "char_end": 1359,
+          "score": 0.665635,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "08ea4fe7-c048-4667-99f1-dc48fc9376d2",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 5,
+          "char_start": 2134,
+          "char_end": 2610,
+          "score": 0.665322,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "77448a86-6228-422a-931c-8780d97a1e06",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 6,
+          "char_start": 2876,
+          "char_end": 3313,
+          "score": 0.601811,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "db9a08f2-8cb4-4150-a986-149b141f2794",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 2,
+          "char_start": 1041,
+          "char_end": 1839,
+          "score": 0.598755,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "5b5ed823-da13-4765-a983-925409b62a6c",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 6,
+          "char_start": 3091,
+          "char_end": 3799,
+          "score": 0.598281,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.704441,
+      "embed_ms": 461.0,
+      "search_ms": 1234.3,
+      "total_ms": 1695.3
+    },
+    {
+      "question_id": "m01",
+      "type": "multi_fact",
+      "level": "relational",
+      "question": "Which business segment owns the plant whose six-week stoppage hurt Tarnwick's fourth-quarter gross margin, and how did that segment's revenue move in fiscal 2025?",
+      "fact_ids": [
+        "f09",
+        "f17"
+      ],
+      "gold_doc_ids": [
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80"
+      ],
+      "gold_documents": [
+        "doc_02_q4_earnings_release.md",
+        "doc_05_segment_reporting.md"
+      ],
+      "ranked_doc_ids": [
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.743325,
+          "supports": [
+            "f17"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "1696cf0a-5ffd-4318-9ac5-445376752c62",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 2,
+          "char_start": 942,
+          "char_end": 1705,
+          "score": 0.727536,
+          "supports": [
+            "f17"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.718571,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.717619,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "5b5ed823-da13-4765-a983-925409b62a6c",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 6,
+          "char_start": 3091,
+          "char_end": 3799,
+          "score": 0.711034,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "cffef2ac-3f34-446b-9e1e-f14b589eadd7",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 5,
+          "char_start": 2416,
+          "char_end": 3211,
+          "score": 0.70757,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "8452fe0d-86f0-411f-8af1-1a1ba2f832c0",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 1,
+          "char_start": 156,
+          "char_end": 862,
+          "score": 0.703834,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.703788,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "6aa774b3-6d43-4ca5-98fc-2b58c7a75fa1",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 1,
+          "char_start": 492,
+          "char_end": 1062,
+          "score": 0.703379,
+          "supports": [
+            "f17"
+          ]
+        },
+        {
+          "rank": 10,
+          "chunk_id": "9d845159-0739-4f3a-aa30-49eecfcf5068",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 5,
+          "char_start": 2511,
+          "char_end": 2996,
+          "score": 0.702591,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.743325,
+      "embed_ms": 502.6,
+      "search_ms": 1331.0,
+      "total_ms": 1833.6
+    },
+    {
+      "question_id": "m02",
+      "type": "multi_fact",
+      "level": "relational",
+      "question": "Who recused herself from the board vote on the Corvane acquisition, and what price did Tarnwick agree to pay for Corvane?",
+      "fact_ids": [
+        "f16",
+        "f10"
+      ],
+      "gold_doc_ids": [
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e"
+      ],
+      "gold_documents": [
+        "doc_06_board_minutes_oct2025.md",
+        "doc_07_corvane_acquisition_announcement.md"
+      ],
+      "ranked_doc_ids": [
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "8c293e20-2660-4992-aca7-ae0e585b6980",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 5,
+          "char_start": 2294,
+          "char_end": 2956,
+          "score": 0.755297,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "0e6d7e10-efef-45b8-aa44-e87ef464cf65",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 1,
+          "char_start": 224,
+          "char_end": 850,
+          "score": 0.74808,
+          "supports": [
+            "f10"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.742885,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "81a15dfc-f1c7-4ab0-8c17-b936640457b3",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 4,
+          "char_start": 1942,
+          "char_end": 2425,
+          "score": 0.735953,
+          "supports": [
+            "f16"
+          ]
+        },
+        {
+          "rank": 5,
+          "chunk_id": "5be88fe1-bb59-4413-9911-a86f9d43bf02",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 4,
+          "char_start": 1625,
+          "char_end": 2414,
+          "score": 0.735203,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "31903271-b55a-4116-8c5f-5b70227455cb",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 3,
+          "char_start": 1157,
+          "char_end": 1745,
+          "score": 0.717365,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "c9636a7b-e30e-49e7-9b06-c4553519db54",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 344,
+          "score": 0.713577,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "0e5d5d81-628d-4761-99e8-74400947999d",
+          "document_id": "13094331-35c0-4dc1-b5e4-46ba60a6fb97",
+          "filename": "doc_06_board_minutes_oct2025.md",
+          "chunk_index": 5,
+          "char_start": 2305,
+          "char_end": 2899,
+          "score": 0.702503,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "81008fc3-3357-432b-a8f2-a8049616812a",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 2,
+          "char_start": 730,
+          "char_end": 1277,
+          "score": 0.681627,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.67021,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.755297,
+      "embed_ms": 535.9,
+      "search_ms": 1234.6,
+      "total_ms": 1770.5
+    },
+    {
+      "question_id": "m03",
+      "type": "multi_fact",
+      "level": "relational",
+      "question": "What was the goodwill impairment on the business whose purchase was financed by the term loan that the 2031 notes repaid?",
+      "fact_ids": [
+        "f19",
+        "f12"
+      ],
+      "gold_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed"
+      ],
+      "gold_documents": [
+        "doc_03_income_statement_notes.md",
+        "doc_04_debt_and_liquidity_note.md"
+      ],
+      "ranked_doc_ids": [
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "36ca4bf0-8d1b-4b87-80c5-7c9353f7f702",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 3,
+          "char_start": 1578,
+          "char_end": 2275,
+          "score": 0.724029,
+          "supports": [
+            "f19"
+          ]
+        },
+        {
+          "rank": 2,
+          "chunk_id": "654999f3-078b-4d2b-bb9e-d78526af6043",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 4,
+          "char_start": 1810,
+          "char_end": 2426,
+          "score": 0.71127,
+          "supports": [
+            "f12"
+          ]
+        },
+        {
+          "rank": 3,
+          "chunk_id": "c5837102-1778-424f-82c2-5fe9594070a6",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 2,
+          "char_start": 1024,
+          "char_end": 1539,
+          "score": 0.709615,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "e7821e71-3869-41b9-ad09-15d7b804cf72",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 3,
+          "char_start": 1419,
+          "char_end": 1930,
+          "score": 0.704718,
+          "supports": [
+            "f12"
+          ]
+        },
+        {
+          "rank": 5,
+          "chunk_id": "d2566f7f-a0f3-4e1e-bdb4-649bf47c2867",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 5,
+          "char_start": 2306,
+          "char_end": 2897,
+          "score": 0.700517,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "7586f28f-4ce1-48e9-bb16-986afdc09333",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 1,
+          "char_start": 462,
+          "char_end": 1020,
+          "score": 0.684148,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "19ff63e8-226c-4ea2-86f9-c5a11da3e306",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 2,
+          "char_start": 900,
+          "char_end": 1698,
+          "score": 0.670505,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "98bea451-a895-434a-85e5-d217ec84bd61",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 6,
+          "char_start": 3096,
+          "char_end": 3579,
+          "score": 0.668502,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.667191,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "e1e271b8-5aa5-4341-891c-8dadd3ca14cd",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 6,
+          "char_start": 2777,
+          "char_end": 3315,
+          "score": 0.663019,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.724029,
+      "embed_ms": 530.7,
+      "search_ms": 1328.8,
+      "total_ms": 1859.5
+    },
+    {
+      "question_id": "m04",
+      "type": "multi_fact",
+      "level": "relational",
+      "question": "How much did Tarnwick record for closing the foundry that the new Kessendal plant will replace?",
+      "fact_ids": [
+        "f20",
+        "f11"
+      ],
+      "gold_doc_ids": [
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "ee055978-111d-4a1b-a066-7886c35bc949"
+      ],
+      "gold_documents": [
+        "doc_03_income_statement_notes.md",
+        "doc_10_capex_plan_fy2026.md"
+      ],
+      "ranked_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "1fbbed57-34c6-445a-91d7-61a01bdb8a9e"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b2574cf0-c078-4533-83a0-6c3de38b8e4b",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 4,
+          "char_start": 1597,
+          "char_end": 2254,
+          "score": 0.692188,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.663738,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "9235b666-9c0d-4eb5-b95d-388036724e2d",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 6,
+          "char_start": 2836,
+          "char_end": 3340,
+          "score": 0.658014,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "002ea33d-5ff9-4e29-bf93-212c9f053194",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 3,
+          "char_start": 1342,
+          "char_end": 1925,
+          "score": 0.64702,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.646007,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "b34751c1-35cd-4387-a824-4a730be81302",
+          "document_id": "a93b9a60-cb2d-4e04-9c43-d944333df06d",
+          "filename": "doc_02_q4_earnings_release.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 276,
+          "score": 0.642796,
+          "supports": []
+        },
+        {
+          "rank": 7,
+          "chunk_id": "0e6d7e10-efef-45b8-aa44-e87ef464cf65",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 1,
+          "char_start": 224,
+          "char_end": 850,
+          "score": 0.640556,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "bec13de4-5374-4ede-94a2-bd4de264ffdc",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 1,
+          "char_start": 520,
+          "char_end": 1144,
+          "score": 0.639815,
+          "supports": [
+            "f11"
+          ]
+        },
+        {
+          "rank": 9,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.637972,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "8c293e20-2660-4992-aca7-ae0e585b6980",
+          "document_id": "1fbbed57-34c6-445a-91d7-61a01bdb8a9e",
+          "filename": "doc_07_corvane_acquisition_announcement.md",
+          "chunk_index": 5,
+          "char_start": 2294,
+          "char_end": 2956,
+          "score": 0.637054,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.692188,
+      "embed_ms": 536.2,
+      "search_ms": 1437.7,
+      "total_ms": 1973.9
+    },
+    {
+      "question_id": "m05",
+      "type": "multi_fact",
+      "level": "relational",
+      "question": "By how much does Tarnwick's fiscal 2026 capex budget exceed the amount allocated to the Kessendal plant?",
+      "fact_ids": [
+        "f07",
+        "f20"
+      ],
+      "gold_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949"
+      ],
+      "gold_documents": [
+        "doc_10_capex_plan_fy2026.md"
+      ],
+      "ranked_doc_ids": [
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+        "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+        "621c777e-ebb7-4076-8f40-82746b00b3da",
+        "ee055978-111d-4a1b-a066-7886c35bc949",
+        "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+        "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+        "80096d48-2694-479a-9c9b-e4a180428405",
+        "528e0f5c-85e6-4e15-9626-0ef18f729a04"
+      ],
+      "first_gold_rank": 1,
+      "hits": [
+        {
+          "rank": 1,
+          "chunk_id": "b2574cf0-c078-4533-83a0-6c3de38b8e4b",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 4,
+          "char_start": 1597,
+          "char_end": 2254,
+          "score": 0.723655,
+          "supports": []
+        },
+        {
+          "rank": 2,
+          "chunk_id": "6967ed08-8974-46db-b2c5-cdc4fb6415d5",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 2,
+          "char_start": 1081,
+          "char_end": 1839,
+          "score": 0.704349,
+          "supports": []
+        },
+        {
+          "rank": 3,
+          "chunk_id": "abe6dab9-2543-4431-9f3d-27bae7056634",
+          "document_id": "c6973afb-6cfd-4bca-9dfc-a23e11691bed",
+          "filename": "doc_03_income_statement_notes.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 640,
+          "score": 0.699174,
+          "supports": []
+        },
+        {
+          "rank": 4,
+          "chunk_id": "81fe2e2c-ec55-4624-aeb2-487c19f5d045",
+          "document_id": "ef1defe0-b19b-4aae-ba53-c8b1934b135e",
+          "filename": "doc_12_investor_day_faq.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 623,
+          "score": 0.691307,
+          "supports": []
+        },
+        {
+          "rank": 5,
+          "chunk_id": "57b265e3-8f9c-49a9-8b38-8bbb26c69e8a",
+          "document_id": "621c777e-ebb7-4076-8f40-82746b00b3da",
+          "filename": "sustainability_overview_fy2025.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 576,
+          "score": 0.684311,
+          "supports": []
+        },
+        {
+          "rank": 6,
+          "chunk_id": "d119be08-c8fe-4ed7-9a5d-59928ebb3650",
+          "document_id": "ee055978-111d-4a1b-a066-7886c35bc949",
+          "filename": "doc_10_capex_plan_fy2026.md",
+          "chunk_index": 3,
+          "char_start": 1239,
+          "char_end": 1717,
+          "score": 0.684196,
+          "supports": [
+            "f20"
+          ]
+        },
+        {
+          "rank": 7,
+          "chunk_id": "256ed95d-79c6-4ef7-8a04-dee91d58c583",
+          "document_id": "bf5639b6-94c7-413b-aa7d-2291f9188f7c",
+          "filename": "doc_04_debt_and_liquidity_note.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 582,
+          "score": 0.682989,
+          "supports": []
+        },
+        {
+          "rank": 8,
+          "chunk_id": "8a68877e-7b13-4891-92e8-ab05816ee6d8",
+          "document_id": "b33184ff-a6c0-4e6f-adce-dc0490ff4f80",
+          "filename": "doc_05_segment_reporting.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.681948,
+          "supports": []
+        },
+        {
+          "rank": 9,
+          "chunk_id": "22305b99-6c93-4e37-8874-f6f8a8a8650a",
+          "document_id": "80096d48-2694-479a-9c9b-e4a180428405",
+          "filename": "fy2024_results_highlights.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 679,
+          "score": 0.679928,
+          "supports": []
+        },
+        {
+          "rank": 10,
+          "chunk_id": "820a3599-4087-429c-a9f9-a8ec29655178",
+          "document_id": "528e0f5c-85e6-4e15-9626-0ef18f729a04",
+          "filename": "doc_01_annual_report_letter.md",
+          "chunk_index": 0,
+          "char_start": 0,
+          "char_end": 612,
+          "score": 0.675898,
+          "supports": []
+        }
+      ],
+      "returned": 10,
+      "top_score": 0.723655,
+      "embed_ms": 532.6,
+      "search_ms": 1331.0,
+      "total_ms": 1863.6
+    }
+  ]
+}
